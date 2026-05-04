@@ -31,7 +31,8 @@ object SocketPacket {
             Chat(506),
             Error(507),
             Warn(508),
-            List(509);
+            List(509),
+            Discord(510);
 
             companion object {
                 val all: Set<Int> = entries.map { it.id }.toSet()

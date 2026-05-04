@@ -57,13 +57,7 @@ object Commander {
         "/${Athen.modId} update [stream]" to "Install updates (release/beta/alpha)",
         "/${Athen.modId} checkupdate [stream]" to "Check for available updates",
         "/${Athen.modId} toggle feature <featureKey>" to "Toggles the specified feature!",
-        "/${Athen.modId} irc create <channel> [pin]" to "Create an IRC channel",
-        "/${Athen.modId} irc join <channel> [pin]" to "Join an IRC channel",
-        "/${Athen.modId} irc pin <pin>" to "Update channel PIN (host only)",
-        "/${Athen.modId} irc leave" to "Leave current IRC channel",
-        "/${Athen.modId} irc chat <message>" to "Send a message",
-        "/${Athen.modId} irc list" to "List active IRC channels",
-        "/${Athen.modId} irc connect" to "Reconnect to IRC"
+        "/${Athen.modId} irc help" to "View all IRC commands"
     )
 
     init {

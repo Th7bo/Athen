@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 package xyz.aerii.athen.modules.impl.general
 
 import com.google.gson.JsonParser
@@ -15,7 +17,11 @@ import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
+import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.library.api.center
+import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.name
+import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.Observable.Companion.and
 import xyz.aerii.library.handlers.parser.parse
@@ -32,6 +38,12 @@ object IRC : IWebSocket() {
         Category.GENERAL,
         true
     ) {}
+
+    private val _unused by a.config.textParagraph("Run <red>\"/athen irc help\" <r>to view all commands!")
+    private val help by a.config.switch("Help message", true)
+    private val format0 by a.config.textInput("Message format", "<#A6E3A1>#name <dark_gray>➤ <white>#message")
+    private val discord by a.config.switch("Discord IRC", true)
+    private val format1 by a.config.textInput("Discord format", "<#A6E3A1>#name <dark_gray>➤ <white>#message").dependsOn { discord }
 
     init {
         on<CommandRegistration> {
@@ -100,6 +112,10 @@ object IRC : IWebSocket() {
                         if (!auth) return@thenCallback "Not connected to IRC!".modMessage(Typo.PrefixType.ERROR)
                         list()
                     }
+
+                    thenCallback("help") {
+                        help()
+                    }
                 }
             }
         }
@@ -120,6 +136,7 @@ object IRC : IWebSocket() {
 
                 cc = c
                 "<gray>Joined channel <aqua>#$c".parse().modMessage()
+                if (help) "<gray>Need help? Run <red>\"/athen irc help\"<r>!".parse().modMessage()
             }
 
             SocketPacket.IRC.ClientBound.Left.id -> {
@@ -134,8 +151,17 @@ object IRC : IWebSocket() {
                 if (n == null) return
                 if (b == null) return
                 if (n == name) return
+                if (n == "[Discord]") return
 
-                "<dark_gray>[<aqua>#$c<dark_gray>] <white>$n<dark_gray>: <gray>$b".parse().modMessage()
+                "<dark_gray>[<aqua>#$c<dark_gray>]".format0(n, b).parse().modMessage()
+            }
+
+            SocketPacket.IRC.ClientBound.Discord.id -> {
+                if (!discord) return
+                if (n == null) return
+                if (b == null) return
+
+                "<dark_gray>[<aqua>Discord<dark_gray>]".format1(n, b).parse().modMessage()
             }
 
             SocketPacket.IRC.ClientBound.Error.id -> {
@@ -143,7 +169,7 @@ object IRC : IWebSocket() {
             }
 
             SocketPacket.IRC.ClientBound.Warn.id -> {
-                b?.let { "<yellow>$it".parse().modMessage(Typo.PrefixType.ERROR) }
+                if (b != null) "<yellow>IRC: <gray>$b".parse().modMessage(Typo.PrefixType.ERROR)
             }
 
             SocketPacket.IRC.ClientBound.List.id -> {
@@ -165,29 +191,61 @@ object IRC : IWebSocket() {
         return a.observable
     }
 
-    fun create(channel: String, pin: String? = null) {
+    private fun create(channel: String, pin: String? = null) {
         `socket$send`(SocketPacket.IRC.ServerBound.Create.id, "c" to channel, "p" to pin)
     }
 
-    fun pin(pin: String) {
+    private fun pin(pin: String) {
         `socket$send`(SocketPacket.IRC.ServerBound.Pin.id, "p" to pin)
     }
 
-    fun join(channel: String, pin: String? = null) {
+    private fun join(channel: String, pin: String? = null) {
         `socket$send`(SocketPacket.IRC.ServerBound.Join.id, "c" to channel, "p" to pin)
     }
 
-    fun leave() {
+    private fun leave() {
         `socket$send`(SocketPacket.IRC.ServerBound.Leave.id)
     }
 
-    fun list() {
+    private fun list() {
         `socket$send`(SocketPacket.IRC.ServerBound.List.id)
     }
 
-    fun send(body: String) {
+    private fun send(body: String) {
         `socket$send`(SocketPacket.IRC.ServerBound.Chat.id, "b" to body)
 
-        "<dark_gray>[<aqua>#$cc<dark_gray>] <white>$name<dark_gray>: <gray>$body".parse().modMessage()
+        "<dark_gray>[<aqua>#$cc<dark_gray>]".format0(name, body).parse(true).modMessage()
+    }
+
+    private fun String.format0(n: String, b: String): String {
+        return "$this " + format0.replace("#name", n).replace("#message", b)
+    }
+
+    private fun String.format1(n: String, b: String): String {
+        return "$this " + format1.replace("#name", n).replace("#message", b)
+    }
+
+    private fun help() {
+        val a = ("<dark_gray>" + ("-".repeat())).parse()
+        val b = Athen.modId
+        val c = Catppuccin.Mocha.Green.argb
+
+        a.lie()
+        ("<red>" + ("Athen IRC".center())).parse().lie()
+        a.lie()
+
+        " <dark_gray>- <$c>/$b irc create [channel] [pin <gray>- optional<$c>]".parse().lie()
+        " <dark_gray>- <$c>/$b irc join [channel] [pin <gray>- optional<$c>]".parse().lie()
+        " <dark_gray>- <$c>/$b irc leave <gray>- leave channel".parse().lie()
+        " <dark_gray>- <$c>/$b irc pin [pin] <gray>- sets a pin".parse().lie()
+        " <dark_gray>- <$c>/$b irc chat [message]".parse().lie()
+        " <dark_gray>- <$c>/$b irc list <gray>- list channels".parse().lie()
+
+        a.lie()
+
+        " <dark_gray>- <$c>/airc [message] <gray>- send message alias".parse().lie()
+        " <dark_gray>- <$c>/airc toggle <gray>- send all messages to irc".parse().lie()
+
+        a.lie()
     }
 }
