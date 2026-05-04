@@ -187,8 +187,8 @@ object IRC : IWebSocket() {
         }
     }
 
-    override fun fn1(): Observable<Boolean> {
-        return a.observable
+    override fun fn1(): Boolean {
+        return a.enabled
     }
 
     private fun create(channel: String, pin: String? = null) {
@@ -212,8 +212,10 @@ object IRC : IWebSocket() {
     }
 
     private fun send(body: String) {
-        `socket$send`(SocketPacket.IRC.ServerBound.Chat.id, "b" to body)
+        if ("@everyone" in body) return "Please don't ping everyone...".modMessage()
+        if ("@here" in body) return "Please don't ping every online member...".modMessage()
 
+        `socket$send`(SocketPacket.IRC.ServerBound.Chat.id, "b" to body)
         "<dark_gray>[<aqua>#$cc<dark_gray>]".format0(name, body).parse(true).modMessage()
     }
 

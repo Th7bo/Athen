@@ -28,11 +28,9 @@ import kotlin.time.Duration.Companion.seconds
 @Load
 object WebSocket {
     private val http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()
-    private val set: MutableSet<IWebSocket> = mutableSetOf()
     private val url = URI(wsUrl)
     private var ws: WebSocket? = null
     private var rc: Task? = null
-    private var ii: Int = 0
 
     @JvmStatic
     val all: MutableSet<IWebSocket> = mutableSetOf()
@@ -92,14 +90,10 @@ object WebSocket {
                     return null
                 }
 
-                if (ii == 0) {
-                    fn1()
-                }
-
                 val json = buffer.toString()
                 buffer.clear()
 
-                val ss = set.toList()
+                val ss = all.toList()
                 runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()?.let { j ->
                     val t = j.get("t")?.asInt ?: return@let
                     val c = j.get("c")?.asString
@@ -128,7 +122,7 @@ object WebSocket {
                         }
 
                         else -> {
-                            for (s in ss) s.fn0(t, c, n, b)
+                            for (s in ss) if (s.fn1()) s.fn0(t, c, n, b)
                         }
                     }
                 }
@@ -172,16 +166,5 @@ object WebSocket {
     private fun fn0() {
         rc?.cancel()
         rc = Chronos.repeat(15.seconds) { connect() }
-    }
-
-    private fun fn1() {
-        set.clear()
-        ii = 1
-
-        for (a in all) {
-            val b = a.fn1()
-            if (b.value) set.add(a)
-            b.onChange { if (it) set.add(a) else set.remove(a) }
-        }
     }
 }

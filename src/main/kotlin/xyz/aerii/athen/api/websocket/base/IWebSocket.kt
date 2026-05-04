@@ -4,12 +4,11 @@ package xyz.aerii.athen.api.websocket.base
 
 import com.google.gson.JsonObject
 import xyz.aerii.athen.api.websocket.WebSocket
-import xyz.aerii.library.handlers.Observable
 
 abstract class IWebSocket {
     abstract fun fn0(t: Int, c: String?, n: String?, b: String?)
 
-    abstract fun fn1(): Observable<Boolean>
+    abstract fun fn1(): Boolean
 
     companion object {
         val auth: Boolean
