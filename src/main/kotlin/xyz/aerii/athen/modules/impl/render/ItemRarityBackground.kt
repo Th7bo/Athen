@@ -5,6 +5,7 @@ package xyz.aerii.athen.modules.impl.render
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.ARGB
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.data.SkyBlockRarity
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
@@ -32,7 +33,7 @@ object ItemRarityBackground : Module(
     private val renderStyle by config.dropdown("Render style", listOf("Filled", "Outline",  "Filled outline", "Circle"), 2)
     private val mode = config.dropdown("Render mode", listOf("Everywhere", "Slots"), 1).custom("mode")
     private val hotbar = config.switch("Hotbar", true).dependsOn { mode.value == 1 }.custom("hotbar")
-    private val fill by config.slider("Fill alpha", 0.5f, 0f, 1f, showDouble = true).dependsOn { renderStyle == 0 || renderStyle == 2 }
+    private val fill by config.slider("Fill alpha", 0.5f, 0f, 1f, showDouble = true).dependsOn { renderStyle != 1 }
 
     private val colorExpandable by config.expandable("Colors")
     private val `color$common` by config.colorPicker("Common color", Color(SkyBlockRarity.COMMON.color)).childOf { colorExpandable }
@@ -87,7 +88,7 @@ object ItemRarityBackground : Module(
             }
 
             3 -> {
-                blitSprite(RenderPipelines.GUI_TEXTURED, a.sprite(), x, y, 16, 16)
+                blitSprite(RenderPipelines.GUI_TEXTURED, a.sprite(), x, y, 16, 16, ARGB.color((fill * 255).toInt(), 255, 255, 255))
             }
         }
     }
