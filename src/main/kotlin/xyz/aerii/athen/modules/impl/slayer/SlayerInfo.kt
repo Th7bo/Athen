@@ -9,11 +9,11 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerType
 import tech.thatgravyboat.skyblockapi.utils.extentions.serverHealth
 import tech.thatgravyboat.skyblockapi.utils.extentions.toRomanNumeral
-import xyz.aerii.athen.accessors.attachedStripped
-import xyz.aerii.athen.accessors.parent
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.config.Category
+import xyz.aerii.athen.ducks.entity.attachedStripped
+import xyz.aerii.athen.ducks.entity.parent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.events.TickEvent

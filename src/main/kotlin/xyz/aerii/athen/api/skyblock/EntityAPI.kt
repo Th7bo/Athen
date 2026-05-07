@@ -42,8 +42,8 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.monster./*? >= 1.21.11 { *//*spider.*//*? }*/CaveSpider
 import net.minecraft.world.entity.monster.Creeper
 import net.minecraft.world.entity.monster./*? >= 1.21.11 {*//*spider.*//*? }*/Spider
-import xyz.aerii.athen.accessors.EntityAccessor
 import xyz.aerii.athen.annotations.Priority
+import xyz.aerii.athen.ducks.entity.EntityDuck
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.handlers.Chronos
@@ -111,11 +111,11 @@ object EntityAPI {
 
         val b = a ?: return
 
-        val acc = (ent as? EntityAccessor) ?: return
+        val acc = (ent as? EntityDuck) ?: return
         val c = acc.`athen$attach`()
         if (c != null && (c == a || c == a2)) return
 
-        val list = (b as? EntityAccessor)?.`athen$attachments`() ?: return
+        val list = (b as? EntityDuck)?.`athen$attachments`() ?: return
 
         list.removeIf { it.get()?.isAlive != true }
         if (!list.any { it.get() == ent }) list.add(WeakReference(ent))

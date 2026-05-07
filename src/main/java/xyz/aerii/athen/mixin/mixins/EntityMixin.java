@@ -49,8 +49,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import xyz.aerii.athen.accessors.EntityAccessor;
 import xyz.aerii.athen.api.skyblock.EntityAPI;
+import xyz.aerii.athen.ducks.entity.EntityDuck;
 import xyz.aerii.athen.events.EntityEvent;
 import xyz.aerii.athen.modules.impl.render.RenderOptimiser;
 
@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements EntityAccessor {
+public abstract class EntityMixin implements EntityDuck {
     @Shadow
     @Final
     private static EntityDataAccessor<Optional<Component>> DATA_CUSTOM_NAME;
@@ -144,7 +144,7 @@ public abstract class EntityMixin implements EntityAccessor {
 
     @Inject(method = "onRemoval", at = @At("RETURN"))
     private void athen$remove(CallbackInfo ci) {
-        if (!(athen$attachedTo instanceof EntityAccessor acc)) return;
+        if (!(athen$attachedTo instanceof EntityDuck acc)) return;
 
         acc.athen$attachments().removeIf(ref -> ref.get() == entity());
     }

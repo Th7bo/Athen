@@ -2,8 +2,8 @@ package xyz.aerii.athen.api.skyblock
 
 import net.minecraft.world.entity.Entity
 import tech.thatgravyboat.skyblockapi.api.area.slayer.*
-import xyz.aerii.athen.accessors.parent
 import xyz.aerii.athen.annotations.Priority
+import xyz.aerii.athen.ducks.entity.parent
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.MessageEvent

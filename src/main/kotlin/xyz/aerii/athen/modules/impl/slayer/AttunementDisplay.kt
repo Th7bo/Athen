@@ -2,12 +2,12 @@ package xyz.aerii.athen.modules.impl.slayer
 
 import net.minecraft.util.FormattedCharSequence
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroups
-import xyz.aerii.athen.accessors.parent
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.api.skyblock.SlayerAPI
 import xyz.aerii.athen.config.Category
+import xyz.aerii.athen.ducks.entity.parent
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.modules.Module
