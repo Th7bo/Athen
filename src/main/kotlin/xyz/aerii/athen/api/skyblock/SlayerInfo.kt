@@ -34,11 +34,12 @@ package xyz.aerii.athen.api.skyblock
 import net.minecraft.world.entity.Entity
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SLAYER_MOBS
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerMob
+import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerType
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
-import tech.thatgravyboat.skyblockapi.utils.DiscoverableValue
 import tech.thatgravyboat.skyblockapi.utils.extentions.parseRomanNumeral
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 import xyz.aerii.library.api.level
+import xyz.aerii.library.handlers.delegate.Expirable
 import xyz.aerii.library.utils.stripped
 
 private val tierRegex = Regex("""(?:^|\s)(?<level>[MDCLXVI]{1,7})\s""")
@@ -48,7 +49,7 @@ data class SlayerInfo(val entity: Entity) {
         val nametag = level?.getEntity(entity.id + 1) ?: return null
 
         return SLAYER_MOBS.find { mob ->
-            val inGameNames = mob.inGameNames
+            val inGameNames = mob.inGameNames.let { if (mob == SlayerType.TARANTULA_BROODFATHER) it + "Conjoined Brood" else it }
             inGameNames.any { nametag.name.stripped().contains(it) }
         }
     }
@@ -59,19 +60,17 @@ data class SlayerInfo(val entity: Entity) {
     private fun discoverTier(): Int? =
         level?.getEntity(entity.id + 1)?.customName?.stripped()?.let {
             if ("Atoned Horror" in it) 5
+            else if ("Conjoined Brood" in it) 5
             else tierRegex.findGroup(it, "level")?.parseRomanNumeral()
         }
 
     val isOwnedByPlayer: Boolean get() = owner == McPlayer.name
-    val owner by DiscoverableValue(::discoverOwner)
-    val type by DiscoverableValue(::discoverType)
-    val tier by DiscoverableValue(::discoverTier)
+    val owner by Expirable(::discoverOwner, true)
+    val type by Expirable(::discoverType, true)
+    val tier by Expirable(::discoverTier, true)
 
     val str: String
         get() = "${type}_T${tier}"
-
-    // attempts to check once when the class is created
-    init { tier;type;owner; }
 
     override fun toString(): String {
         return "SlayerInfo(owner=$owner, isOwnedByPlayer=$isOwnedByPlayer, type=$type, tier=$tier, age=${entity.tickCount / 20}s)"

@@ -12,7 +12,6 @@ import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.handlers.Typo.devMessage
 import java.util.*
 
-// FIXME: Doesn't work for tarantula T5.
 @Priority
 object SlayerAPI {
     private val questFailedRegex = Regex("\\s+SLAYER QUEST FAILED!")
@@ -21,7 +20,7 @@ object SlayerAPI {
 
     private val logged: MutableSet<Entity> = mutableSetOf()
     val slayerBosses: WeakHashMap<Entity, SlayerInfo> = WeakHashMap()
-    val slayerNames = SLAYER_MOBS.flatMap { it.inGameNames }.toSet()
+    val slayerNames = SLAYER_MOBS.flatMap { it.inGameNames }.toSet() + "Conjoined Brood"
 
     var slayer: SlayerInfo? = null
         private set
