@@ -40,6 +40,7 @@ object BigSlayerDrops : Module(
     private val set = mutableSetOf<Vec3>()
 
     val scale by config.slider("Scale", 3f, 1f, 10f)
+    private val range by config.slider("Range multiplier", 1.0, 0.5, 5.0, "blocks", true)
     private val unscale by config.slider("Unscale after", 15, 5, 60, "seconds")
     private val selected by config.multiCheckbox("Enable for", listOf("Revenant", "Tarantula", "Sven", "Voidgloom", "Riftstalker", "Blaze"), listOf(0, 1, 2, 3, 4, 5))
 
@@ -72,10 +73,11 @@ object BigSlayerDrops : Module(
         val h = fn0(e, f, g) || fn1(e, f, g) || fn2(e, f, g) || fn3(e, f, g) || fn4(e, f, g) || fn5(e, f, g)
         if (!h) return false
 
+        val i = range
         for (s in set) {
-            if (abs(s.x - a) > 2) continue
-            if (abs(s.y - b) > 1) continue
-            if (abs(s.z - c) > 2) continue
+            if (abs(s.x - a) > 5 * i) continue
+            if (abs(s.y - b) > 3 * i) continue
+            if (abs(s.z - c) > 5 * i) continue
 
             return true
         }
