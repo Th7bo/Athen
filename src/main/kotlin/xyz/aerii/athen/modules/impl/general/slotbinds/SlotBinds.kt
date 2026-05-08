@@ -128,8 +128,8 @@ object SlotBinds : Module(
                         then("swap") {
                             thenCallback("name", StringArgumentType.greedyString()) {
                                 val s = StringArgumentType.getString(this, "profile")
-                                if (s !in saved) return@thenCallback "Profile <red>\"$s\"<r> does not exist!".parse().modMessage()
-                                if (s == "binds") return@thenCallback "Can't swap to profile <red>\"binds\"<r>!".parse().modMessage()
+                                if (s !in map0) return@thenCallback "Profile <red>\"$s\"<r> does not exist!".parse().modMessage()
+                                if (s == active) return@thenCallback "Already on profile <red>\"$s\"<r>!".parse().modMessage()
 
                                 load(s)
                                 "Swapped to profile <green>$s<r>!".parse().modMessage()
