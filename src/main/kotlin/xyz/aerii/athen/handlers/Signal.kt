@@ -122,7 +122,8 @@ object Signal {
             WorldRenderEvent.Render(context.matrices(), context.consumers() as? MultiBufferSource.BufferSource ?: return@register).post()
         }
 
-        ClientReceiveMessageEvents.ALLOW_GAME.register { component, _ ->
+        ClientReceiveMessageEvents.ALLOW_GAME.register { component, bool ->
+            if (bool) return@register true
             !MessageEvent.Chat.Intercept(component).post()
         }
 
