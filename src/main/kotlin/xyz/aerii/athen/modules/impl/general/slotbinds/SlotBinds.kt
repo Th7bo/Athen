@@ -3,6 +3,7 @@
 package xyz.aerii.athen.modules.impl.general.slotbinds
 
 import com.google.gson.reflect.TypeToken
+import com.mojang.brigadier.arguments.StringArgumentType
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.world.inventory.ClickType
@@ -27,6 +28,7 @@ import xyz.aerii.athen.utils.render.Render2D.drawOutline
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
+import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.safely
@@ -42,6 +44,7 @@ object SlotBinds : Module(
     private val swap by config.keybind("Swap keybind", GLFW.GLFW_KEY_LEFT_SHIFT)
     private val lock = config.switch("Lock bound slots").custom("lock")
     private val _unused1 by config.button("Open editor") { SlotBindsGUI.open() }
+    private val _unused2 by config.textParagraph("You can use the command <red>\"/${Athen.modId} slotbinds profile swap [profile]\"<r> to swap profiles!")
 
     private var last0: Int? = null
     private var last1: Int = 0
@@ -119,6 +122,19 @@ object SlotBinds : Module(
 
                     thenCallback("gui") {
                         SlotBindsGUI.open()
+                    }
+
+                    then("profile") {
+                        then("swap") {
+                            thenCallback("name", StringArgumentType.greedyString()) {
+                                val s = StringArgumentType.getString(this, "profile")
+                                if (s !in saved) return@thenCallback "Profile <red>\"$s\"<r> does not exist!".parse().modMessage()
+                                if (s == "binds") return@thenCallback "Can't swap to profile <red>\"binds\"<r>!".parse().modMessage()
+
+                                load(s)
+                                "Swapped to profile <green>$s<r>!".parse().modMessage()
+                            }
+                        }
                     }
                 }
 
