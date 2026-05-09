@@ -10,7 +10,7 @@
   "contact": {},
   "license": "BSD 3-Clause",
   "icon": "assets/athen/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       {
@@ -36,5 +36,10 @@
     "hypixel-mod-api": ">=${hm_api}",
     "skyblock-api": ">=${sb_api}",
     "minecraft": "${minecraft}"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": false
+    }
   }
 }
