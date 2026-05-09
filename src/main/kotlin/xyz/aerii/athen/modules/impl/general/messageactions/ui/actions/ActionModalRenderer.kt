@@ -25,7 +25,7 @@ class ActionModalRenderer(
     var open = false
     var entry: ActionEntryView? = null
     var match = MatchType.CONTAINS
-    var action = 1
+    var action = 0
     var cancel = false
     var category = ""
 
@@ -322,7 +322,7 @@ class ActionModalRenderer(
         valueField.selectionStart = -1
         valueField.scrollOffset = 0
         match = MatchType.CONTAINS
-        action = 1
+        action = 0
         cancel = false
         category = ""
         delayField.value = ""
