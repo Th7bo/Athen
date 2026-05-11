@@ -16,6 +16,8 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.dungeon.DungeonAPI
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.config.ConfigBuilder
 import xyz.aerii.athen.events.CommandRegistration
@@ -27,8 +29,6 @@ import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.dungeon.carry.DungeonCarryStateTracker.tracked
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.sizedText
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.center
@@ -143,7 +143,7 @@ object DungeonCarryTracker : Module(
             for (teammate in DungeonAPI.teammates) {
                 if (teammate.name !in tracked) continue
                 val e = teammate.entity ?: continue
-                Render3D.drawBox(e.renderBoundingBox, playerColor, playerLineWidth, false)
+                extractFrameBox(e.renderBoundingBox, playerColor.rgb, playerLineWidth, false)
             }
         }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
 

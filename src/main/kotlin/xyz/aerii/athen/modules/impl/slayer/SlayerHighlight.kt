@@ -3,12 +3,12 @@ package xyz.aerii.athen.modules.impl.slayer
 import net.minecraft.world.entity.Entity
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import java.awt.Color
 
@@ -91,7 +91,7 @@ object SlayerHighlight : Module(
                 continue
             }
 
-            Render3D.drawBox(entity.renderBoundingBox, color, width)
+            extractFrameBox(entity.renderBoundingBox, color.rgb, width)
             i++
         }
     }

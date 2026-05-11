@@ -2,6 +2,9 @@ package xyz.aerii.athen.modules.impl.general.messageactions.ui
 
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.modules.impl.general.messageactions.data.ActionEntry
 import xyz.aerii.athen.modules.impl.general.messageactions.MessageActions
@@ -11,9 +14,6 @@ import xyz.aerii.athen.modules.impl.general.messageactions.ui.actions.ActionModa
 import xyz.aerii.athen.modules.impl.general.messageactions.ui.actions.ActionsListRenderer
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 object MessageActionsGUI : Scram("Message actions [Athen]") {
@@ -41,7 +41,7 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
         zones.clear()
         for (e in entries) e.toggle += ((if (e.entry.enabled) 1f else 0f) - e.toggle) * delta * 0.4f
 
-        graphics.drawRectangle(0, 0, width, height, Catppuccin.Mocha.Crust.withAlpha(0.6f))
+        graphics.rectangle(0, 0, width, height, Catppuccin.Mocha.Crust.withAlpha(0.6f))
 
         val px = (width - 576) / 2
         val py = (height - 300) / 2
@@ -49,8 +49,8 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
         categoryBar.draw(graphics, mouseX, mouseY, px, py, 300, modal.open, zones)
 
         val x = px + 116
-        graphics.drawRectangle(x, py, 460, 300, Catppuccin.Mocha.Base.argb)
-        graphics.drawOutline(x, py, 460, 300, 1, Catppuccin.Mocha.Surface0.argb)
+        graphics.rectangle(x, py, 460, 300, Catppuccin.Mocha.Base.argb)
+        graphics.outline(x, py, 460, 300, 1, Catppuccin.Mocha.Surface0.argb)
 
         val list = categoryBar.selected?.let { s -> entries.filter { it.entry.category == s } } ?: entries
         listRenderer.draw(graphics, mouseX, mouseY, x + 6, py + 6, 448, 260, list, modal.open, zones)
@@ -62,13 +62,13 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
 
     private fun footer(graphics: GuiGraphics, mx: Int, my: Int, mainX: Int, py: Int) {
         val y0 = py + 272
-        graphics.drawRectangle(mainX, y0, 460, 1, Catppuccin.Mocha.Surface0.argb)
+        graphics.rectangle(mainX, y0, 460, 1, Catppuccin.Mocha.Surface0.argb)
 
         val x0 = mainX + 170
         val y1 = y0 + 6
-        graphics.drawRectangle(x0, y1, 120, 16, if (!modal.open && mx in x0 until x0 + 120 && my in y1 until y1 + 16) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
-        graphics.drawOutline(x0, y1, 120, 16, 1, Catppuccin.Mocha.Green.argb)
-        graphics.text("+ Create Action", x0 + (120 - client.font.width("+ Create Action")) / 2, y1 + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Green.argb)
+        graphics.rectangle(x0, y1, 120, 16, if (!modal.open && mx in x0 until x0 + 120 && my in y1 until y1 + 16) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
+        graphics.outline(x0, y1, 120, 16, 1, Catppuccin.Mocha.Green.argb)
+        graphics.extractText("+ Create Action", x0 + (120 - client.font.width("+ Create Action")) / 2, y1 + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Green.argb)
         zones.add(UIZone(x0, y1, 120, 16, UIZoneType.BUTTON_CREATE))
     }
 

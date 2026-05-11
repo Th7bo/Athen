@@ -9,13 +9,16 @@ import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.kuudra.enums.KuudraPhase
 import xyz.aerii.athen.api.kuudra.enums.KuudraSupply
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractBeam
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFilledBox
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.MessageEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render3D
+import xyz.aerii.athen.utils.markerAABB
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.utils.toDurationFromMillis
@@ -72,13 +75,14 @@ object SupplyWaypoints : Module(
             when (phase) {
                 KuudraPhase.Supply if (dropOff || pickup) -> {
                     if (dropOff) {
-                        for (b in KuudraSupply.every) if (!b.active) Render3D.drawFilledBox(b.buildAABB, dropOffColor, false)
+                        for (b in KuudraSupply.every) if (!b.active) extractFilledBox(b.buildAABB, dropOffColor.rgb, false)
                     }
 
                     if (pickup) {
                         for (s in KuudraAPI.supplies) {
                             val color = if (changeColor && s.nearby) playerColor else pickupColor
-                            Render3D.drawWaypoint(s.blockPos, color, 2f, s.aabb)
+                            extractFrameBox(s.blockPos.markerAABB(), color.rgb, depth = false)
+                            extractBeam(s.blockPos, color.rgb)
                         }
                     }
                 }
@@ -86,7 +90,8 @@ object SupplyWaypoints : Module(
                 KuudraPhase.Fuel if fuel -> {
                     for (s in KuudraAPI.fuels) {
                         val color = if (changeColor && s.nearby) playerColor else fuelColor
-                        Render3D.drawWaypoint(s.blockPos, color, 2f, s.aabb)
+                        extractFrameBox(s.blockPos.markerAABB(), color.rgb, depth = false)
+                        extractBeam(s.blockPos, color.rgb)
                     }
                 }
 

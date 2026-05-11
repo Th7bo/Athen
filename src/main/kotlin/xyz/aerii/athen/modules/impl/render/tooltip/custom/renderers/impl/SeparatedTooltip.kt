@@ -5,12 +5,12 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTextTooltip
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.util.FormattedCharSequence
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.CustomTooltip
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.renderers.base.ITooltipRenderer
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.renderers.base.TooltipContext
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 
 object SeparatedTooltip : ITooltipRenderer {
     override fun TooltipContext.render() {
@@ -31,7 +31,7 @@ object SeparatedTooltip : ITooltipRenderer {
         graphics.box(hx, hy, w, headerH, bw)
         val text = (header as ClientTextTooltip).text
         val textX = if (CustomTooltip.`header$centered`) (x + (w - 8) / 2) - font.width(text) / 2 else x
-        graphics.text(text, textX, dy, CustomTooltip.`text$shadow`)
+        graphics.extractText(text, textX, dy, CustomTooltip.`text$shadow`)
         //~ if >= 26.1 'renderImage' -> 'extractImage'
         header.renderImage(font, x, dy, width, height, graphics)
 
@@ -48,8 +48,8 @@ object SeparatedTooltip : ITooltipRenderer {
     }
 
     private fun GuiGraphics.box(x: Int, y: Int, w: Int, h: Int, bw: Int) {
-        if (CustomTooltip.background) drawRectangle(x, y, w, h, CustomTooltip.`background$color`.rgb)
-        if (CustomTooltip.border && bw > 0) drawOutline(x, y, w, h, bw, if (CustomTooltip.`border$rarity`) CustomTooltip.color else CustomTooltip.`border$color`.rgb)
+        if (CustomTooltip.background) rectangle(x, y, w, h, CustomTooltip.`background$color`.rgb)
+        if (CustomTooltip.border && bw > 0) outline(x, y, w, h, bw, if (CustomTooltip.`border$rarity`) CustomTooltip.color else CustomTooltip.`border$color`.rgb)
     }
 
     private fun GuiGraphics.components(font: Font, comps: List<ClientTooltipComponent>, tx: Int, boxX: Int, boxY: Int, boxW: Int, boxH: Int, startY: Int, width: Int, totalHeight: Int) {

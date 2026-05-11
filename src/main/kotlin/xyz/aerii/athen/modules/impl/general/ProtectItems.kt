@@ -16,6 +16,7 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.bold
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.dungeon.DungeonAPI
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GuiEvent
@@ -25,7 +26,6 @@ import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.held
@@ -77,7 +77,7 @@ object ProtectItems : Module(
             if (!slot.item.fn()) return@on
 
             renders.add { graphics, slot ->
-                if (!renderKey || (renderKeybind.bound && renderKeybind.pressed)) graphics.text(p, slot.x, slot.y)
+                if (!renderKey || (renderKeybind.bound && renderKeybind.pressed)) graphics.extractText(p, slot.x, slot.y)
             }
         }.runWhen(render.state)
 

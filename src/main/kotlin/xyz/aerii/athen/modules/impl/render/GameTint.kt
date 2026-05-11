@@ -2,11 +2,11 @@ package xyz.aerii.athen.modules.impl.render
 
 import net.minecraft.client.gui.GuiGraphics
 import xyz.aerii.athen.annotations.Load
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.Observable.Companion.and
 import java.awt.Color
@@ -47,6 +47,6 @@ object GameTint : Module(
     }
 
     private fun GuiGraphics.tint() {
-        drawRectangle(0, 0, guiWidth(), guiHeight(), color)
+        rectangle(0, 0, guiWidth(), guiHeight(), color)
     }
 }

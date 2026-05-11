@@ -2,6 +2,9 @@ package xyz.aerii.athen.modules.impl.general.keybinds
 
 import net.minecraft.client.gui.GuiGraphics
 import org.lwjgl.glfw.GLFW
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.modules.impl.general.keybinds.Keybinds.add
 import xyz.aerii.athen.modules.impl.general.keybinds.Keybinds.remove
@@ -9,9 +12,6 @@ import xyz.aerii.athen.modules.impl.general.keybinds.Keybinds.update
 import xyz.aerii.athen.modules.impl.general.keybinds.ui.*
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
@@ -35,7 +35,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         zones.clear()
         for (e in entries) e.toggleAnim += ((if (e.binding.enabled) 1f else 0f) - e.toggleAnim) * delta * 0.4f
 
-        graphics.drawRectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
+        graphics.rectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
 
         val px = (width - 576) / 2
         val py = (height - 300) / 2
@@ -43,8 +43,8 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         categoryBar.draw(graphics, mouseX, mouseY, px, py, 300, modal.open, zones)
 
         val mainX = px + 116
-        graphics.drawRectangle(mainX, py, 460, 300, Mocha.Base.argb)
-        graphics.drawOutline(mainX, py, 460, 300, 1, Mocha.Surface0.argb)
+        graphics.rectangle(mainX, py, 460, 300, Mocha.Base.argb)
+        graphics.outline(mainX, py, 460, 300, 1, Mocha.Surface0.argb)
 
         val list = categoryBar.selected?.let { s -> entries.filter { it.binding.category == s } } ?: entries
         listRenderer.draw(graphics, mouseX, mouseY, mainX + 6, py + 6, 448, 260, list, modal.open, zones)
@@ -56,14 +56,14 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
 
     private fun drawFooter(guiGraphics: GuiGraphics, mx: Int, my: Int, mainX: Int, py: Int) {
         val fy = py + 272
-        guiGraphics.drawRectangle(mainX, fy, 460, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(mainX, fy, 460, 1, Mocha.Surface0.argb)
 
         val btnX = mainX + 170
         val fieldY = fy + 6
         val hovered = !modal.open && mx in btnX until btnX + 120 && my in fieldY until fieldY + 16
-        guiGraphics.drawRectangle(btnX, fieldY, 120, 16, if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(btnX, fieldY, 120, 16, 1, Mocha.Green.argb)
-        guiGraphics.text("+ Create Keybind", btnX + (120 - client.font.width("+ Create Keybind")) / 2, fieldY + (16 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
+        guiGraphics.rectangle(btnX, fieldY, 120, 16, if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(btnX, fieldY, 120, 16, 1, Mocha.Green.argb)
+        guiGraphics.extractText("+ Create Keybind", btnX + (120 - client.font.width("+ Create Keybind")) / 2, fieldY + (16 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
         zones.add(UIZone(btnX, fieldY, 120, 16, UIZoneType.BUTTON_CREATE))
     }
 

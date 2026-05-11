@@ -14,6 +14,8 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.*
 import xyz.aerii.athen.handlers.Chronos
@@ -25,8 +27,6 @@ import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.slayer.carry.SlayerCarryStateTracker.bossToPlayer
 import xyz.aerii.athen.modules.impl.slayer.carry.SlayerCarryStateTracker.tracked
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.sizedText
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.*
@@ -221,7 +221,7 @@ object SlayerCarryTracker : Module(
 
             if (highlightBoss) {
                 bossToPlayer.keys.removeIf {
-                    Render3D.drawBox(it.renderBoundingBox, bossColor, bossLineWidth)
+                    extractFrameBox(it.renderBoundingBox, bossColor.rgb, bossLineWidth)
                     it.isRemoved
                 }
             }
@@ -229,7 +229,7 @@ object SlayerCarryTracker : Module(
             if (highlightPlayer) {
                 client.level?.players()?.forEach { player ->
                     if (player.name.string in tracked) {
-                        Render3D.drawBox(player.renderBoundingBox, playerColor, playerLineWidth)
+                        extractFrameBox(player.renderBoundingBox, playerColor.rgb, playerLineWidth)
                     }
                 }
             }

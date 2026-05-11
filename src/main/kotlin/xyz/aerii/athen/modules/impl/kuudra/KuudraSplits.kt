@@ -13,6 +13,7 @@ import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.kuudra.enums.KuudraPhase
 import xyz.aerii.athen.api.kuudra.enums.KuudraTier
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.KuudraEvent
@@ -24,7 +25,6 @@ import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render2D.sizedText
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.handlers.parser.parse

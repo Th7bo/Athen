@@ -20,6 +20,8 @@ import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GuiEvent
@@ -35,8 +37,6 @@ import xyz.aerii.athen.utils.PlayerStats
 import xyz.aerii.athen.utils.calculateMP
 import xyz.aerii.athen.utils.fetchPlayerStats
 import xyz.aerii.athen.utils.parseItem
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.server
@@ -192,18 +192,18 @@ object PartyFinder : Module(
 
             if (special != Special.NONE) {
                 when (special) {
-                    Special.VC -> if (vc) graphics.drawRectangle(slot.x, slot.y, 16, 16, vcColor)
-                    Special.PERM -> if (perm) graphics.drawRectangle(slot.x, slot.y, 16, 16, permColor)
-                    Special.CARRY -> if (carry) graphics.drawRectangle(slot.x, slot.y, 16, 16, carryColor)
+                    Special.VC -> if (vc) graphics.rectangle(slot.x, slot.y, 16, 16, vcColor)
+                    Special.PERM -> if (perm) graphics.rectangle(slot.x, slot.y, 16, 16, permColor)
+                    Special.CARRY -> if (carry) graphics.rectangle(slot.x, slot.y, 16, 16, carryColor)
                 }
 
                 return@on
             }
 
             when (status) {
-                SlotStatus.BLOCKED -> if (blocked) graphics.drawRectangle(slot.x, slot.y, 16, 16, blockedColor)
-                SlotStatus.DUPE -> if (dupe) graphics.drawRectangle(slot.x, slot.y, 16, 16, dupeColor)
-                SlotStatus.JOINABLE -> if (joinable) graphics.drawRectangle(slot.x, slot.y, 16, 16, joinableColor)
+                SlotStatus.BLOCKED -> if (blocked) graphics.rectangle(slot.x, slot.y, 16, 16, blockedColor)
+                SlotStatus.DUPE -> if (dupe) graphics.rectangle(slot.x, slot.y, 16, 16, dupeColor)
+                SlotStatus.JOINABLE -> if (joinable) graphics.rectangle(slot.x, slot.y, 16, 16, joinableColor)
             }
         }.runWhen(highlight.state)
 
@@ -211,7 +211,7 @@ object PartyFinder : Module(
             if (!inPartyFinder) return@on
             val s = slotData[slot.index]?.members?.size?.toString() ?: return@on
 
-            graphics.text(s, slot.x + 17 - client.font.width(s), slot.y + 18 - client.font.lineHeight)
+            graphics.extractText(s, slot.x + 17 - client.font.width(s), slot.y + 18 - client.font.lineHeight)
         }.runWhen(stackSize.state)
 
         on<GuiEvent.Open.Container> {

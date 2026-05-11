@@ -2,11 +2,11 @@ package xyz.aerii.athen.modules.impl.render
 
 import net.minecraft.client.renderer.entity.state.ArrowRenderState
 import xyz.aerii.athen.annotations.Load
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import java.awt.Color
 
@@ -24,7 +24,7 @@ object ArrowHitboxes : Module(
             if (renderState !is ArrowRenderState) return@on
             val entity = entity ?: return@on
 
-            Render3D.drawBox(entity.renderBoundingBox, color, thickness)
+            extractFrameBox(entity.renderBoundingBox, color.rgb, thickness)
         }
     }
 }

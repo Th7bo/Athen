@@ -3,11 +3,11 @@ package xyz.aerii.athen.modules.impl.render.tooltip.custom.renderers.impl
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.CustomTooltip
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.renderers.base.ITooltipRenderer
 import xyz.aerii.athen.modules.impl.render.tooltip.custom.renderers.base.TooltipContext
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
 
 object CombinedTooltip : ITooltipRenderer {
     override fun TooltipContext.render() {
@@ -27,8 +27,8 @@ object CombinedTooltip : ITooltipRenderer {
     }
 
     private fun GuiGraphics.box(x: Int, y: Int, w: Int, h: Int, bw: Int) {
-        if (CustomTooltip.background) drawRectangle(x, y, w, h, CustomTooltip.`background$color`.rgb)
-        if (CustomTooltip.border && bw > 0) drawOutline(x, y, w, h, bw, if (CustomTooltip.`border$rarity`) CustomTooltip.color else CustomTooltip.`border$color`.rgb)
+        if (CustomTooltip.background) rectangle(x, y, w, h, CustomTooltip.`background$color`.rgb)
+        if (CustomTooltip.border && bw > 0) outline(x, y, w, h, bw, if (CustomTooltip.`border$rarity`) CustomTooltip.color else CustomTooltip.`border$color`.rgb)
     }
 
     private fun GuiGraphics.component(font: Font, comps: List<ClientTooltipComponent>, tx: Int, boxX: Int, boxY: Int, boxW: Int, boxH: Int, startY: Int, width: Int, totalHeight: Int) {

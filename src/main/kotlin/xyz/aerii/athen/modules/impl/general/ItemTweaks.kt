@@ -13,12 +13,12 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.handlers.Itemizer.`watch$tooltip`
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
@@ -66,7 +66,7 @@ object ItemTweaks : Module(
 
             cakeRegex.findOrNull(slot.item.displayName.stripped(), "year") {
                 renders.add { graphics, slot ->
-                    graphics.text("§b${it.component1()}", slot.x, slot.y + 8)
+                    graphics.extractText("§b${it.component1()}", slot.x, slot.y + 8)
                 }
             }
         }.runWhen(cakeNumbers.state)
@@ -112,7 +112,7 @@ object ItemTweaks : Module(
             if (stars <= 0) return@on
 
             val str = stars.toString()
-            graphics.text(str, x + 17 - client.font.width(str), y + 18 - client.font.lineHeight, color = starColor.rgb)
+            graphics.extractText(str, x + 17 - client.font.width(str), y + 18 - client.font.lineHeight, color = starColor.rgb)
         }.runWhen(showItemStars.state)
     }
 

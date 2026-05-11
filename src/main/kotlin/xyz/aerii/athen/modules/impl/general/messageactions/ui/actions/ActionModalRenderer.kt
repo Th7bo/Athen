@@ -1,6 +1,9 @@
 package xyz.aerii.athen.modules.impl.general.messageactions.ui.actions
 
 import net.minecraft.client.gui.GuiGraphics
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.modules.impl.general.messageactions.data.MatchType
 import xyz.aerii.athen.modules.impl.general.messageactions.MessageActions
 import xyz.aerii.athen.modules.impl.general.messageactions.actions.IMessageAction
@@ -8,9 +11,6 @@ import xyz.aerii.athen.modules.impl.general.messageactions.ui.UIZoneType
 import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 class ActionModalRenderer(
@@ -39,22 +39,22 @@ class ActionModalRenderer(
         get() = matchOpen || catOpen
 
     fun draw(graphics: GuiGraphics, mx: Int, my: Int, sw: Int, sh: Int, zones: MutableList<UIZone>) {
-        graphics.drawRectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
+        graphics.rectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
         val x0 = (sw - mw) / 2
         val y0 = (sh - mh) / 2
         val w = mw - padding * 2
 
-        graphics.drawRectangle(x0, y0, mw, mh, Mocha.Base.argb)
-        graphics.drawOutline(x0, y0, mw, mh, 1, Mocha.Surface0.argb)
+        graphics.rectangle(x0, y0, mw, mh, Mocha.Base.argb)
+        graphics.outline(x0, y0, mw, mh, 1, Mocha.Surface0.argb)
 
-        graphics.text(if (entry == null) "Create Action" else "Edit Action", x0 + padding, y0 + padding + 2, false, Mocha.Mauve.argb)
-        graphics.drawRectangle(x0, y0 + 24, mw, 1, Mocha.Surface0.argb)
+        graphics.extractText(if (entry == null) "Create Action" else "Edit Action", x0 + padding, y0 + padding + 2, false, Mocha.Mauve.argb)
+        graphics.rectangle(x0, y0 + 24, mw, 1, Mocha.Surface0.argb)
 
         var cy = y0 + 34
         val hw = w / 2 - 4
 
-        graphics.text("Pattern", x0 + padding, cy, false, Mocha.Subtext0.argb)
-        graphics.text("Match Type", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Pattern", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Match Type", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         patternField.draw(graphics, mx, my, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_PATTERN)) }
@@ -62,7 +62,7 @@ class ActionModalRenderer(
         dropdown0(graphics, mx, my, x0 + padding + hw + 8, cy, hw, zones)
         cy += fh + 8
 
-        graphics.text("Action", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Action", x0 + padding, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         val actions = IMessageAction.all()
@@ -74,22 +74,22 @@ class ActionModalRenderer(
             val selected = action == i
             val hovered = !opened && mx in ax until ax + aw && my in cy until cy + 14
 
-            graphics.drawRectangle(ax, cy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
-            graphics.drawOutline(ax, cy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+            graphics.rectangle(ax, cy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
+            graphics.outline(ax, cy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
             graphics.enableScissor(ax + 2, cy, ax + aw - 2, cy + 14)
-            graphics.text(a.name, ax + (aw - client.font.width(a.name)) / 2, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (selected) Mocha.Base.argb else Mocha.Text.argb)
+            graphics.extractText(a.name, ax + (aw - client.font.width(a.name)) / 2, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (selected) Mocha.Base.argb else Mocha.Text.argb)
             graphics.disableScissor()
             zones.add(UIZone(ax, cy, aw, 14, UIZoneType.MODAL_ACTION_TYPE, a.id))
         }
         cy += 14 + 8
 
-        graphics.text(if (action == 0) "Value" else IMessageAction.all().firstOrNull { it.id == action }?.name ?: "Value", x0 + padding, cy, false, if (action == 0) Mocha.Overlay0.argb else Mocha.Subtext0.argb)
-        graphics.text("Category", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText(if (action == 0) "Value" else IMessageAction.all().firstOrNull { it.id == action }?.name ?: "Value", x0 + padding, cy, false, if (action == 0) Mocha.Overlay0.argb else Mocha.Subtext0.argb)
+        graphics.extractText("Category", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         if (action == 0) {
-            graphics.drawRectangle(x0 + padding, cy, hw, fh, Mocha.Crust.argb)
-            graphics.drawOutline(x0 + padding, cy, hw, fh, 1, Mocha.Surface0.argb)
+            graphics.rectangle(x0 + padding, cy, hw, fh, Mocha.Crust.argb)
+            graphics.outline(x0 + padding, cy, hw, fh, 1, Mocha.Surface0.argb)
         } else {
             valueField.draw(graphics, mx, my, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_ACTION_VALUE)) }
         }
@@ -104,33 +104,33 @@ class ActionModalRenderer(
         val cy0 = cy + (fh - 14) / 2
         val ch = !opened && mx in cx until cx + 14 && my in cy0 until cy0 + 14
 
-        graphics.drawRectangle(cx, cy0, 14, 14, if (ch) Mocha.Surface2.argb else Mocha.Base.argb)
-        graphics.drawOutline(cx, cy0, 14, 14, 1, if (cancel) Mocha.Red.argb else Mocha.Overlay0.argb)
+        graphics.rectangle(cx, cy0, 14, 14, if (ch) Mocha.Surface2.argb else Mocha.Base.argb)
+        graphics.outline(cx, cy0, 14, 14, 1, if (cancel) Mocha.Red.argb else Mocha.Overlay0.argb)
 
-        if (cancel) graphics.drawRectangle(cx + 3, cy0 + 3, 8, 8, Mocha.Red.argb)
-        graphics.text(c, cx + 18, cy0 + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
+        if (cancel) graphics.rectangle(cx + 3, cy0 + 3, 8, 8, Mocha.Red.argb)
+        graphics.extractText(c, cx + 18, cy0 + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
         zones.add(UIZone(cx, cy0, 14 + 4 + c0, 14, UIZoneType.MODAL_CANCEL_TOGGLE))
 
-        graphics.text("Delay (s)", x0 + padding + hw + 8, cy + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
+        graphics.extractText("Delay (s)", x0 + padding + hw + 8, cy + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
         delayField.draw(graphics, mx, my, x0 + padding + hw + 8 + client.font.width("Delay (s)") + 4, cy, hw - client.font.width("Delay (s)") - 4) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_DELAY)) }
 
         val y1 = y0 + mh - fh - padding
         val x1 = x0 + padding
         val x2 = x1 + hw + 8
 
-        graphics.drawRectangle(x0 + padding, y1 - 8, w, 1, Mocha.Surface0.argb)
+        graphics.rectangle(x0 + padding, y1 - 8, w, 1, Mocha.Surface0.argb)
 
-        graphics.drawRectangle(x2, y1, hw, fh, if (!opened && mx in x2 until x2 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.drawOutline(x2, y1, hw, fh, 1, Mocha.Green.argb)
-        graphics.text("Save", x2 + (hw - client.font.width("Save")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
+        graphics.rectangle(x2, y1, hw, fh, if (!opened && mx in x2 until x2 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.outline(x2, y1, hw, fh, 1, Mocha.Green.argb)
+        graphics.extractText("Save", x2 + (hw - client.font.width("Save")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
         zones.add(UIZone(x2, y1, hw, fh, UIZoneType.MODAL_SAVE))
 
-        graphics.drawRectangle(x1, y1, hw, fh, if (!opened && mx in x1 until x1 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.drawOutline(x1, y1, hw, fh, 1, Mocha.Red.argb)
-        graphics.text("Cancel", x1 + (hw - client.font.width("Cancel")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
+        graphics.rectangle(x1, y1, hw, fh, if (!opened && mx in x1 until x1 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.outline(x1, y1, hw, fh, 1, Mocha.Red.argb)
+        graphics.extractText("Cancel", x1 + (hw - client.font.width("Cancel")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
         zones.add(UIZone(x1, y1, hw, fh, UIZoneType.MODAL_CANCEL))
 
-        graphics.text("Regex: use $0 for full message, and $1, $2, $3... for groups", x1, y1 - 8 - client.font.lineHeight - 2, false, Mocha.Overlay0.argb)
+        graphics.extractText("Regex: use $0 for full message, and $1, $2, $3... for groups", x1, y1 - 8 - client.font.lineHeight - 2, false, Mocha.Overlay0.argb)
 
         if (matchOpen) matchType(graphics, mx, my, x0 + padding + hw + 8, matchY + fh, hw)
         if (catOpen) category(graphics, mx, my, x0 + padding + hw + 8, catY + fh, hw)
@@ -138,60 +138,60 @@ class ActionModalRenderer(
 
     private fun dropdown0(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || matchOpen) && mx in x until x + w && my in y until y + fh
-        graphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.drawOutline(x, y, w, fh, 1, if (matchOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
-        graphics.text(match.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
-        graphics.text(if (matchOpen) "▾" else "▸", x + w - client.font.width(if (matchOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.outline(x, y, w, fh, 1, if (matchOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        graphics.extractText(match.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        graphics.extractText(if (matchOpen) "▾" else "▸", x + w - client.font.width(if (matchOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_MATCH_TYPE))
     }
 
     private fun matchType(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
         val entries = MatchType.entries
         val menuH = entries.size * 14
-        graphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        graphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        graphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        graphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
 
         var cy = y
         for (e in entries) {
-            if (mx in x until x + w && my in cy until cy + 14) graphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
             val sel = match == e
-            graphics.text(e.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-            if (sel) graphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+            graphics.extractText(e.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (sel) graphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             cy += 14
         }
     }
 
     private fun dropdown1(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || catOpen) && mx in x until x + w && my in y until y + fh
-        graphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.drawOutline(x, y, w, fh, 1, if (catOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.outline(x, y, w, fh, 1, if (catOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
         graphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        graphics.text(category.ifEmpty { "Uncategorized" }, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        graphics.extractText(category.ifEmpty { "Uncategorized" }, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         graphics.disableScissor()
-        graphics.text(if (catOpen) "▾" else "▸", x + w - client.font.width(if (catOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        graphics.extractText(if (catOpen) "▾" else "▸", x + w - client.font.width(if (catOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_CATEGORY))
     }
 
     private fun category(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
         val cats = MessageActions.categories
         val menuH = ((cats.size + 1) * 14).coerceAtMost(80)
-        graphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        graphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        graphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        graphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         graphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y
-        if (mx in x until x + w && my in cy until cy + 14) graphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
-        graphics.text("Uncategorized", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (category.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
-        if (category.isEmpty()) graphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+        if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+        graphics.extractText("Uncategorized", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (category.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+        if (category.isEmpty()) graphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
         cy += 14
 
         for (cat in cats) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) graphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
                 val sel = category == cat.name
-                graphics.text(cat.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) graphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                graphics.extractText(cat.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) graphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14

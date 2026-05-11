@@ -5,13 +5,14 @@ import net.minecraft.world.phys.AABB
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.dungeon.DungeonAPI
 import xyz.aerii.athen.api.dungeon.enums.DungeonClass
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractStyledBox
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.utils.markerAABB
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.library.handlers.Observable
 import java.awt.Color
 
@@ -128,15 +129,8 @@ object TerminalWaypoints : Module(
                 val color = if (t is Node.Lever) leverColor else terminalColor
                 val aabb = t.aabb1
 
-                when (highlightStyle) {
-                    0 -> Render3D.drawBox(aabb, color, 2f, depthTest)
-                    1 -> Render3D.drawFilledBox(aabb, color, depthTest)
-                    2 -> Render3D.drawStyledBox(aabb, color, Render3D.BoxStyle.BOTH, 2f, depthTest)
-                }
-
-                if (showText) {
-                    Render3D.drawString(t.defaultClass.str(), t.positions.last().center, depthTest = depthTest)
-                }
+                extractStyledBox(aabb, color.rgb, highlightStyle, 2f, depthTest)
+                if (showText) extractText(t.defaultClass.str(), t.positions.last().center, depth = depthTest)
             }
         }.runWhen(r)
 

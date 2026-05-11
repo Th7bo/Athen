@@ -1,12 +1,12 @@
 package xyz.aerii.athen.updater
 
 import net.minecraft.client.gui.GuiGraphics
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 class UpdateGUI(
@@ -23,28 +23,28 @@ class UpdateGUI(
     }
 
     override fun onScramRender(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
-        graphics.drawRectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
+        graphics.rectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
         graphics.drawPanel(mouseX, mouseY, (width - 360) / 2, (height - 175) / 2)
     }
 
     private fun GuiGraphics.drawPanel(mouseX: Int, mouseY: Int, px: Int, py: Int) {
-        drawRectangle(px, py, 360, 28, Mocha.Base.argb)
-        drawRectangle(px, py + 28, 360, 175 - 28, Mocha.Mantle.argb)
-        drawOutline(px, py, 360, 175, 1, Mocha.Surface0.argb)
-        drawRectangle(px, py + 28, 360, 1, Mocha.Surface0.argb)
+        rectangle(px, py, 360, 28, Mocha.Base.argb)
+        rectangle(px, py + 28, 360, 175 - 28, Mocha.Mantle.argb)
+        outline(px, py, 360, 175, 1, Mocha.Surface0.argb)
+        rectangle(px, py + 28, 360, 1, Mocha.Surface0.argb)
 
-        text("Update available for Athen", px + 16, py + 10, false, Mocha.Mauve.argb)
+        extractText("Update available for Athen", px + 16, py + 10, false, Mocha.Mauve.argb)
 
         val a = client.font.lineHeight + 6
         val b = py + 40
 
-        text("Current version:", px + 16, b, false, Mocha.Subtext0.argb)
-        text(currentVersion, px + 344 - client.font.width(currentVersion), b, false, Mocha.Text.argb)
+        extractText("Current version:", px + 16, b, false, Mocha.Subtext0.argb)
+        extractText(currentVersion, px + 344 - client.font.width(currentVersion), b, false, Mocha.Text.argb)
 
-        text("New version:", px + 16, b + a, false, Mocha.Subtext0.argb)
-        text(newVersion, px + 344 - client.font.width(newVersion), b + a, false, Mocha.Green.argb)
+        extractText("New version:", px + 16, b + a, false, Mocha.Subtext0.argb)
+        extractText(newVersion, px + 344 - client.font.width(newVersion), b + a, false, Mocha.Green.argb)
 
-        drawRectangle(px + 16, b + a + 30, 330, 1, Mocha.Surface0.argb)
+        rectangle(px + 16, b + a + 30, 330, 1, Mocha.Surface0.argb)
 
         drawButton(mouseX, mouseY, px + 16, py + 175 - 34, "Update Now",   Mocha.Green.argb)
         drawButton(mouseX, mouseY, px + 128, py + 175 - 34, "Remind Later", Mocha.Peach.argb)
@@ -53,9 +53,9 @@ class UpdateGUI(
 
     private fun GuiGraphics.drawButton( mouseX: Int, mouseY: Int, x: Int, y: Int, label: String, color: Int) {
         val b = mouseX in x until x + 104 && mouseY in y until y + 22
-        drawRectangle(x, y, 104, 22, if (b) color else Mocha.Surface1.argb)
-        drawOutline(x, y, 104, 22, 1, color)
-        text(label, x + (104 - client.font.width(label)) / 2, y + (22 - client.font.lineHeight) / 2 + 1, false, if (b) Mocha.Base.argb else color)
+        rectangle(x, y, 104, 22, if (b) color else Mocha.Surface1.argb)
+        outline(x, y, 104, 22, 1, color)
+        extractText(label, x + (104 - client.font.width(label)) / 2, y + (22 - client.font.lineHeight) / 2 + 1, false, if (b) Mocha.Base.argb else color)
     }
 
     override fun onScramMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean {

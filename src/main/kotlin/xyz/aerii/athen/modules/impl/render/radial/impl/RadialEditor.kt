@@ -5,6 +5,9 @@ package xyz.aerii.athen.modules.impl.render.radial.impl
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.Mth
 import org.lwjgl.glfw.GLFW
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.modules.impl.render.radial.base.ISlot
 import xyz.aerii.athen.modules.impl.render.radial.base.actions.IAction
@@ -13,9 +16,6 @@ import xyz.aerii.athen.ui.IZoneType
 import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 object RadialEditor : Scram("Radial menu editor [Athen]") {
@@ -139,7 +139,7 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
     override fun onScramRender(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         zones.clear()
 
-        graphics.drawRectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
+        graphics.rectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
 
         val px = (width - 906) / 2
         val py = (height - 320) / 2
@@ -195,7 +195,7 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
     }
 
     private fun drawPreviewPanel(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, prx: Int, pry: Int) {
-        guiGraphics.drawOutline(prx, pry, 320, 320, 1, Mocha.Surface0.argb)
+        guiGraphics.outline(prx, pry, 320, 320, 1, Mocha.Surface0.argb)
 
         if (working.isEmpty()) return
 
@@ -269,9 +269,9 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
         val back = bool || (RadialMenu.subMenu == 2 && selMain in working.indices && selSub >= 0)
         val str = if (back) "←" else "✕"
 
-        guiGraphics.drawRectangle(cx - 12, cy - 12, 24, 24, if (hCenter) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(cx - 12, cy - 12, 24, 24, 1, if (hCenter) Mocha.Mauve.argb else Mocha.Overlay0.argb)
-        guiGraphics.text(str, cx - client.font.width(str) / 2, cy - client.font.lineHeight / 2, false, if (hCenter) Mocha.Mauve.argb else Mocha.Subtext0.argb)
+        guiGraphics.rectangle(cx - 12, cy - 12, 24, 24, if (hCenter) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(cx - 12, cy - 12, 24, 24, 1, if (hCenter) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.extractText(str, cx - client.font.width(str) / 2, cy - client.font.lineHeight / 2, false, if (hCenter) Mocha.Mauve.argb else Mocha.Subtext0.argb)
 
         val label = if (hCenter) (if (back) "Back" else "Exit") else {
             if (hs != -1) working.getOrNull(selMain)?.sub?.getOrNull(hs)?.name
@@ -282,9 +282,9 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
             val tw = client.font.width(label)
             val lmx = mouseX + 12
             val lmy = mouseY - 4
-            guiGraphics.drawRectangle(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, Mocha.Base.argb)
-            guiGraphics.drawOutline(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, 1, Mocha.Mauve.argb)
-            guiGraphics.text(label, lmx, lmy, false, Mocha.Text.argb)
+            guiGraphics.rectangle(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, Mocha.Base.argb)
+            guiGraphics.outline(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, 1, Mocha.Mauve.argb)
+            guiGraphics.extractText(label, lmx, lmy, false, Mocha.Text.argb)
         }
 
         val zMain = if (hCenter) -2 else if (bool) selMain else hm
@@ -293,8 +293,8 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
     }
 
     private fun drawSidebar(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, sx: Int, sy: Int) {
-        guiGraphics.drawRectangle(sx, sy, 130, 320, Mocha.Base.argb)
-        guiGraphics.drawOutline(sx, sy, 130, 320, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(sx, sy, 130, 320, Mocha.Base.argb)
+        guiGraphics.outline(sx, sy, 130, 320, 1, Mocha.Surface0.argb)
 
         var hy = sy + 6
 
@@ -312,21 +312,21 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
         if (editing) {
             val cursor = if ((System.currentTimeMillis() / 500) % 2 == 0L) "|" else ""
             val txt = cfgField.value + cursor
-            guiGraphics.text(txt, lbe + (nw - client.font.width(txt)) / 2, ny + 1, false, Mocha.Text.argb)
+            guiGraphics.extractText(txt, lbe + (nw - client.font.width(txt)) / 2, ny + 1, false, Mocha.Text.argb)
         } else {
             val n = RadialMenu.active
-            guiGraphics.text(n, lbe + (nw - client.font.width(n)) / 2, ny + 1, false, Mocha.Mauve.argb)
+            guiGraphics.extractText(n, lbe + (nw - client.font.width(n)) / 2, ny + 1, false, Mocha.Mauve.argb)
         }
 
         zones.add(UIZone(lbe, hy, nw, 14, ZoneType.CONFIG_NAME))
 
         hy += 14 + 4
-        guiGraphics.drawRectangle(sx + 6, hy, 130 - 6 * 2, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(sx + 6, hy, 130 - 6 * 2, 1, Mocha.Surface0.argb)
         hy += 4
 
-        guiGraphics.text("Slots", sx + 6, hy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Slots", sx + 6, hy, false, Mocha.Subtext0.argb)
         hy += client.font.lineHeight + 2
-        guiGraphics.drawRectangle(sx + 6, hy, 130 - 6 * 2, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(sx + 6, hy, 130 - 6 * 2, 1, Mocha.Surface0.argb)
 
         val ly = hy + 4
         val lh = sy + 320 - ly - 6
@@ -344,12 +344,12 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
 
                 when {
                     selected -> {
-                        guiGraphics.drawRectangle(sx + 1, iy, 130 - 2, 20, Mocha.Surface2.argb)
-                        guiGraphics.drawRectangle(sx, iy, 2, 20, Mocha.Mauve.argb)
+                        guiGraphics.rectangle(sx + 1, iy, 130 - 2, 20, Mocha.Surface2.argb)
+                        guiGraphics.rectangle(sx, iy, 2, 20, Mocha.Mauve.argb)
                     }
 
                     hovered -> {
-                        guiGraphics.drawRectangle(sx + 1, iy, 130 - 2, 20, Mocha.Surface1.argb)
+                        guiGraphics.rectangle(sx + 1, iy, 130 - 2, 20, Mocha.Surface1.argb)
                     }
                 }
 
@@ -359,10 +359,10 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
                 val label = working[i].name.ifBlank { "..." }
 
                 if (!selected) {
-                    guiGraphics.text(label, sx + 6 + 18, ty + 1, false, Mocha.Subtext0.argb)
+                    guiGraphics.extractText(label, sx + 6 + 18, ty + 1, false, Mocha.Subtext0.argb)
                 } else {
                     val rbx = sx + 130 - 6 - (12 + 2) * 3
-                    guiGraphics.text(label, sx + 6 + 18, ty + 1, false, Mocha.Text.argb)
+                    guiGraphics.extractText(label, sx + 6 + 18, ty + 1, false, Mocha.Text.argb)
                     guiGraphics.button(mouseX, mouseY, rbx, iy + (20 - 12) / 2, "↑", Mocha.Text.argb, ZoneType.MOVE_UP)
                     guiGraphics.button(mouseX, mouseY, rbx + 12 + 2, iy + (20 - 12) / 2, "↓", Mocha.Text.argb, ZoneType.MOVE_DOWN)
                     guiGraphics.button(mouseX, mouseY, rbx + (12 + 2) * 2, iy + (20 - 12) / 2, "×", Mocha.Red.argb, ZoneType.REMOVE)
@@ -371,7 +371,7 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
                 if (hasSub) {
                     val arrow = if (expanded) "▾" else "▸"
                     val ax = if (selected) sx + 130 - 6 - (12 + 2) * 3 - client.font.width(arrow) - 4 else sx + 130 - 6 - client.font.width(arrow) - 2
-                    guiGraphics.text(arrow, ax, ty + 1, false, Mocha.Overlay0.argb)
+                    guiGraphics.extractText(arrow, ax, ty + 1, false, Mocha.Overlay0.argb)
                     zones.add(UIZone(ax - 2, iy, sx + 130 - ax + 2, 20, ZoneType.TOGGLE, i))
                 }
 
@@ -387,26 +387,26 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
 
                         when {
                             a -> {
-                                guiGraphics.drawRectangle(sx + 1, iy, 130 - 2, 18, Mocha.Surface2.argb)
-                                guiGraphics.drawRectangle(sx, iy, 2, 18, Mocha.Mauve.argb)
+                                guiGraphics.rectangle(sx + 1, iy, 130 - 2, 18, Mocha.Surface2.argb)
+                                guiGraphics.rectangle(sx, iy, 2, 18, Mocha.Mauve.argb)
                             }
 
                             subHov -> {
-                                guiGraphics.drawRectangle(sx + 1, iy, 130 - 2, 18, Mocha.Surface1.argb)
+                                guiGraphics.rectangle(sx + 1, iy, 130 - 2, 18, Mocha.Surface1.argb)
                             }
                         }
 
-                        guiGraphics.drawRectangle(sx + 6 + 4, iy + 2, 1, 18 - 4, Mocha.Overlay0.argb)
+                        guiGraphics.rectangle(sx + 6 + 4, iy + 2, 1, 18 - 4, Mocha.Overlay0.argb)
                         //~ if >= 26.1 'renderItem(' -> 'item('
                         guiGraphics.renderItem(working[i].sub[j].item, sx + 6 + 8, iy + 1)
                         val sty = iy + (18 - client.font.lineHeight) / 2
                         val subLabel = working[i].sub[j].name.ifBlank { "..." }
 
                         if (!a) {
-                            guiGraphics.text(subLabel, sx + 6 + 26, sty + 1, false, Mocha.Subtext0.argb)
+                            guiGraphics.extractText(subLabel, sx + 6 + 26, sty + 1, false, Mocha.Subtext0.argb)
                         } else {
                             val rbx = sx + 130 - 6 - (12 + 2) * 3
-                            guiGraphics.text(subLabel, sx + 6 + 26, sty + 1, false, Mocha.Text.argb)
+                            guiGraphics.extractText(subLabel, sx + 6 + 26, sty + 1, false, Mocha.Text.argb)
                             guiGraphics.button(mouseX, mouseY, rbx, iy + (18 - 12) / 2, "↑", Mocha.Text.argb, ZoneType.MOVE_UP)
                             guiGraphics.button(mouseX, mouseY, rbx + 12 + 2, iy + (18 - 12) / 2, "↓", Mocha.Text.argb, ZoneType.MOVE_DOWN)
                             guiGraphics.button(mouseX, mouseY, rbx + (12 + 2) * 2, iy + (18 - 12) / 2, "×", Mocha.Red.argb, ZoneType.REMOVE)
@@ -422,8 +422,8 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
             val a = expanded || (selected && !hasSub)
             if (a && iy + 18 > ly && iy < ly + lh) {
                 val addHov = mouseX in sx + 6 until sx + 6 + 50 && mouseY in iy until iy + 18
-                guiGraphics.drawRectangle(sx + 6 + 4, iy + 2, 1, 18 - 4, Mocha.Overlay0.argb)
-                guiGraphics.text("+ Sub", sx + 6 + 10, iy + (18 - client.font.lineHeight) / 2 + 1, false, if (addHov) Mocha.Green.argb else Mocha.Overlay0.argb)
+                guiGraphics.rectangle(sx + 6 + 4, iy + 2, 1, 18 - 4, Mocha.Overlay0.argb)
+                guiGraphics.extractText("+ Sub", sx + 6 + 10, iy + (18 - client.font.lineHeight) / 2 + 1, false, if (addHov) Mocha.Green.argb else Mocha.Overlay0.argb)
                 zones.add(UIZone(sx + 6, iy, 50, 18, ZoneType.ADD_SUB, i))
             }
 
@@ -437,9 +437,9 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
             val by = iy + (20 - 14) / 2
             val addHov = mouseX in bx until bx + bw && mouseY in by until by + 14
 
-            guiGraphics.drawRectangle(bx, by, bw, 14, if (addHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-            guiGraphics.drawOutline(bx, by, bw, 14, 1, Mocha.Overlay0.argb)
-            guiGraphics.text(label, bx + (bw - client.font.width(label)) / 2, by + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
+            guiGraphics.rectangle(bx, by, bw, 14, if (addHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+            guiGraphics.outline(bx, by, bw, 14, 1, Mocha.Overlay0.argb)
+            guiGraphics.extractText(label, bx + (bw - client.font.width(label)) / 2, by + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
             zones.add(UIZone(bx, by, bw, 14, ZoneType.ADD_SLOT))
         }
         iy += 20
@@ -451,31 +451,31 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
     }
 
     private fun drawMainPanel(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, mx: Int, my: Int) {
-        guiGraphics.drawRectangle(mx, my, 444, 320, Mocha.Base.argb)
-        guiGraphics.drawOutline(mx, my, 444, 320, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(mx, my, 444, 320, Mocha.Base.argb)
+        guiGraphics.outline(mx, my, 444, 320, 1, Mocha.Surface0.argb)
 
         val rx = mx + 6
         val fw = 444 - 6 * 2
         var fy = my + 6
 
-        guiGraphics.text("Edit Slot", rx, fy, false, Mocha.Text.argb)
+        guiGraphics.extractText("Edit Slot", rx, fy, false, Mocha.Text.argb)
         fy += client.font.lineHeight + 2
-        guiGraphics.drawRectangle(rx, fy, fw, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(rx, fy, fw, 1, Mocha.Surface0.argb)
         fy += 5
 
-        if (slot == null) return guiGraphics.text("No slot selected.", rx, fy, false, Mocha.Subtext0.argb)
+        if (slot == null) return guiGraphics.extractText("No slot selected.", rx, fy, false, Mocha.Subtext0.argb)
 
-        guiGraphics.text("Name", rx, fy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Name", rx, fy, false, Mocha.Subtext0.argb)
         fy += client.font.lineHeight + 2
         nameField.draw(guiGraphics, mouseX, mouseY, rx, fy, fw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.FIELD_NAME)) }
         fy += 16 + 4
 
-        guiGraphics.text("Item ID", rx, fy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Item ID", rx, fy, false, Mocha.Subtext0.argb)
         fy += client.font.lineHeight + 2
         itemField.draw(guiGraphics, mouseX, mouseY, rx, fy, fw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.FIELD_ITEM)) }
         fy += 16 + 4
 
-        guiGraphics.text("Action", rx, fy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Action", rx, fy, false, Mocha.Subtext0.argb)
         fy += client.font.lineHeight + 2
 
         val aw = 55
@@ -487,9 +487,9 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
             val selected = type == i
             val hovered = mouseX in ax until ax + aw && mouseY in fy until fy + 14
 
-            guiGraphics.drawRectangle(ax, fy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
-            guiGraphics.drawOutline(ax, fy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
-            guiGraphics.text(a.name, ax + (aw - client.font.width(a.name)) / 2, fy + (14 - client.font.lineHeight) / 2 + 1, false, if (selected) Mocha.Base.argb else Mocha.Text.argb)
+            guiGraphics.rectangle(ax, fy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
+            guiGraphics.outline(ax, fy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+            guiGraphics.extractText(a.name, ax + (aw - client.font.width(a.name)) / 2, fy + (14 - client.font.lineHeight) / 2 + 1, false, if (selected) Mocha.Base.argb else Mocha.Text.argb)
 
             zones.add(UIZone(ax, fy, aw, 14, ZoneType.TYPE, a.id))
         }
@@ -497,14 +497,14 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
         fy += 14 + 4
 
         if (type != 0) {
-            guiGraphics.text(IAction.all().firstOrNull { it.id == type }?.name ?: "Value", rx, fy, false, Mocha.Subtext0.argb)
+            guiGraphics.extractText(IAction.all().firstOrNull { it.id == type }?.name ?: "Value", rx, fy, false, Mocha.Subtext0.argb)
             fy += client.font.lineHeight + 2
             valField.draw(guiGraphics, mouseX, mouseY, rx, fy, fw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.FIELD_VALUE)) }
             fy += 16 + 4
         }
 
         if (itemField.value == "player_head") {
-            guiGraphics.text("Texture", rx, fy, false, Mocha.Subtext0.argb)
+            guiGraphics.extractText("Texture", rx, fy, false, Mocha.Subtext0.argb)
             fy += client.font.lineHeight + 2
             texField.draw(guiGraphics, mouseX, mouseY, rx, fy, fw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.FIELD_TEXTURE)) }
         }
@@ -518,18 +518,18 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
             val x = mx + (444 - tw) / 2
             val y = my + 320 - 30
 
-            guiGraphics.drawRectangle(x - 6, y - 4, tw + 12, client.font.lineHeight + 8, Mocha.Surface0.withAlpha(alpha))
-            guiGraphics.drawOutline(x - 6, y - 4, tw + 12, client.font.lineHeight + 8, 1, Mocha.Mauve.withAlpha(alpha))
-            guiGraphics.text(it, x, y, false, Mocha.Text.withAlpha(alpha))
+            guiGraphics.rectangle(x - 6, y - 4, tw + 12, client.font.lineHeight + 8, Mocha.Surface0.withAlpha(alpha))
+            guiGraphics.outline(x - 6, y - 4, tw + 12, client.font.lineHeight + 8, 1, Mocha.Mauve.withAlpha(alpha))
+            guiGraphics.extractText(it, x, y, false, Mocha.Text.withAlpha(alpha))
         }
     }
 
     private fun GuiGraphics.button(mx: Int, my: Int, x: Int, y: Int, label: String, color: Int, type: ZoneType) {
         val hovered = mx in x until x + 12 && my in y until y + 12
 
-        drawRectangle(x, y, 12, 12, if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        drawOutline(x, y, 12, 12, 1, Mocha.Overlay0.argb)
-        text(label, x + (12 - client.font.width(label)) / 2, y + (12 - client.font.lineHeight) / 2 + 1, false, color)
+        rectangle(x, y, 12, 12, if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        outline(x, y, 12, 12, 1, Mocha.Overlay0.argb)
+        extractText(label, x + (12 - client.font.width(label)) / 2, y + (12 - client.font.lineHeight) / 2 + 1, false, color)
 
         zones.add(UIZone(x, y, 12, 12, type))
     }

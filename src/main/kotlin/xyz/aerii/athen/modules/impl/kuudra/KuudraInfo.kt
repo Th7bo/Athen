@@ -6,6 +6,9 @@ import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.kuudra.enums.KuudraTier
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractText
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.LocationEvent
@@ -13,8 +16,6 @@ import xyz.aerii.athen.events.TickEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render2D.sizedText
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.athen.utils.render.renderPos
 import xyz.aerii.library.api.client
@@ -96,8 +97,9 @@ object KuudraInfo : Module(
         if (!KuudraAPI.inRun) return
         val k = KuudraAPI.kuudra ?: return
 
-        if (highlight)
-            Render3D.drawBox(k.renderBoundingBox, color, lineWidth)
+        if (highlight) {
+            extractFrameBox(k.renderBoundingBox, color.rgb, lineWidth)
+        }
 
         if (hpOnKuudra) {
             val text = display ?: return
@@ -109,7 +111,7 @@ object KuudraInfo : Module(
 
             val t = minOf(fn(d.x, hw), fn(d.y, hh), fn(d.z, hw))
 
-            Render3D.drawString(text, c.add(d.scale(t + 0.1)), increase = true)
+            extractText(text, c.add(d.scale(t + 0.1)), increase = true)
         }
     }
 

@@ -5,7 +5,7 @@ import net.irisshaders.iris.api.v0.IrisApi
 import net.irisshaders.iris.api.v0.IrisProgram
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
-import xyz.aerii.athen.utils.render.pipelines.StarredPipelines
+import xyz.aerii.athen.api.rendering.level.pipelines.LevelPipelineImpl
 
 @Load
 object IrisCompatibility {
@@ -17,12 +17,12 @@ object IrisCompatibility {
         Athen.LOGGER.info("Attempting to ensure Iris compatibility for rendering...")
 
         try {
-            IrisApi.getInstance().assignPipeline(StarredPipelines.LINES, IrisProgram.LINES)
-            IrisApi.getInstance().assignPipeline(StarredPipelines.LINES_DEPTHLESS, IrisProgram.LINES)
-            IrisApi.getInstance().assignPipeline(StarredPipelines.DEBUG_FILLED, IrisProgram.BASIC)
-            IrisApi.getInstance().assignPipeline(StarredPipelines.DEBUG_FILLED_DEPTHLESS, IrisProgram.BASIC)
-            IrisApi.getInstance().assignPipeline(StarredPipelines.TRIANGLE_FAN, IrisProgram.BASIC)
-            IrisApi.getInstance().assignPipeline(StarredPipelines.TRIANGLE_FAN_DEPTHLESS, IrisProgram.BASIC)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.LINES.depth, IrisProgram.LINES)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.LINES.depthless, IrisProgram.LINES)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.DEBUG_FILLED.depth, IrisProgram.BASIC)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.DEBUG_FILLED.depthless, IrisProgram.BASIC)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.TRIANGLE_FAN.depth, IrisProgram.BASIC)
+            IrisApi.getInstance().assignPipeline(LevelPipelineImpl.TRIANGLE_FAN.depthless, IrisProgram.BASIC)
 
             Athen.LOGGER.info("Registered pipelines to Iris API!")
         } catch (e: Exception) {

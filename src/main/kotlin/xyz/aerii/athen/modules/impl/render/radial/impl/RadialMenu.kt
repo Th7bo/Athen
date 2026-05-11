@@ -9,6 +9,9 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.Athen.GSON
 import xyz.aerii.athen.annotations.Load
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
@@ -24,9 +27,6 @@ import xyz.aerii.athen.modules.impl.render.radial.base.toData
 import xyz.aerii.athen.modules.impl.render.radial.base.toSlot
 import xyz.aerii.athen.modules.impl.render.radial.impl.SlotsRenderState.Companion.tri
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.center
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.lie
@@ -335,9 +335,9 @@ object RadialMenu : Module(
             val back = stack.isNotEmpty() || (subMenu == 2 && idx1 != -1)
             val str = if (back) "←" else "✕"
 
-            graphics.drawRectangle(cx - 12, cy - 12, 24, 24, if (h) Mocha.Surface2.argb else Mocha.Surface1.argb)
-            graphics.drawOutline(cx - 12, cy - 12, 24, 24, 1, if (h) Mocha.Mauve.argb else Mocha.Overlay0.argb)
-            graphics.text(str, cx - client.font.width(str) / 2, cy - client.font.lineHeight / 2, false, if (h) Mocha.Mauve.argb else Mocha.Subtext0.argb)
+            graphics.rectangle(cx - 12, cy - 12, 24, 24, if (h) Mocha.Surface2.argb else Mocha.Surface1.argb)
+            graphics.outline(cx - 12, cy - 12, 24, 24, 1, if (h) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+            graphics.extractText(str, cx - client.font.width(str) / 2, cy - client.font.lineHeight / 2, false, if (h) Mocha.Mauve.argb else Mocha.Subtext0.argb)
 
             val sel = when {
                 idx0 != -1 && idx1 in current.indices -> current[idx1].sub.getOrNull(idx0)
@@ -349,9 +349,9 @@ object RadialMenu : Module(
             val mx = mouseSX.toInt() + 12
             val my = mouseSY.toInt() - 4
 
-            graphics.drawRectangle(mx - 5, my - 5, tw + 10, client.font.lineHeight + 10, Mocha.Base.argb)
-            graphics.drawOutline(mx - 5, my - 5, tw + 10, client.font.lineHeight + 10, 1, Mocha.Mauve.argb)
-            graphics.text(label, mx, my, false, Mocha.Text.argb)
+            graphics.rectangle(mx - 5, my - 5, tw + 10, client.font.lineHeight + 10, Mocha.Base.argb)
+            graphics.outline(mx - 5, my - 5, tw + 10, client.font.lineHeight + 10, 1, Mocha.Mauve.argb)
+            graphics.extractText(label, mx, my, false, Mocha.Text.argb)
         }.runWhen(open)
 
         on<GuiEvent.Open.Any> {

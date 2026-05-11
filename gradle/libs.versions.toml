@@ -77,7 +77,6 @@ iris-1-21-10 = { module = "maven.modrinth:iris", version.ref = "iris-1-21-10" }
 iris-1-21-11 = { module = "maven.modrinth:iris", version.ref = "iris-1-21-11" }
 iris-26-1 = { module = "maven.modrinth:iris", version.ref = "iris-26-1" }
 
-
 lwjgl-nanovg-1-21-10 = { module = "org.lwjgl:lwjgl-nanovg", version.ref = "lwjgl-nanovg-1-21-10" }
 lwjgl-nanovg-1-21-11 = { module = "org.lwjgl:lwjgl-nanovg", version.ref = "lwjgl-nanovg-1-21-11" }
 lwjgl-nanovg-26-1 = { module = "org.lwjgl:lwjgl-nanovg", version.ref = "lwjgl-nanovg-26-1" }

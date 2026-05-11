@@ -12,13 +12,13 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.api.datatype.getData
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.handlers.Resourceful
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
 import xyz.aerii.library.handlers.Observable.Companion.and
 import xyz.aerii.library.utils.withAlpha
 import java.awt.Color
@@ -75,16 +75,16 @@ object ItemRarityBackground : Module(
 
         when (renderStyle) {
             0 -> {
-                drawRectangle(x, y, 16, 16, color.withAlpha(fill))
+                rectangle(x, y, 16, 16, color.withAlpha(fill))
             }
 
             1 -> {
-                drawOutline(x, y, 16, 16, 1, color, true)
+                outline(x, y, 16, 16, 1, color, true)
             }
 
             2 -> {
-                drawRectangle(x, y, 16, 16, color.withAlpha(fill))
-                drawOutline(x, y, 16, 16, 1, color, true)
+                rectangle(x, y, 16, 16, color.withAlpha(fill))
+                outline(x, y, 16, 16, 1, color, true)
             }
 
             3 -> {

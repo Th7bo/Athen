@@ -4,11 +4,11 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.name
 import java.awt.Color
@@ -29,7 +29,7 @@ object TeammateHighlight : Module(
                 if (p.name == name) continue
                 val e = p.entity ?: continue
 
-                Render3D.drawBox(e.renderBoundingBox, color, lineWidth)
+                extractFrameBox(e.renderBoundingBox, color.rgb, lineWidth)
             }
         }
     }

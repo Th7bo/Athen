@@ -15,13 +15,13 @@ import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.kuudra.enums.KuudraPod
 import xyz.aerii.athen.api.kuudra.enums.KuudraTier
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.*
 import xyz.aerii.athen.events.core.CancellableEvent
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderPos
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
@@ -122,7 +122,7 @@ object StunHelper : Module(
                 else null
 
             for (p in KuudraPod.entries) {
-                if (highlightPod && belly) Render3D.drawBox(p.aabb, boxColor, depthTest = depthTest)
+                if (highlightPod && belly) extractFrameBox(p.aabb, boxColor.rgb, depth = depthTest)
 
                 if (!highlightSpecific) continue
                 if (p != selected) continue
@@ -131,7 +131,7 @@ object StunHelper : Module(
                     if (offset != null) p.aabb0.move(offset.x, offset.y, offset.z)
                     else p.aabb0
 
-                Render3D.drawBox(aabb, boxColor, depthTest = false)
+                extractFrameBox(aabb, boxColor.rgb, depth = false)
             }
         }
     }

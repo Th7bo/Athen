@@ -5,11 +5,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import xyz.aerii.athen.annotations.Priority
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.athen.utils.render.animations.easeInOutCubic
 import xyz.aerii.athen.utils.render.animations.easeOutQuad
 import xyz.aerii.athen.utils.render.animations.linear
@@ -90,17 +90,17 @@ object Notifier {
             val h = height()
 
             val accent = Mocha.Mauve.withAlpha(alpha)
-            graphics.drawRectangle(x, y, 200, 1, accent)
-            graphics.drawRectangle(x, y + 1, 200, h, Mocha.Base.withAlpha(alpha * 0.95f))
+            graphics.rectangle(x, y, 200, 1, accent)
+            graphics.rectangle(x, y + 1, 200, h, Mocha.Base.withAlpha(alpha * 0.95f))
 
             var cy = y + 9
-            graphics.text(header, x + 8, cy, false, Mocha.Mauve.withAlpha(alpha))
-            graphics.text("✕", x + 192 - str0, cy, false, Mocha.Subtext0.withAlpha(alpha))
+            graphics.extractText(header, x + 8, cy, false, Mocha.Mauve.withAlpha(alpha))
+            graphics.extractText("✕", x + 192 - str0, cy, false, Mocha.Subtext0.withAlpha(alpha))
             cy += 16
 
             val lines = client.font.split(message, 184)
             for (line in lines) {
-                graphics.text(line, x + 8, cy, false, Mocha.Text.withAlpha(alpha))
+                graphics.extractText(line, x + 8, cy, false, Mocha.Text.withAlpha(alpha))
                 cy += client.font.lineHeight
             }
 
@@ -108,7 +108,7 @@ object Notifier {
             if (!eating && progress < 1f) {
                 val barW = (200 * progress).toInt()
                 val barY = y + h - 2
-                graphics.drawRectangle(x, barY, barW, 2, accent)
+                graphics.rectangle(x, barY, barW, 2, accent)
             }
         }
 

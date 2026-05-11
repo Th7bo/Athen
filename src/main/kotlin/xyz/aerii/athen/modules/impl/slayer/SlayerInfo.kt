@@ -11,6 +11,7 @@ import tech.thatgravyboat.skyblockapi.utils.extentions.serverHealth
 import tech.thatgravyboat.skyblockapi.utils.extentions.toRomanNumeral
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.ducks.entity.attachedStripped
 import xyz.aerii.athen.ducks.entity.parent
@@ -21,7 +22,6 @@ import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.slayer.carry.SlayerCarryTracker.shortName
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.athen.utils.render.renderPos
 import xyz.aerii.library.api.client
 import xyz.aerii.library.handlers.parser.parse
@@ -137,7 +137,7 @@ object SlayerInfo : Module(
                 val l = i.renderText
                 val b = e.renderPos.add(0.0, 0.5 + (l.size - 1) * 0.25 / 2, 0.0)
 
-                for (a in l.indices) Render3D.drawString(l[a], b.add(0.0, -a * 0.25, 0.0), depthTest = !i.visible)
+                for (a in l.indices) extractText(l[a], b.add(0.0, -a * 0.25, 0.0), depth = !i.visible)
             }
         }
     }

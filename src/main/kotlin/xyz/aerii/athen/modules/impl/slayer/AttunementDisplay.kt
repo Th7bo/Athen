@@ -5,13 +5,13 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroups
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.api.skyblock.SlayerAPI
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.ducks.entity.parent
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.sizedText
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.utils.literal
 

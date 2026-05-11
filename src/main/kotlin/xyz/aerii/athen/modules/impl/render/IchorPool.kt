@@ -7,6 +7,8 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.kuudra.KuudraAPI
 import xyz.aerii.athen.api.kuudra.enums.KuudraPhase
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractStyledCircle
+import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.MessageEvent
@@ -14,7 +16,6 @@ import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.athen.utils.render.Render3D
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.command
 import xyz.aerii.library.handlers.parser.parse
@@ -54,7 +55,7 @@ object IchorPool : Module(
             }
 
             if (pos != null && !prio) return@on
-            if ("Casting Spell: Ichor Pool!" !in stripped) return@on
+            if ("Casting Spell: Ichor Pool!" != stripped) return@on
 
             val n = client.player?.blockPosition() ?: return@on
             pos = n.center.add(0.0, 0.1, 0.0)
@@ -70,19 +71,13 @@ object IchorPool : Module(
             val center = pos ?: return@on
             val t = (20100 - (System.currentTimeMillis() - time)).takeIf { it > 0 } ?: return@on reset()
 
-            Render3D.drawStyledCircle(center, 8.0, color, style.get())
-            Render3D.drawString(t.toDurationFromMillis(), center, textColor.rgb, depthTest = false, increase = true)
+            extractStyledCircle(center, 8.0, color.rgb, style)
+            extractText(t.toDurationFromMillis(), center, textColor.rgb, depth = false, increase = true)
         }
     }
 
     private fun reset() {
         time = 0
         pos = null
-    }
-
-    private fun Int.get() = when (this) {
-        0 -> Render3D.CircleStyle.OUTLINED
-        1 -> Render3D.CircleStyle.FILLED
-        else -> Render3D.CircleStyle.BOTH
     }
 }

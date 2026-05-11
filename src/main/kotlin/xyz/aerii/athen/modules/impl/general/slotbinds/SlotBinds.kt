@@ -12,6 +12,8 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.Athen.GSON
 import xyz.aerii.athen.annotations.Load
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.line.line
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
@@ -23,8 +25,6 @@ import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.athen.utils.guiClick
-import xyz.aerii.athen.utils.render.Render2D.drawLine
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
@@ -267,16 +267,16 @@ object SlotBinds : Module(
                 val b = m.getOrNull(e.intValue) ?: continue
                 val c = m2.get(e.intKey)
 
-                graphics.drawLine(a.x + 8, a.y + 8, b.x + 8, b.y + 8, c, 1)
+                graphics.line(a.x + 8, a.y + 8, b.x + 8, b.y + 8, c, 1)
 
-                graphics.drawOutline(a.x, a.y, 16, 16, 1, c, true)
-                graphics.drawOutline(b.x, b.y, 16, 16, 1, c, true)
+                graphics.outline(a.x, a.y, 16, 16, 1, c, true)
+                graphics.outline(b.x, b.y, 16, 16, 1, c, true)
             }
 
             val l = last0 ?: return@on
             val a = m.getOrNull(l) ?: return@on
 
-            graphics.drawOutline(a.x, a.y, 16, 16, 1, inset = true)
+            graphics.outline(a.x, a.y, 16, 16, 1, inset = true)
         }
 
         on<PlayerEvent.Drop> {

@@ -6,10 +6,10 @@ import tech.thatgravyboat.skyblockapi.platform.drawOutline
 import tech.thatgravyboat.skyblockapi.platform.scale
 import tech.thatgravyboat.skyblockapi.platform.translate
 import xyz.aerii.athen.annotations.Priority
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.modules.impl.Dev
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 import kotlin.math.roundToInt
 
@@ -92,7 +92,7 @@ object HUDEditor : Scram("HUD Editor [Athen]") {
 
             graphics.fill(-6, -6, textWidth + 6, textHeight + 6, Mocha.Base.withAlpha(0.8f))
             graphics.drawOutline(-6, -6, textWidth + 12, textHeight + 12, Mocha.Text.argb)
-            graphics.text(text, 0, 0, false, Mocha.Text.argb)
+            graphics.extractText(text, 0, 0, false, Mocha.Text.argb)
             graphics.pose().popMatrix()
         }
 
@@ -255,8 +255,8 @@ object HUDEditor : Scram("HUD Editor [Athen]") {
             for (entry in lines) {
                 val (enabled, text) = entry()
 
-                text("•", 0, yOff, false, if (enabled) Mocha.Green.argb else Mocha.Red.argb)
-                text(text, t0, yOff, false, Mocha.Text.argb)
+                extractText("•", 0, yOff, false, if (enabled) Mocha.Green.argb else Mocha.Red.argb)
+                extractText(text, t0, yOff, false, Mocha.Text.argb)
 
                 yOff += font.lineHeight
             }

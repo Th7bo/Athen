@@ -9,6 +9,7 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.dungeon.DungeonAPI
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.config.ConfigBuilder
 import xyz.aerii.athen.events.LocationEvent
@@ -21,7 +22,6 @@ import xyz.aerii.athen.handlers.Texter.onHover
 import xyz.aerii.athen.handlers.Ticking
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.sizedText
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.api.level
 import xyz.aerii.library.handlers.parser.parse

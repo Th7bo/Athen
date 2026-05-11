@@ -4,13 +4,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.api.skyblock.SlayerAPI.slayerNames
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.ducks.entity.attachedNames
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.handlers.Ticking
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.utils.render.Render2D.sizedText
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.utils.stripped
 

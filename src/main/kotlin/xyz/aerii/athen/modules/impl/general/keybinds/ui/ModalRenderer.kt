@@ -4,6 +4,9 @@ import net.minecraft.client.gui.GuiGraphics
 import tech.thatgravyboat.skyblockapi.api.area.dungeon.DungeonFloor
 import xyz.aerii.athen.api.dungeon.enums.DungeonClass
 import xyz.aerii.athen.api.location.SkyBlockIsland
+import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
+import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.modules.impl.general.keybinds.KeybindCondition
 import xyz.aerii.athen.modules.impl.general.keybinds.KeybindWorkIn
 import xyz.aerii.athen.modules.impl.general.keybinds.Keybinds
@@ -11,9 +14,6 @@ import xyz.aerii.athen.modules.impl.general.keybinds.ui.BindingsListRenderer.Com
 import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
-import xyz.aerii.athen.utils.render.Render2D.drawOutline
-import xyz.aerii.athen.utils.render.Render2D.drawRectangle
-import xyz.aerii.athen.utils.render.Render2D.text
 import xyz.aerii.library.api.client
 
 class ModalRenderer(
@@ -60,30 +60,30 @@ class ModalRenderer(
         get() = categoryOpen || workInOpen || islandOpen || floorOpen || classOpen || f7PhaseOpen
 
     fun draw(guiGraphics: GuiGraphics, mx: Int, my: Int, sw: Int, sh: Int, zones: MutableList<UIZone>) {
-        guiGraphics.drawRectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
+        guiGraphics.rectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
         val mx0 = (sw - mw) / 2
         val my0 = (sh - mh) / 2
         val fw = mw - padding * 2
 
-        guiGraphics.drawRectangle(mx0, my0, mw, mh, Mocha.Base.argb)
-        guiGraphics.drawOutline(mx0, my0, mw, mh, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(mx0, my0, mw, mh, Mocha.Base.argb)
+        guiGraphics.outline(mx0, my0, mw, mh, 1, Mocha.Surface0.argb)
 
-        guiGraphics.text(if (entry == null) "Create Keybind" else "Edit Keybind", mx0 + padding, my0 + padding + 2, false, Mocha.Mauve.argb)
-        guiGraphics.drawRectangle(mx0, my0 + 24, mw, 1, Mocha.Surface0.argb)
+        guiGraphics.extractText(if (entry == null) "Create Keybind" else "Edit Keybind", mx0 + padding, my0 + padding + 2, false, Mocha.Mauve.argb)
+        guiGraphics.rectangle(mx0, my0 + 24, mw, 1, Mocha.Surface0.argb)
 
         var cy = my0 + 34
         val halfW = fw / 2 - 4
 
-        guiGraphics.text("Command", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.text("Keys", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Command", mx0 + padding, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Keys", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         cmdField.draw(guiGraphics, mx, my, mx0 + padding, cy, halfW) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_CMD)) }
         drawKeysField(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.text("Category", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.text("Work In", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Category", mx0 + padding, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Work In", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         categoryDropdownY = cy
@@ -92,8 +92,8 @@ class ModalRenderer(
         drawWorkInDropdown(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.text("Islands", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.text("Dungeon Floors", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Islands", mx0 + padding, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Dungeon Floors", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         islandDropdownY = cy
@@ -102,8 +102,8 @@ class ModalRenderer(
         drawFloorDropdown(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.text("Dungeon Classes", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.text("F7 Phases", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("Dungeon Classes", mx0 + padding, cy, false, Mocha.Subtext0.argb)
+        guiGraphics.extractText("F7 Phases", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         classDropdownY = cy
@@ -116,18 +116,18 @@ class ModalRenderer(
         val saveX = cancelX + halfW + 8
 
         val sepY = btnY - 8
-        guiGraphics.drawRectangle(mx0 + padding, sepY, fw, 1, Mocha.Surface0.argb)
+        guiGraphics.rectangle(mx0 + padding, sepY, fw, 1, Mocha.Surface0.argb)
 
         val saveHov = !opened && mx in saveX until saveX + halfW && my in btnY until btnY + fh
-        guiGraphics.drawRectangle(saveX, btnY, halfW, fh, if (saveHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(saveX, btnY, halfW, fh, 1, Mocha.Green.argb)
-        guiGraphics.text("Save", saveX + (halfW - client.font.width("Save")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
+        guiGraphics.rectangle(saveX, btnY, halfW, fh, if (saveHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(saveX, btnY, halfW, fh, 1, Mocha.Green.argb)
+        guiGraphics.extractText("Save", saveX + (halfW - client.font.width("Save")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
         zones.add(UIZone(saveX, btnY, halfW, fh, UIZoneType.MODAL_SAVE))
 
         val cancelHov = !opened && mx in cancelX until cancelX + halfW && my in btnY until btnY + fh
-        guiGraphics.drawRectangle(cancelX, btnY, halfW, fh, if (cancelHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(cancelX, btnY, halfW, fh, 1, Mocha.Red.argb)
-        guiGraphics.text("Cancel", cancelX + (halfW - client.font.width("Cancel")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
+        guiGraphics.rectangle(cancelX, btnY, halfW, fh, if (cancelHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(cancelX, btnY, halfW, fh, 1, Mocha.Red.argb)
+        guiGraphics.extractText("Cancel", cancelX + (halfW - client.font.width("Cancel")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
         zones.add(UIZone(cancelX, btnY, halfW, fh, UIZoneType.MODAL_CANCEL))
 
         if (categoryOpen) drawCategoryMenu(guiGraphics, mx, my, mx0 + padding, categoryDropdownY + fh, halfW)
@@ -141,23 +141,23 @@ class ModalRenderer(
             val tt = "Press Enter to confirm | Escape to cancel"
             val tw = client.font.width(tt)
             val bx = (sw - tw - 12) / 2
-            guiGraphics.drawRectangle(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, Mocha.Base.argb)
-            guiGraphics.drawOutline(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, 1, Mocha.Overlay0.argb)
-            guiGraphics.text(tt, bx + 6, my0 + mh + 10, false, Mocha.Text.argb)
+            guiGraphics.rectangle(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, Mocha.Base.argb)
+            guiGraphics.outline(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, 1, Mocha.Overlay0.argb)
+            guiGraphics.extractText(tt, bx + 6, my0 + mh + 10, false, Mocha.Text.argb)
         }
     }
 
     private fun drawCategoryDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || categoryOpen) && mx in x until x + w && my in y until y + fh
 
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (categoryOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (categoryOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(category.ifEmpty { "Uncategorized" }, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(category.ifEmpty { "Uncategorized" }, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (categoryOpen) "▾" else "▸", x + w - client.font.width(if (categoryOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (categoryOpen) "▾" else "▸", x + w - client.font.width(if (categoryOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_CATEGORY))
     }
 
@@ -165,26 +165,26 @@ class ModalRenderer(
         val cats = Keybinds.categories.value
         val menuH = ((cats.size + 1) * 14).coerceAtMost(80)
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y
         if (cy + 14 > y && cy < y + menuH) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
-            guiGraphics.text("Uncategorized", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (category.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
-            if (category.isEmpty()) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+            guiGraphics.extractText("Uncategorized", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (category.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (category.isEmpty()) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
         }
         cy += 14
 
         for (cat in cats) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
                 val sel = category == cat.name
-                guiGraphics.text(cat.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                guiGraphics.extractText(cat.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14
@@ -194,14 +194,14 @@ class ModalRenderer(
 
     private fun drawWorkInDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || workInOpen) && mx in x until x + w && my in y until y + fh
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (workInOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (workInOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(condition.workIn.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(condition.workIn.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (workInOpen) "▾" else "▸", x + w - client.font.width(if (workInOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (workInOpen) "▾" else "▸", x + w - client.font.width(if (workInOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_WORK_IN))
     }
 
@@ -209,17 +209,17 @@ class ModalRenderer(
         val entries = KeybindWorkIn.entries
         val menuH = entries.size * 14
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y
         for (e in entries) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
             val sel = condition.workIn == e
-            guiGraphics.text(e.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-            if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+            guiGraphics.extractText(e.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             cy += 14
         }
 
@@ -228,41 +228,41 @@ class ModalRenderer(
 
     private fun drawIslandDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || islandOpen) && mx in x until x + w && my in y until y + fh
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (islandOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (islandOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         val s = condition.islands.size
         val str = if (s == 0) "Any" else if (s == 1) condition.islands.first().displayName else "$s Islands"
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (islandOpen) "▾" else "▸", x + w - client.font.width(if (islandOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (islandOpen) "▾" else "▸", x + w - client.font.width(if (islandOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_ISLAND))
     }
 
     private fun drawIslandMenu(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
         val menuH = ((SkyBlockIsland.entries.size + 1) * 14).coerceAtMost(100)
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y + islandScroll
         if (cy + 14 > y && cy < y + menuH) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
-            guiGraphics.text("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.islands.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            guiGraphics.extractText("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.islands.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
         }
 
         cy += 14
         for (island in SkyBlockIsland.entries) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
                 val sel = island in condition.islands
-                guiGraphics.text(island.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                guiGraphics.extractText(island.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14
@@ -273,41 +273,41 @@ class ModalRenderer(
 
     private fun drawFloorDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || floorOpen) && mx in x until x + w && my in y until y + fh
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (floorOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (floorOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         val s = condition.floors.size
         val str = if (s == 0) "Any" else if (s == 1) condition.floors.first().name else "$s Floors"
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (floorOpen) "▾" else "▸", x + w - client.font.width(if (floorOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (floorOpen) "▾" else "▸", x + w - client.font.width(if (floorOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_FLOOR))
     }
 
     private fun drawFloorMenu(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
         val menuH = ((DungeonFloor.entries.size + 1) * 14).coerceAtMost(100)
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y + floorScroll
         if (cy + 14 > y && cy < y + menuH) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
-            guiGraphics.text("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.floors.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            guiGraphics.extractText("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.floors.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
         }
 
         cy += 14
         for (floor in DungeonFloor.entries) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
                 val sel = floor in condition.floors
-                guiGraphics.text(floor.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                guiGraphics.extractText(floor.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14
@@ -318,17 +318,17 @@ class ModalRenderer(
 
     private fun drawClassDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || classOpen) && mx in x until x + w && my in y until y + fh
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (classOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (classOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         val s = condition.classes.size
         val str = if (s == 0) "Any" else if (s == 1) condition.classes.first().name.lowercase().replaceFirstChar { it.uppercase() } else "$s Classes"
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (classOpen) "▾" else "▸", x + w - client.font.width(if (classOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (classOpen) "▾" else "▸", x + w - client.font.width(if (classOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_CLASS))
     }
 
@@ -336,24 +336,24 @@ class ModalRenderer(
         val all = DungeonClass.entries.filter { it != DungeonClass.DEAD && it != DungeonClass.UNKNOWN }
         val menuH = ((all.size + 1) * 14).coerceAtMost(100)
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y + classScroll
         if (cy + 14 > y && cy < y + menuH) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
-            guiGraphics.text("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.classes.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            guiGraphics.extractText("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.classes.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
         }
 
         cy += 14
         for (c in all) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
                 val sel = c in condition.classes
-                guiGraphics.text(c.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                guiGraphics.extractText(c.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14
@@ -364,41 +364,41 @@ class ModalRenderer(
 
     private fun drawF7PhaseDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = (!opened || f7PhaseOpen) && mx in x until x + w && my in y until y + fh
-        guiGraphics.drawRectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (f7PhaseOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (f7PhaseOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
         val s = condition.phases.size
         val str = if (s == 0) "Any" else if (s == 1) "Phase ${condition.phases.first()}" else "$s Phases"
 
         guiGraphics.enableScissor(x + 2, y, x + w - 14, y + fh)
-        guiGraphics.text(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(str, x + (w - 14 - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
 
-        guiGraphics.text(if (f7PhaseOpen) "▾" else "▸", x + w - client.font.width(if (f7PhaseOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
+        guiGraphics.extractText(if (f7PhaseOpen) "▾" else "▸", x + w - client.font.width(if (f7PhaseOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_F7_PHASE))
     }
 
     private fun drawF7PhaseMenu(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
         val menuH = ((allPhases.size + 1) * 14).coerceAtMost(100)
 
-        guiGraphics.drawRectangle(x, y, w, menuH, Mocha.Base.argb)
-        guiGraphics.drawOutline(x, y, w, menuH, 1, Mocha.Mauve.argb)
+        guiGraphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
+        guiGraphics.outline(x, y, w, menuH, 1, Mocha.Mauve.argb)
         guiGraphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y + f7PhaseScroll
         if (cy + 14 > y && cy < y + menuH) {
-            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
-            guiGraphics.text("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.phases.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
+            if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            guiGraphics.extractText("Any", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (condition.phases.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
         }
 
         cy += 14
         for (p in allPhases) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.drawRectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (mx in x until x + w && my in cy until cy + 14) guiGraphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
                 val sel = p in condition.phases
-                guiGraphics.text("Phase $p", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
-                if (sel) guiGraphics.text("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
+                guiGraphics.extractText("Phase $p", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
+                if (sel) guiGraphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
             }
 
             cy += 14
@@ -409,8 +409,8 @@ class ModalRenderer(
 
     private fun drawKeysField(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
         val hov = !opened && (mx in x until x + w && my in y until y + fh)
-        guiGraphics.drawRectangle(x, y, w, fh, if (keysListening) Mocha.Peach.withAlpha(0.3f) else if (hov) Mocha.Surface1.argb else Mocha.Surface0.argb)
-        guiGraphics.drawOutline(x, y, w, fh, 1, if (keysListening) Mocha.Peach.argb else Mocha.Overlay0.argb)
+        guiGraphics.rectangle(x, y, w, fh, if (keysListening) Mocha.Peach.withAlpha(0.3f) else if (hov) Mocha.Surface1.argb else Mocha.Surface0.argb)
+        guiGraphics.outline(x, y, w, fh, 1, if (keysListening) Mocha.Peach.argb else Mocha.Overlay0.argb)
 
         val str = when {
             keysListening -> if (recorded.isEmpty()) "Press keys..." else recorded.toList().str()
@@ -419,7 +419,7 @@ class ModalRenderer(
         }
 
         guiGraphics.enableScissor(x + 2, y, x + w - 2, y + fh)
-        guiGraphics.text(str, x + (w - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
+        guiGraphics.extractText(str, x + (w - client.font.width(str)) / 2, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         guiGraphics.disableScissor()
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_KEYS))
     }
