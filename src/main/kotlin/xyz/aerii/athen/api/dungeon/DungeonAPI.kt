@@ -122,7 +122,9 @@ object DungeonAPI {
     // </editor-fold>
 
     init {
-        on<LocationEvent.IslandChange> { reset() }
+        on<LocationEvent.Hypixel.Island> {
+            reset()
+        }
 
         on<TabListEvent.Change> {
             val firstColumn = new.firstOrNull() ?: return@on

@@ -3,14 +3,12 @@
 package xyz.aerii.athen.modules.impl.general
 
 import com.google.gson.JsonParser
-import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.network.protocol.game.ServerboundChatPacket
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.websocket.SocketPacket
 import xyz.aerii.athen.api.websocket.base.IWebSocket
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.InternalEvent
 import xyz.aerii.athen.events.PacketEvent
 import xyz.aerii.athen.events.core.runWhen
@@ -25,6 +23,7 @@ import xyz.aerii.library.api.name
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 
 @Load
 object IRC : Module(
@@ -32,7 +31,7 @@ object IRC : Module(
     "Enables the IRC by default on launch if the module is enabled.",
     Category.GENERAL,
     true
-), IWebSocket {
+), IWebSocket, ICommand {
     private val _unused by config.textParagraph("Run <red>\"/athen irc help\" <r>to view all commands!")
     private val help by config.switch("Help message", true)
     private val format0 by config.textInput("Message format", "<#A6E3A1>#name <dark_gray>➤ <white>#message")
@@ -43,6 +42,64 @@ object IRC : Module(
     private var cc: String = "general"
 
     init {
+        command("airc") {
+            greedyString("message") {
+                send(string("message"))
+            }
+
+            "toggle" {
+                val b = !ob.value
+                ob.value = b
+                "Send all messages to IRC <gray>➤ ${if (b) "<green>Enabled" else "<red>Disabled"}".parse().modMessage()
+            }
+        }
+
+        command(Athen.modId) {
+            "irc" / "chat" / greedyString("message") {
+                if (!auth) return@greedyString er0()
+                send(string("message"))
+            }
+
+            "irc" / "create" / string("channel") {
+                if (!auth) return@string er0()
+                create(string("channel"))
+            }
+
+            "irc" / "create" / string("channel") / string("pin") {
+                if (!auth) return@string er0()
+                create(string("channel"),string("pin"))
+            }
+
+            "irc" / "pin" / string("pin") {
+                if (!auth) return@string er0()
+                pin(string("pin"))
+            }
+
+            "irc" / "join" / string("channel") {
+                if (!auth) return@string er0()
+                join(string("channel"))
+            }
+
+            "irc" / "join" / string("channel") / string("pin") {
+                if (!auth) return@string er0()
+                join(string("channel"), string("pin"))
+            }
+
+            "irc" / "leave" {
+                if (!auth) return@invoke er0()
+                leave()
+            }
+
+            "irc" / "list" {
+                if (!auth) return@invoke er0()
+                list()
+            }
+
+            "irc" / "help" {
+                help()
+            }
+        }
+
         on<PacketEvent.Send, ServerboundChatPacket> {
             if (message.startsWith('/')) return@on
             send(message)
@@ -106,80 +163,6 @@ object IRC : Module(
 
                     if (ch.isEmpty()) "<gray>No active channels.".parse().modMessage()
                     else "<gray>Active channels: <aqua>${ch.joinToString("<dark_gray>, <aqua>") { ch -> "#$ch" }}".parse().modMessage()
-                }
-            }
-        }
-
-        on<CommandRegistration> {
-            event.register("airc") {
-                thenCallback("message", StringArgumentType.greedyString()) {
-                    send(StringArgumentType.getString(this@thenCallback, "message"))
-                }
-
-                thenCallback("toggle") {
-                    val b = !ob.value
-                    ob.value = b
-                    "Send all messages to IRC <gray>➤ ${if (b) "<green>Enabled" else "<red>Disabled"}".parse().modMessage()
-                }
-            }
-
-            event.register(Athen.modId) {
-                then("irc") {
-                    then("create") {
-                        then("channel", StringArgumentType.string()) {
-                            callback {
-                                if (!auth) return@callback er0()
-                                create(StringArgumentType.getString(this, "channel"))
-                            }
-
-                            thenCallback("pin", StringArgumentType.string()) {
-                                if (!auth) return@thenCallback er0()
-                                create(StringArgumentType.getString(this, "channel"), StringArgumentType.getString(this, "pin"))
-                            }
-                        }
-                    }
-
-                    then("join") {
-                        then("channel", StringArgumentType.string()) {
-                            callback {
-                                if (!auth) return@callback er0()
-                                join(StringArgumentType.getString(this, "channel"))
-                            }
-
-                            thenCallback("pin", StringArgumentType.string()) {
-                                if (!auth) return@thenCallback er0()
-                                join(StringArgumentType.getString(this, "channel"), StringArgumentType.getString(this, "pin"))
-                            }
-                        }
-                    }
-
-                    then("pin") {
-                        thenCallback("pin", StringArgumentType.string()) {
-                            if (!auth) return@thenCallback er0()
-                            pin(StringArgumentType.getString(this, "pin"))
-                        }
-                    }
-
-                    thenCallback("leave") {
-                        if (!auth) return@thenCallback er0()
-                        leave()
-                    }
-
-                    then("chat") {
-                        thenCallback("message", StringArgumentType.greedyString()) {
-                            if (!auth) return@thenCallback er0()
-                            send(StringArgumentType.getString(this, "message"))
-                        }
-                    }
-
-                    thenCallback("list") {
-                        if (!auth) return@thenCallback er0()
-                        list()
-                    }
-
-                    thenCallback("help") {
-                        help()
-                    }
                 }
             }
         }

@@ -32,7 +32,6 @@ import tech.thatgravyboat.skyblockapi.api.events.info.ScoreboardTitleUpdateEvent
 import tech.thatgravyboat.skyblockapi.api.events.info.ScoreboardUpdateEvent
 import tech.thatgravyboat.skyblockapi.api.events.info.TabListChangeEvent
 import tech.thatgravyboat.skyblockapi.api.events.minecraft.sounds.SoundPlayedEvent
-import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.screen.ItemTooltipEvent
 import xyz.aerii.athen.annotations.Priority
 import xyz.aerii.athen.events.*
@@ -54,7 +53,7 @@ object Signal {
 
         HypixelModAPICallback.EVENT.register { event ->
             if (event is ClientboundLocationPacket) {
-                LocationEvent.ServerChange(
+                LocationEvent.Hypixel.Server(
                     event.serverName,
                     event.serverType.getOrNull(),
                     event.lobbyName.getOrNull(),
@@ -204,9 +203,6 @@ object Signal {
 
     @Subscription
     fun onScoreboardUpdate(event: ScoreboardUpdateEvent) = ScoreboardEvent.Update(event.old, event.new, event.oldComponents, event.newComponents).post()
-
-    @Subscription
-    fun onCommand(event: RegisterCommandsEvent) = CommandRegistration(event).post()
 
     @Subscription(receiveCancelled = true)
     fun onEntityEquipment(event: EntityEquipmentUpdateEvent) = EntityEvent.Update.Equipment(event.entity).post()

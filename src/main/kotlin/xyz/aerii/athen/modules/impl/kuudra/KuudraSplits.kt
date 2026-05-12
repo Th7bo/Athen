@@ -2,7 +2,6 @@
 
 package xyz.aerii.athen.modules.impl.kuudra
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.serialization.Codec
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
@@ -15,7 +14,6 @@ import xyz.aerii.athen.api.kuudra.enums.KuudraTier
 import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.KuudraEvent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.handlers.Chronos
@@ -29,6 +27,7 @@ import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.client
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.toDuration
 import xyz.aerii.library.utils.toDurationFromMillis
 import kotlin.math.abs
@@ -39,7 +38,7 @@ object KuudraSplits : Module(
     "Kuudra splits",
     "Splits for kuudra, very customisable.",
     Category.KUUDRA
-) {
+), ICommand {
     private val chat by config.switch("Send to chat", true)
     private val _hud = config.hud("Splits display") {
         if (it) return@hud sizedText(fcs)
@@ -94,38 +93,32 @@ object KuudraSplits : Module(
     }
 
     init {
-        on<LocationEvent.Server.Connect> {
-            display.reset()
+        command(Athen.modId) {
+            "times" / "kuudra" / int("tier", 1, 5) {
+                val tier = int("tier")
+                val splits = KuudraPhase.entries.filter { tier in it.tiers }
+                val pbs = splits.associateWith { PB.get(tier, it) }
+
+                if (pbs.values.all { it == 0L }) {
+                    "<red>No Kuudra splits for tier $tier. Did you have \"Kuudra Splits\" enabled?".parse().modMessage(Typo.PrefixType.ERROR)
+                    return@int
+                }
+
+                "<yellow>PBs for <red>Kuudra T$tier:".parse().modMessage()
+
+                for (s in splits) {
+                    val pb = pbs[s]?.toDurationFromMillis(secondsDecimals = 1) ?: continue
+                    val type = if (s == KuudraPhase.Fuel && tier >= KuudraTier.BURNING.int) "eaten" else null
+                    " <dark_gray>• <red>${s.str(type)}<r>: $pb".parse().lie()
+                }
+
+                val overall = PB.get(tier, null).toDurationFromMillis(secondsDecimals = 1)
+                " <dark_gray>• <red>Overall<r>: $overall".parse().lie()
+            }
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("times") {
-                    then("kuudra") {
-                        thenCallback("tier", IntegerArgumentType.integer(1, 5)) {
-                            val tier = IntegerArgumentType.getInteger(this, "tier")
-                            val splits = KuudraPhase.entries.filter { tier in it.tiers }
-                            val pbs = splits.associateWith { PB.get(tier, it) }
-
-                            if (pbs.values.all { it == 0L }) {
-                                "<red>No Kuudra splits for tier $tier. Did you have \"Kuudra Splits\" enabled?".parse().modMessage(Typo.PrefixType.ERROR)
-                                return@thenCallback
-                            }
-
-                            "<yellow>PBs for <red>Kuudra T$tier:".parse().modMessage()
-
-                            for (s in splits) {
-                                val pb = pbs[s]?.toDurationFromMillis(secondsDecimals = 1) ?: continue
-                                val type = if (s == KuudraPhase.Fuel && tier >= KuudraTier.BURNING.int) "eaten" else null
-                                " <dark_gray>• <red>${s.str(type)}<r>: $pb".parse().lie()
-                            }
-
-                            val overall = PB.get(tier, null).toDurationFromMillis(secondsDecimals = 1)
-                            " <dark_gray>• <red>Overall<r>: $overall".parse().lie()
-                        }
-                    }
-                }
-            }
+        on<LocationEvent.Server.Connect> {
+            display.reset()
         }
 
         on<KuudraEvent.End.Success> {

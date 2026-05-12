@@ -1,11 +1,9 @@
 package xyz.aerii.athen.handlers
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import xyz.aerii.athen.annotations.Load
-import xyz.aerii.athen.events.CommandRegistration
-import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
 import kotlin.math.pow
 
@@ -13,20 +11,16 @@ import kotlin.math.pow
  * Calc stands for calculator, I'm just using slang guys.
  */
 @Load
-object Calculator {
+object Calculator : ICommand {
     private val tokenRegex = Regex("""\d+(\.\d+)?|[+\-*/x^()]""")
     private val priority = mapOf("+" to 1, "-" to 1, "*" to 2, "x" to 2, "/" to 2, "^" to 3)
 
     init {
-        on<CommandRegistration> {
-            event.register("calc") {
-                thenCallback("operation", StringArgumentType.greedyString()) {
-                    val str = StringArgumentType.getString(this, "operation")
-                    if (str.isEmpty()) return@thenCallback "Empty operation!".modMessage(Typo.PrefixType.ERROR)
-
-                    val result = calc(str).formatted()
-                    "<gray>$str = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
-                }
+        command("calc") {
+            greedyString("operation") {
+                val string = string("operation")
+                val result = calc(string).formatted()
+                "<gray>$string = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
             }
         }
     }

@@ -13,7 +13,6 @@ import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
 import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.InputEvent
@@ -33,6 +32,7 @@ import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.*
 import java.awt.Color
 import kotlin.math.PI
@@ -43,7 +43,7 @@ object RadialMenu : Module(
     "Radial menu",
     "Shows a cool radial menu with a ton of options for customisations!",
     Category.RENDER
-) {
+), ICommand {
     private val keybind by config.keybind("Keybind", GLFW.GLFW_KEY_R)
     private val releaseClose by config.switch("Release to close", true)
     private val generalDirection by config.switch("General direction click")
@@ -89,6 +89,45 @@ object RadialMenu : Module(
         private set
 
     init {
+        command(Athen.modId) {
+            "radial" {
+                help()
+            }
+
+            "radial" / "help" {
+                help()
+            }
+
+            "radial" / "edit" {
+                RadialEditor.open()
+            }
+
+            "import" / "radial" {
+                val clipboard = McClient.clipboard
+                if (clipboard.isEmpty()) return@invoke "No data found in clipboard!".modMessage()
+
+                val map: Map<String, Any> = GSON.fromJson(clipboard.decompress(), object : TypeToken<Map<String, Any>>() {}.type)
+                val name = map["name"] as? String ?: return@invoke "Invalid config data!".modMessage()
+                val raw = GSON.toJson(map["slots"])
+                val data: List<SlotData> = GSON.fromJson(raw, object : TypeToken<List<SlotData>>() {}.type)
+
+                var n = name
+                var i = 1
+                while (n in configs) n = "$name ${++i}"
+
+                configs[n] = data
+                load(n)
+                disk()
+                "Imported config '$n' with ${data.size} slots!".modMessage()
+            }
+
+            "export" / "radial" {
+                save()
+                McClient.clipboard = GSON.toJson(mapOf("name" to active, "slots" to slots.map { it.toData() })).compress()
+                "Exported config '$active' to clipboard!".modMessage()
+            }
+        }
+
         on<GameEvent.Start> {
             safely {
                 val raw = saved.takeIf { it.isNotBlank() }
@@ -107,54 +146,6 @@ object RadialMenu : Module(
         on<GameEvent.Stop> {
             save()
             disk()
-        }
-
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("radial") {
-                    callback {
-                        help()
-                    }
-
-                    thenCallback("help") {
-                        help()
-                    }
-
-                    thenCallback("edit") {
-                        RadialEditor.open()
-                    }
-                }
-
-                then("import") {
-                    thenCallback("radial") {
-                        val clipboard = McClient.clipboard
-                        if (clipboard.isEmpty()) return@thenCallback "No data found in clipboard!".modMessage()
-
-                        val map: Map<String, Any> = GSON.fromJson(clipboard.decompress(), object : TypeToken<Map<String, Any>>() {}.type)
-                        val name = map["name"] as? String ?: return@thenCallback "Invalid config data!".modMessage()
-                        val raw = GSON.toJson(map["slots"])
-                        val data: List<SlotData> = GSON.fromJson(raw, object : TypeToken<List<SlotData>>() {}.type)
-
-                        var n = name
-                        var i = 1
-                        while (n in configs) n = "$name ${++i}"
-
-                        configs[n] = data
-                        load(n)
-                        disk()
-                        "Imported config '$n' with ${data.size} slots!".modMessage()
-                    }
-                }
-
-                then("export") {
-                    thenCallback("radial") {
-                        save()
-                        val data = mapOf("name" to active, "slots" to slots.map { it.toData() })
-                        McClient.clipboard = GSON.toJson(data).compress()
-                        "Exported config '$active' to clipboard!".modMessage()
-                    }
-                }
-            }
         }
 
         on<InputEvent.Keyboard.Press> {

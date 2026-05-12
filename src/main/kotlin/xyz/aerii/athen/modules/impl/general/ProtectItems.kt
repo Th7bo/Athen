@@ -18,7 +18,6 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.dungeon.DungeonAPI
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.PlayerEvent
 import xyz.aerii.athen.events.core.runWhen
@@ -33,6 +32,7 @@ import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.pressed
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.stripped
 
 @Load
@@ -40,7 +40,7 @@ object ProtectItems : Module(
     "Protect items",
     "Protects any item!",
     Category.GENERAL
-) {
+), ICommand {
     private val _unused by config.textParagraph("Use command <red>\"/${Athen.modId} protect [add|remove|list]\"<r> to manage items!")
     private val move by config.switch("Allowing moving items")
 
@@ -81,90 +81,86 @@ object ProtectItems : Module(
             }
         }.runWhen(render.state)
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("protect") {
-                    thenCallback("add") {
-                        val item = held?.takeIf { !it.isEmpty } ?: return@thenCallback "Not holding anything!".modMessage()
-                        val uuid = item.getData(DataTypes.UUID)?.toString()
-                        if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
+        command(Athen.modId) {
+            "protect" / "add" {
+                val item = held?.takeIf { !it.isEmpty } ?: return@invoke "Not holding anything!".modMessage()
+                val uuid = item.getData(DataTypes.UUID)?.toString()
+                if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
 
-                        if (uuid != null) {
-                            if (uuid in uuids.value) return@thenCallback "Item uuid already exists in list!".modMessage()
-                            uuids.update { add(uuid) }
+                if (uuid != null) {
+                    if (uuid in uuids.value) return@invoke "Item uuid already exists in list!".modMessage()
+                    uuids.update { add(uuid) }
 
-                            "Added item uuid to list!".modMessage()
-                            return@thenCallback
-                        }
-
-                        val sid = item.getData(DataTypes.SKYBLOCK_ID)?.skyblockId
-                        if (sid != null) {
-                            if (sid in types0.value) return@thenCallback "Item skyblock id already exists in list!".modMessage()
-                            types0.update { add(sid) }
-
-                            "Added item skyblock id to list!".modMessage()
-                            return@thenCallback
-                        }
-
-                        val id = BuiltInRegistries.ITEM.getKey(item.item).toString()
-
-                        if (id in types.value) return@thenCallback "Item id already exists in list!".modMessage()
-                        types.update { add(id) }
-
-                        "Added item id to list!".modMessage()
-                    }
-
-                    thenCallback("remove") {
-                        val item = held?.takeIf { !it.isEmpty } ?: return@thenCallback "Not holding anything!".modMessage()
-                        val uuid = item.getData(DataTypes.UUID)?.toString()
-                        if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
-
-                        if (uuid != null) {
-                            if (uuid !in uuids.value) return@thenCallback "Item uuid does not exist in list!".modMessage()
-                            uuids.update { remove(uuid) }
-
-                            "Removed item uuid from list!".modMessage()
-                            return@thenCallback
-                        }
-
-                        val sid = item.getData(DataTypes.SKYBLOCK_ID)?.skyblockId
-                        if (sid != null) {
-                            if (sid !in types0.value) return@thenCallback "Item skyblock id does not exist in list!".modMessage()
-                            types0.update { remove(sid) }
-
-                            "Removed item skyblock id from list!".modMessage()
-                            return@thenCallback
-                        }
-
-                        val id = BuiltInRegistries.ITEM.getKey(item.item).toString()
-
-                        if (id !in types.value) return@thenCallback "Item id does not exist in list!".modMessage()
-                        types.update { remove(id) }
-
-                        "Removed item id from list!".modMessage()
-                    }
-
-                    thenCallback("list") {
-                        val a = ("<gray>" + ("-".repeat())).parse()
-
-                        "Protected items list:".modMessage()
-                        a.lie()
-
-                        "Protected UUIDs:".modMessage()
-                        for (u in uuids.value) " <dark_gray>- <gray>$u".parse().lie()
-                        a.lie()
-
-                        "Protected SkyBlock IDs:".modMessage()
-                        for (t in types0.value) " <dark_gray>- <gray>$t".parse().lie()
-                        a.lie()
-
-                        "Protected IDs:".modMessage()
-                        for (t in types.value) " <dark_gray>- <gray>$t".parse().lie()
-                        a.lie()
-
-                        if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
-                    }
+                    "Added item uuid to list!".modMessage()
+                    return@invoke
                 }
+
+                val sid = item.getData(DataTypes.SKYBLOCK_ID)?.skyblockId
+                if (sid != null) {
+                    if (sid in types0.value) return@invoke "Item skyblock id already exists in list!".modMessage()
+                    types0.update { add(sid) }
+
+                    "Added item skyblock id to list!".modMessage()
+                    return@invoke
+                }
+
+                val id = BuiltInRegistries.ITEM.getKey(item.item).toString()
+
+                if (id in types.value) return@invoke "Item id already exists in list!".modMessage()
+                types.update { add(id) }
+
+                "Added item id to list!".modMessage()
+            }
+
+            "protect" / "remove" {
+                val item = held?.takeIf { !it.isEmpty } ?: return@invoke "Not holding anything!".modMessage()
+                val uuid = item.getData(DataTypes.UUID)?.toString()
+                if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
+
+                if (uuid != null) {
+                    if (uuid !in uuids.value) return@invoke "Item uuid does not exist in list!".modMessage()
+                    uuids.update { remove(uuid) }
+
+                    "Removed item uuid from list!".modMessage()
+                    return@invoke
+                }
+
+                val sid = item.getData(DataTypes.SKYBLOCK_ID)?.skyblockId
+                if (sid != null) {
+                    if (sid !in types0.value) return@invoke "Item skyblock id does not exist in list!".modMessage()
+                    types0.update { remove(sid) }
+
+                    "Removed item skyblock id from list!".modMessage()
+                    return@invoke
+                }
+
+                val id = BuiltInRegistries.ITEM.getKey(item.item).toString()
+
+                if (id !in types.value) return@invoke "Item id does not exist in list!".modMessage()
+                types.update { remove(id) }
+
+                "Removed item id from list!".modMessage()
+            }
+
+            "protect" / "list" {
+                val a = ("<gray>" + ("-".repeat())).parse()
+
+                "Protected items list:".modMessage()
+                a.lie()
+
+                "Protected UUIDs:".modMessage()
+                for (u in uuids.value) " <dark_gray>- <gray>$u".parse().lie()
+                a.lie()
+
+                "Protected SkyBlock IDs:".modMessage()
+                for (t in types0.value) " <dark_gray>- <gray>$t".parse().lie()
+                a.lie()
+
+                "Protected IDs:".modMessage()
+                for (t in types.value) " <dark_gray>- <gray>$t".parse().lie()
+                a.lie()
+
+                if (!enabled) "Please turn on the feature \"ProtectItems\"".modMessage()
             }
         }
     }

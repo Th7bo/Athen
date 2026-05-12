@@ -2,14 +2,8 @@
 
 package xyz.aerii.athen.modules.impl.dungeon.carry
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import tech.thatgravyboat.skyblockapi.api.area.dungeon.DungeonFloor
 import tech.thatgravyboat.skyblockapi.helpers.McClient
-import tech.thatgravyboat.skyblockapi.impl.suggestion.SkyBlockAPICommandSuggestionProvider
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
@@ -20,7 +14,6 @@ import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.config.ConfigBuilder
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.DungeonEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
@@ -36,10 +29,10 @@ import xyz.aerii.library.api.command
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
 import java.awt.Color
-import java.util.concurrent.CompletableFuture
 
 @Load
 @OnlyIn(skyblock = true)
@@ -47,7 +40,7 @@ object DungeonCarryTracker : Module(
     "Dungeon carry tracker",
     "Track dungeon carries and display progress.",
     Category.DUNGEONS
-) {
+), ICommand {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)
 
@@ -81,14 +74,6 @@ object DungeonCarryTracker : Module(
         "m7" to DungeonFloor.M7
     )
 
-    private val playerSuggestions = object : SkyBlockAPICommandSuggestionProvider() {
-        override fun getSuggestions(context: CommandContext<FabricClientCommandSource>, builder: SuggestionsBuilder) =
-            CompletableFuture.supplyAsync {
-                for (i in McClient.players) suggest(builder, i.profile.name)
-                builder.build()
-            }
-    }
-
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
         if (`hud$dungeon` && !SkyBlockIsland.THE_CATACOMBS.inIsland.value) return@Ticking null
@@ -100,6 +85,50 @@ object DungeonCarryTracker : Module(
     }
 
     init {
+        command(Athen.modId) {
+            "dcarry" / "add" / word("player").suggests { McClient.players.map { it.profile.name } } / int("amount", 1).suggests { listOf("1", "5", "10", "20") } / word("floor") {
+                val player = string("player")
+                val floor = string("floor")
+                val amount = int("amount")
+
+                val floor0 = floorMap[floor.lowercase()] ?: return@word "Invalid floor. Use: e, f1-f7, m1-m7.".modMessage()
+
+                DungeonCarryStateTracker.addCarry(player, amount, floor0)
+            }.suggests { floorMap.keys }
+
+            "dcarry" / "remove" / word("player") {
+                DungeonCarryStateTracker.removeCarry(string("player"))
+            }.suggests { tracked.keys }
+
+            "dcarry" / "list" {
+                DungeonCarryStateTracker.listCarries()
+            }
+
+            "dcarry" / "list" / "clear" {
+                DungeonCarryStateTracker.clearCarries()
+            }
+
+            "dcarry" / "history" {
+                DungeonCarryStateTracker.displayHistory(1)
+            }
+
+            "dcarry" / "history" / int("page", 1) {
+                DungeonCarryStateTracker.displayHistory(int("page"))
+            }.suggests { listOf("1", "2", "3", "4", "5") }
+
+            "dcarry" / "help" {
+                showHelp()
+            }
+
+            "dcarry" / "gui" {
+                DungeonCarryGUI.open()
+            }
+
+            "dcarry" {
+                DungeonCarryGUI.open()
+            }
+        }
+
         on<DungeonEvent.Start> {
             val floor = DungeonAPI.floor.value ?: return@on
 
@@ -146,68 +175,6 @@ object DungeonCarryTracker : Module(
                 extractFrameBox(e.renderBoundingBox, playerColor.rgb, playerLineWidth, false)
             }
         }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
-
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("dcarry") {
-                    then("add") {
-                        then("player", StringArgumentType.word(), playerSuggestions) {
-                            then("amount", IntegerArgumentType.integer(1), listOf("1", "5", "10", "20")) {
-                                thenCallback("floor", StringArgumentType.word(), floorMap.keys.toList()) {
-                                    val player = StringArgumentType.getString(this, "player")
-                                    val amount = IntegerArgumentType.getInteger(this, "amount")
-                                    val floorInput = StringArgumentType.getString(this, "floor")
-
-                                    val floor = floorMap[floorInput.lowercase()] ?: return@thenCallback "Invalid floor. Use: e, f1-f7, m1-m7.".modMessage()
-
-                                    DungeonCarryStateTracker.addCarry(player, amount, floor)
-                                }
-                            }
-                        }
-                    }
-
-                    then("remove") {
-                        thenCallback("player", StringArgumentType.word(), tracked.keys) {
-                            val player = StringArgumentType.getString(this, "player")
-                            DungeonCarryStateTracker.removeCarry(player)
-                        }
-                    }
-
-                    then("list") {
-                        callback {
-                            DungeonCarryStateTracker.listCarries()
-                        }
-
-                        thenCallback("clear") {
-                            DungeonCarryStateTracker.clearCarries()
-                        }
-                    }
-
-                    then("history") {
-                        callback {
-                            DungeonCarryStateTracker.displayHistory(1)
-                        }
-
-                        thenCallback("page", IntegerArgumentType.integer(1), listOf("1", "2", "3", "4", "5")) {
-                            val page = IntegerArgumentType.getInteger(this, "page")
-                            DungeonCarryStateTracker.displayHistory(page)
-                        }
-                    }
-
-                    thenCallback("help") {
-                        showHelp()
-                    }
-
-                    thenCallback("gui") {
-                        DungeonCarryGUI.open()
-                    }
-
-                    callback {
-                        DungeonCarryGUI.open()
-                    }
-                }
-            }
-        }
     }
 
     private fun showHelp() {

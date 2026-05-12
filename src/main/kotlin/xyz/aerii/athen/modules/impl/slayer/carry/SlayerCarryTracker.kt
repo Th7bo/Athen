@@ -1,13 +1,7 @@
 package xyz.aerii.athen.modules.impl.slayer.carry
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerType
 import tech.thatgravyboat.skyblockapi.helpers.McClient
-import tech.thatgravyboat.skyblockapi.impl.suggestion.SkyBlockAPICommandSuggestionProvider
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
@@ -32,10 +26,10 @@ import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.client
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
 import java.awt.Color
-import java.util.concurrent.CompletableFuture
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -45,7 +39,7 @@ object SlayerCarryTracker : Module(
     "Slayer carry tracker",
     "Track slayer carries and display progress.",
     Category.SLAYER
-) {
+), ICommand {
     private data class CarryMatch(val type: SlayerType, val tier: Int, val count: Int, val price: Double)
 
     private val announceInParty by config.switch("Announce in party", true)
@@ -92,14 +86,6 @@ object SlayerCarryTracker : Module(
         SlayerType.INFERNO_DEMONLORD to 4
     )
 
-    private val playerSuggestions = object : SkyBlockAPICommandSuggestionProvider() {
-        override fun getSuggestions(context: CommandContext<FabricClientCommandSource>, builder: SuggestionsBuilder) =
-            CompletableFuture.supplyAsync {
-                McClient.players.forEach { suggest(builder, it.profile.name) }
-                builder.build()
-            }
-    }
-
     private val ex0 = listOf("§f§lSlayer Carries:", "§7> §bExample §8[§7Void T4§8]§f: §b3§f/§b10 §7(12.5s | 28/hr)").fcs
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
@@ -114,6 +100,49 @@ object SlayerCarryTracker : Module(
         config.hud("Slayer carry display") {
             if (it) return@hud sizedText(ex0)
             sizedText(display.value ?: return@hud null)
+        }
+
+        command(Athen.modId) {
+            "carry" / "add" / word("player").suggests { McClient.players.map { it.profile.name } } / int("amount", 1).suggests { listOf("1", "5", "10", "20") } / word("slayerType").suggests { listOf("void", "blaze", "rev", "tara", "sven") } / word("tier") {
+                val player = string("player")
+                val amount = int("amount")
+                val slayerType = string("slayerType").lowercase()
+                val tier = string("tier")
+
+                add(player, amount, slayerType, tier)
+            }.suggests { listOf("any", "1", "2", "3", "4", "5") }
+
+            "carry" / "remove" / word("player") {
+                SlayerCarryStateTracker.removeCarry(string("player"))
+            }.suggests { tracked.keys }
+
+            "carry" / "list" {
+                SlayerCarryStateTracker.listCarries()
+            }
+
+            "carry" / "list" / "clear" {
+                SlayerCarryStateTracker.clearCarries()
+            }
+
+            "carry" / "history" {
+                SlayerCarryStateTracker.displayHistory(1)
+            }
+
+            "carry" / "history" / int("page", 1) {
+                SlayerCarryStateTracker.displayHistory(int("page"))
+            }.suggests { listOf("1", "2", "3", "4", "5") }
+
+            "carry" / "help" {
+                showHelp()
+            }
+
+            "carry" / "gui" {
+                SlayerCarryGUI.open()
+            }
+
+            "carry" {
+                SlayerCarryGUI.open()
+            }
         }
 
         on<TickEvent.Client.End> {
@@ -238,68 +267,6 @@ object SlayerCarryTracker : Module(
         on<LocationEvent.Server.Connect> {
             for (t in tracked.values) t.reset()
             bossToPlayer.clear()
-        }
-
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("carry") {
-                    then("add") {
-                        then("player", StringArgumentType.word(), playerSuggestions) {
-                            then("amount", IntegerArgumentType.integer(1), listOf("1", "5", "10", "20")) {
-                                then("slayerType", StringArgumentType.word(), listOf("void", "blaze", "rev", "tara", "sven")) {
-                                    thenCallback("tier", StringArgumentType.word(), listOf("any", "1", "2", "3", "4", "5")) {
-                                        val player = StringArgumentType.getString(this, "player")
-                                        val amount = IntegerArgumentType.getInteger(this, "amount")
-                                        val slayerType = StringArgumentType.getString(this, "slayerType").lowercase()
-                                        val tier = StringArgumentType.getString(this, "tier")
-                                        add(player, amount, slayerType, tier)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    then("remove") {
-                        thenCallback("player", StringArgumentType.word(), tracked.keys) {
-                            val player = StringArgumentType.getString(this, "player")
-                            SlayerCarryStateTracker.removeCarry(player)
-                        }
-                    }
-
-                    then("list") {
-                        callback {
-                            SlayerCarryStateTracker.listCarries()
-                        }
-
-                        thenCallback("clear") {
-                            SlayerCarryStateTracker.clearCarries()
-                        }
-                    }
-
-                    then("history") {
-                        callback {
-                            SlayerCarryStateTracker.displayHistory(1)
-                        }
-
-                        thenCallback("page", IntegerArgumentType.integer(1), listOf("1", "2", "3", "4", "5")) {
-                            val page = IntegerArgumentType.getInteger(this, "page")
-                            SlayerCarryStateTracker.displayHistory(page)
-                        }
-                    }
-
-                    thenCallback("help") {
-                        showHelp()
-                    }
-
-                    thenCallback("gui") {
-                        SlayerCarryGUI.open()
-                    }
-
-                    callback {
-                        SlayerCarryGUI.open()
-                    }
-                }
-            }
         }
     }
 

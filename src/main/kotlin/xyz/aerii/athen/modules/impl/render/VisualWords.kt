@@ -2,7 +2,6 @@
 
 package xyz.aerii.athen.modules.impl.render
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.serialization.Codec
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
@@ -11,7 +10,6 @@ import net.minecraft.util.FormattedCharSequence
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
 import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo
@@ -21,6 +19,7 @@ import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.minecraft.AbstractWords
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.literal
 
 @Load
@@ -28,7 +27,7 @@ object VisualWords : Module(
     "Visual words",
     "Visually modify words!",
     Category.RENDER
-) {
+), ICommand {
     private const val SKIP = "\u0000vw_bypass"
 
     private val unused by config.textParagraph("Use the command \"/athen visuals help\" to learn more about the available commands!")
@@ -64,69 +63,55 @@ object VisualWords : Module(
             save()
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("visuals") {
-                    callback {
-                        help()
-                    }
+        command(Athen.modId) {
+            "visuals" {
+                help()
+            }
 
-                    thenCallback("help") {
-                        help()
-                    }
+            "visuals" / "help" {
+                help()
+            }
 
-                    then("add") {
-                        then("word", StringArgumentType.string()) {
-                            thenCallback("replacement", StringArgumentType.greedyString()) {
-                                val word = StringArgumentType.getString(this, "word")
-                                val cmp = StringArgumentType.getString(this, "replacement").parse()
-                                val seq = cmp.visualOrderText
+            "visuals" / "add" / string("word") / greedyString("replacement") {
+                val a = string("word")
+                val b = string("replacement").parse()
+                val c = b.visualOrderText
 
-                                words.put(word, cmp.string, cmp, seq)
-                                words.build()
-                                save()
+                words.put(a, b.string, b, c)
+                words.build()
+                save()
 
-                                "Added the word <red>\"$word\" <gray>-> ".parse().skip().append(seq.toComponent()).modMessage()
-                                if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
-                            }
-                        }
-                    }
+                "Added the word <red>\"$a\" <gray>-> ".parse().skip().append(b).modMessage()
+                if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
+            }
 
-                    then("set") {
-                        then("word", StringArgumentType.string()) {
-                            thenCallback("replacement", StringArgumentType.greedyString()) {
-                                val word = StringArgumentType.getString(this, "word")
-                                val cmp = StringArgumentType.getString(this, "replacement").parse()
-                                val seq = cmp.visualOrderText
+            "visuals" / "set" / string("word") / greedyString("replacement") {
+                val a = string("word")
+                val b = string("replacement").parse()
+                val c = b.visualOrderText
 
-                                words.put(word, cmp.string, cmp, seq)
-                                words.build()
-                                save()
+                words.put(a, b.string, b, c)
+                words.build()
+                save()
 
-                                "Set the word <red>\"$word\" <gray>-> ".parse().skip().append(seq.toComponent()).modMessage()
-                                if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
-                            }
-                        }
-                    }
+                "Set the word <red>\"$a\" <gray>-> ".parse().skip().append(b).modMessage()
+                if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
+            }
 
-                    then("remove") {
-                        thenCallback("word", StringArgumentType.string()) {
-                            val word = StringArgumentType.getString(this, "word")
+            "visuals" / "remove" / string("word") {
+                val a = string("word")
 
-                            words.remove(word)
-                            words.build()
-                            save()
+                words.remove(a)
+                words.build()
+                save()
 
-                            "Removed the word <red>\"$word\"".parse().skip().modMessage()
-                            if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
-                        }
-                    }
+                "Removed the word <red>\"$a\"".parse().skip().modMessage()
+                if (!enabled) "Feature not enabled!".modMessage(Typo.PrefixType.ERROR)
+            }
 
-                    thenCallback("list") {
-                        "Replacement words list:".modMessage()
-                        for ((a, b) in words.map2) " <dark_gray>• <r>$a <gray>-> ".parse().skip().append(b.toComponent()).lie()
-                    }
-                }
+            "visuals" / "list" {
+                "Replacement words list:".modMessage()
+                for ((a, b) in words.map2) " <dark_gray>• <r>$a <gray>-> ".parse().skip().append(b.toComponent()).lie()
             }
         }
     }

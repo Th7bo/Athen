@@ -13,7 +13,6 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.config.ConfigManager.updateConfig
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.handlers.Beacon.request
 import xyz.aerii.athen.handlers.Typo
@@ -24,6 +23,7 @@ import xyz.aerii.athen.utils.data
 import xyz.aerii.athen.utils.enchants
 import xyz.aerii.library.api.EMPTY_COMPONENT
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.stripped
@@ -35,7 +35,7 @@ object ColoredEnchants : Module(
     "Colored enchants",
     "Custom colors for enchants!",
     Category.GENERAL
-) {
+), ICommand {
     private val l = listOf("Bold", "Italic", "Underline", "Strike-through")
 
     private val replaceRoman by config.switch("Replace roman", true)
@@ -92,45 +92,39 @@ object ColoredEnchants : Module(
             }
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("export") {
-                    thenCallback("enchants") {
-                        val data = mapOf(
-                            $$"ultimate$color" to `ultimate$color`.rgb,
-                            $$"ultimate$style" to `ultimate$style`,
-                            $$"max$color" to `max$color`.rgb,
-                            $$"max$style" to `max$style`,
-                            $$"high$color" to `high$color`.rgb,
-                            $$"high$style" to `high$style`,
-                            $$"normal$color" to `normal$color`.rgb,
-                            $$"normal$style" to `normal$style`,
-                            $$"bad$color" to `bad$color`.rgb,
-                            $$"bad$style" to `bad$style`,
-                            "replaceRoman" to replaceRoman
-                        )
+        command(Athen.modId) {
+            "export" / "enchants" {
+                val data = mapOf(
+                    $$"ultimate$color" to `ultimate$color`.rgb,
+                    $$"ultimate$style" to `ultimate$style`,
+                    $$"max$color" to `max$color`.rgb,
+                    $$"max$style" to `max$style`,
+                    $$"high$color" to `high$color`.rgb,
+                    $$"high$style" to `high$style`,
+                    $$"normal$color" to `normal$color`.rgb,
+                    $$"normal$style" to `normal$style`,
+                    $$"bad$color" to `bad$color`.rgb,
+                    $$"bad$style" to `bad$style`,
+                    "replaceRoman" to replaceRoman
+                )
 
-                        McClient.clipboard = Gson().toJson(data).compress()
-                        "Enchant config exported to clipboard!".modMessage()
-                    }
+                McClient.clipboard = Gson().toJson(data).compress()
+                "Enchant config exported to clipboard!".modMessage()
+            }
+
+            "import" / "enchants" {
+                val clipboard = McClient.clipboard
+                if (clipboard.isEmpty()) return@invoke "No data found in clipboard!".modMessage(Typo.PrefixType.ERROR)
+
+                val map = Gson().fromJson<Map<String, Any>>(clipboard.decompress(), Map::class.java)
+
+                for ((k, v) in map) when (k) {
+                    $$"ultimate$color", $$"max$color", $$"high$color", $$"normal$color", $$"bad$color" -> updateConfig("$configKey.$k", Color((v as Double).toInt(), true))
+                    $$"ultimate$style", $$"max$style", $$"high$style", $$"normal$style", $$"bad$style" -> updateConfig("$configKey.$k", (v as List<Double>).map { it.toInt() })
+                    "replaceRoman" -> updateConfig(k, v as Boolean)
                 }
 
-                then("import") {
-                    thenCallback("enchants") {
-                        val clipboard = McClient.clipboard
-                        if (clipboard.isEmpty()) return@thenCallback "No data found in clipboard!".modMessage(Typo.PrefixType.ERROR)
-
-                        val map = Gson().fromJson<Map<String, Any>>(clipboard.decompress(), Map::class.java)
-
-                        for ((k, v) in map) when (k) {
-                            $$"ultimate$color", $$"max$color", $$"high$color", $$"normal$color", $$"bad$color" -> updateConfig("$configKey.$k", Color((v as Double).toInt(), true))
-                            $$"ultimate$style", $$"max$style", $$"high$style", $$"normal$style", $$"bad$style" -> updateConfig("$configKey.$k", (v as List<Double>).map { it.toInt() })
-                            "replaceRoman" -> updateConfig(k, v as Boolean)
-                        }
-
-                        "Enchant config imported successfully!".modMessage()
-                    }
-                }
+                "Enchant config imported successfully!".modMessage()
             }
         }
 

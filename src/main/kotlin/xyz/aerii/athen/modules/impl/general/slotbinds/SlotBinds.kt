@@ -3,7 +3,6 @@
 package xyz.aerii.athen.modules.impl.general.slotbinds
 
 import com.google.gson.reflect.TypeToken
-import com.mojang.brigadier.arguments.StringArgumentType
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.world.inventory.ClickType
@@ -15,7 +14,6 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
 import xyz.aerii.athen.api.rendering.ui.shapes.line.line
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.PlayerEvent
@@ -29,6 +27,7 @@ import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.safely
@@ -38,7 +37,7 @@ object SlotBinds : Module(
     "Slot binds",
     "Bindings for slots!",
     Category.GENERAL
-) {
+), ICommand {
     private val _unused0 by config.textParagraph("You can use the commands <red>\"/${Athen.modId} [import|export] slotbinds\"<r> to share configs!")
     private val bind by config.keybind("Bind keybind", GLFW.GLFW_KEY_B)
     private val swap by config.keybind("Swap keybind", GLFW.GLFW_KEY_LEFT_SHIFT)
@@ -113,80 +112,68 @@ object SlotBinds : Module(
             disk()
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("slotbinds") {
-                    callback {
-                        SlotBindsGUI.open()
-                    }
+        command(Athen.modId) {
+            "slotbinds" {
+                SlotBindsGUI.open()
+            }
 
-                    thenCallback("gui") {
-                        SlotBindsGUI.open()
-                    }
+            "slotbinds" / "gui" {
+                SlotBindsGUI.open()
+            }
 
-                    then("profile") {
-                        then("swap") {
-                            thenCallback("name", StringArgumentType.greedyString()) {
-                                val s = StringArgumentType.getString(this, "profile")
-                                if (s !in map0) return@thenCallback "Profile <red>\"$s\"<r> does not exist!".parse().modMessage()
-                                if (s == active) return@thenCallback "Already on profile <red>\"$s\"<r>!".parse().modMessage()
+            "slotbinds" / "profile" / "swap" / greedyString("name") {
+                val s = string("name")
+                if (s !in map0) return@greedyString "Profile <red>\"$s\"<r> does not exist!".parse().modMessage()
+                if (s == active) return@greedyString "Already on profile <red>\"$s\"<r>!".parse().modMessage()
 
-                                load(s)
-                                "Swapped to profile <green>$s<r>!".parse().modMessage()
-                            }
-                        }
-                    }
+                load(s)
+                "Swapped to profile <green>$s<r>!".parse().modMessage()
+            }
+
+            "export" / "slotbinds" {
+                val clipboard = McClient.clipboard
+                if (clipboard.isEmpty()) return@invoke "No data found in clipboard!".modMessage()
+
+                val data = GSON.fromJson(clipboard.decompress(), object : TypeToken<Map<String, Any>>() {}.type) as Map<String, Any>
+                val name = data["name"] as? String ?: return@invoke "Invalid config data!".modMessage()
+
+                val raw = GSON.toJson(data["binds"])
+                val binds = GSON.fromJson(raw, object : TypeToken<Map<String, Double>>() {}.type) as Map<String, Double>
+
+                val m = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
+                for ((k, v) in binds) k.toIntOrNull()?.let { m.put(it, v.toInt()) }
+
+                val cm = Int2IntOpenHashMap().apply { defaultReturnValue(palette[0]) }
+                val c = data["colors"]
+                if (c != null) {
+                    val colors = GSON.fromJson(GSON.toJson(c), object : TypeToken<Map<String, Double>>() {}.type) as Map<String, Double>
+                    for ((k, v) in colors) k.toIntOrNull()?.let { cm.put(it, v.toInt()) }
                 }
 
-                then("import") {
-                    thenCallback("slotbinds") {
-                        val clipboard = McClient.clipboard
-                        if (clipboard.isEmpty()) return@thenCallback "No data found in clipboard!".modMessage()
+                var n = name
+                var i = 1
+                while (n in map0) n = "$name ${++i}"
 
-                        val data = GSON.fromJson(clipboard.decompress(), object : TypeToken<Map<String, Any>>() {}.type) as Map<String, Any>
-                        val name = data["name"] as? String ?: return@thenCallback "Invalid config data!".modMessage()
+                map0[n] = m
+                map1[n] = cm
 
-                        val raw = GSON.toJson(data["binds"])
-                        val binds = GSON.fromJson(raw, object : TypeToken<Map<String, Double>>() {}.type) as Map<String, Double>
+                load(n)
+                disk()
+                "Imported profile '$n' with ${m.size} binds!".modMessage()
+            }
 
-                        val m = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
-                        for ((k, v) in binds) k.toIntOrNull()?.let { m.put(it, v.toInt()) }
+            "import" / "slotbinds" {
+                save()
 
-                        val cm = Int2IntOpenHashMap().apply { defaultReturnValue(palette[0]) }
-                        val c = data["colors"]
-                        if (c != null) {
-                            val colors = GSON.fromJson(GSON.toJson(c), object : TypeToken<Map<String, Double>>() {}.type) as Map<String, Double>
-                            for ((k, v) in colors) k.toIntOrNull()?.let { cm.put(it, v.toInt()) }
-                        }
+                val binds = mutableMapOf<String, Int>()
+                for (e in (map0[active] ?: return@invoke).int2IntEntrySet()) binds[e.intKey.toString()] = e.intValue
 
-                        var n = name
-                        var i = 1
-                        while (n in map0) n = "$name ${++i}"
+                val colors = mutableMapOf<String, Int>()
+                val c = map1[active]
+                if (c != null) for (e in c.int2IntEntrySet()) colors[e.intKey.toString()] = e.intValue
 
-                        map0[n] = m
-                        map1[n] = cm
-
-                        load(n)
-                        disk()
-                        "Imported profile '$n' with ${m.size} binds!".modMessage()
-                    }
-                }
-
-                then("export") {
-                    thenCallback("slotbinds") {
-                        save()
-
-                        val binds = mutableMapOf<String, Int>()
-                        for (e in (map0[active] ?: return@thenCallback).int2IntEntrySet()) binds[e.intKey.toString()] = e.intValue
-
-                        val colors = mutableMapOf<String, Int>()
-                        val c = map1[active]
-                        if (c != null) for (e in c.int2IntEntrySet()) colors[e.intKey.toString()] = e.intValue
-
-                        McClient.clipboard = GSON.toJson(mapOf("name" to active, "binds" to binds, "colors" to colors)).compress()
-                        "Exported profile '$active' to clipboard!".modMessage()
-                    }
-                }
+                McClient.clipboard = GSON.toJson(mapOf("name" to active, "binds" to binds, "colors" to colors)).compress()
+                "Exported profile '$active' to clipboard!".modMessage()
             }
         }
 

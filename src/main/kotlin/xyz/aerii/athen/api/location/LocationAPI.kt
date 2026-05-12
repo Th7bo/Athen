@@ -55,7 +55,7 @@ object LocationAPI {
 
     var forceOnSkyBlock: Boolean = false
 
-    val isOnSkyBlock = Observable(false).onChange { (if (it) LocationEvent.SkyBlockJoin else LocationEvent.SkyBlockLeave).post() }
+    val isOnSkyBlock = Observable(false).onChange { (if (it) LocationEvent.SkyBlock.Connect else LocationEvent.SkyBlock.Disconnect).post() }
 
     val island = Observable<SkyBlockIsland?>(null)
 
@@ -97,7 +97,7 @@ object LocationAPI {
         private set
 
     init {
-        on<LocationEvent.ServerChange> {
+        on<LocationEvent.Hypixel.Server> {
             lastServerChange = Clock.System.now()
             isOnSkyBlock.value = type == GameType.SKYBLOCK
 
@@ -105,7 +105,7 @@ object LocationAPI {
             val oldIsland = island.value
 
             island.value = newIsland
-            LocationEvent.IslandChange(oldIsland, newIsland).post()
+            LocationEvent.Hypixel.Island(oldIsland, newIsland).post()
             serverId = name
         }
 
@@ -122,7 +122,7 @@ object LocationAPI {
             locationRegex.anyMatch(added, "location") { (location) ->
                 val old = area.value
                 area.value = SkyBlockArea.getByKey(location) ?: SkyBlockArea.NONE
-                LocationEvent.AreaChange(old, area.value).post()
+                LocationEvent.Hypixel.Area(old, area.value).post()
             }
 
             guestRegex.anyMatch(added, "guests") { (current) ->
@@ -148,7 +148,7 @@ object LocationAPI {
         onAlpha = false
         serverId = null
 
-        if (oldArea != SkyBlockArea.NONE) LocationEvent.AreaChange(oldArea, area.value).post()
-        if (oldIsland != null) LocationEvent.IslandChange(oldIsland, island.value).post()
+        if (oldArea != SkyBlockArea.NONE) LocationEvent.Hypixel.Area(oldArea, area.value).post()
+        if (oldIsland != null) LocationEvent.Hypixel.Island(oldIsland, island.value).post()
     }
 }

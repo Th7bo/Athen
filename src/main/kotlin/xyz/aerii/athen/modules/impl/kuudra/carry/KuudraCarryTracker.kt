@@ -2,13 +2,7 @@
 
 package xyz.aerii.athen.modules.impl.kuudra.carry
 
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
-import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import tech.thatgravyboat.skyblockapi.helpers.McClient
-import tech.thatgravyboat.skyblockapi.impl.suggestion.SkyBlockAPICommandSuggestionProvider
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
@@ -20,7 +14,6 @@ import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.config.ConfigBuilder
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.KuudraEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
@@ -36,10 +29,10 @@ import xyz.aerii.library.api.command
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
 import java.awt.Color
-import java.util.concurrent.CompletableFuture
 
 @Load
 @OnlyIn(skyblock = true)
@@ -47,7 +40,7 @@ object KuudraCarryTracker : Module(
     "Kuudra carry tracker",
     "Track kuudra carries and display progress.",
     Category.KUUDRA
-) {
+), ICommand {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)
 
@@ -76,14 +69,6 @@ object KuudraCarryTracker : Module(
         "t5" to KuudraTier.INFERNAL
     )
 
-    private val playerSuggestions = object : SkyBlockAPICommandSuggestionProvider() {
-        override fun getSuggestions(context: CommandContext<FabricClientCommandSource>, builder: SuggestionsBuilder) =
-            CompletableFuture.supplyAsync {
-                for (i in McClient.players) suggest(builder, i.profile.name)
-                builder.build()
-            }
-    }
-
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
         if (`hud$kuudra` && !SkyBlockIsland.KUUDRA.inIsland.value) return@Ticking null
@@ -95,6 +80,50 @@ object KuudraCarryTracker : Module(
     }
 
     init {
+        command(Athen.modId) {
+            "kcarry" / "add" / word("player").suggests { McClient.players.map { it.profile.name } } / int("amount", 1).suggests { listOf("1", "5", "10", "20") } / word("tier") {
+                val player = string("player")
+                val amount = int("amount")
+                val tierInput = string("tier")
+
+                val tier = tierMap[tierInput.lowercase()] ?: return@word "Invalid tier. Use: basic, hot, burning, fiery, infernal, or t1-t5.".modMessage()
+
+                KuudraCarryStateTracker.addCarry(player, amount, tier)
+            }.suggests { tierMap.keys.toList() }
+
+            "kcarry" / "remove" / word("player") {
+                KuudraCarryStateTracker.removeCarry(string("player"))
+            }.suggests { tracked.keys }
+
+            "kcarry" / "list" {
+                KuudraCarryStateTracker.listCarries()
+            }
+
+            "kcarry" / "list" / "clear" {
+                KuudraCarryStateTracker.clearCarries()
+            }
+
+            "kcarry" / "history" {
+                KuudraCarryStateTracker.displayHistory(1)
+            }
+
+            "kcarry" / "history" / int("page", 1) {
+                KuudraCarryStateTracker.displayHistory(int("page"))
+            }.suggests { listOf("1", "2", "3", "4", "5") }
+
+            "kcarry" / "help" {
+                showHelp()
+            }
+
+            "kcarry" / "gui" {
+                KuudraCarryGUI.open()
+            }
+
+            "kcarry" {
+                KuudraCarryGUI.open()
+            }
+        }
+
         on<KuudraEvent.Start> {
             val tier = KuudraAPI.tier ?: return@on
 
@@ -142,68 +171,6 @@ object KuudraCarryTracker : Module(
                 extractFrameBox(e.renderBoundingBox, playerColor.rgb, playerLineWidth, false)
             }
         }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
-
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("kcarry") {
-                    then("add") {
-                        then("player", StringArgumentType.word(), playerSuggestions) {
-                            then("amount", IntegerArgumentType.integer(1), listOf("1", "5", "10", "20")) {
-                                thenCallback("tier", StringArgumentType.word(), tierMap.keys.toList()) {
-                                    val player = StringArgumentType.getString(this, "player")
-                                    val amount = IntegerArgumentType.getInteger(this, "amount")
-                                    val tierInput = StringArgumentType.getString(this, "tier")
-
-                                    val tier = tierMap[tierInput.lowercase()] ?: return@thenCallback "Invalid tier. Use: basic, hot, burning, fiery, infernal, or t1-t5.".modMessage()
-
-                                    KuudraCarryStateTracker.addCarry(player, amount, tier)
-                                }
-                            }
-                        }
-                    }
-
-                    then("remove") {
-                        thenCallback("player", StringArgumentType.word(), tracked.keys) {
-                            val player = StringArgumentType.getString(this, "player")
-                            KuudraCarryStateTracker.removeCarry(player)
-                        }
-                    }
-
-                    then("list") {
-                        callback {
-                            KuudraCarryStateTracker.listCarries()
-                        }
-
-                        thenCallback("clear") {
-                            KuudraCarryStateTracker.clearCarries()
-                        }
-                    }
-
-                    then("history") {
-                        callback {
-                            KuudraCarryStateTracker.displayHistory(1)
-                        }
-
-                        thenCallback("page", IntegerArgumentType.integer(1), listOf("1", "2", "3", "4", "5")) {
-                            val page = IntegerArgumentType.getInteger(this, "page")
-                            KuudraCarryStateTracker.displayHistory(page)
-                        }
-                    }
-
-                    thenCallback("help") {
-                        showHelp()
-                    }
-
-                    thenCallback("gui") {
-                        KuudraCarryGUI.open()
-                    }
-
-                    callback {
-                        KuudraCarryGUI.open()
-                    }
-                }
-            }
-        }
     }
 
     private fun showHelp() {

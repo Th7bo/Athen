@@ -1,6 +1,5 @@
 package xyz.aerii.athen.modules.impl.dungeon
 
-import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
@@ -23,7 +22,6 @@ import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.MessageEvent
 import xyz.aerii.athen.events.PacketEvent
@@ -40,6 +38,7 @@ import xyz.aerii.athen.utils.parseItem
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.server
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.*
 import java.awt.Color
 import kotlin.time.Duration.Companion.hours
@@ -50,7 +49,7 @@ object PartyFinder : Module(
     "Party finder",
     "Shows stats in party finder, on player join, and highlights.",
     Category.DUNGEONS
-) {
+), ICommand {
     private val floorRegex = Regex("^Floor: Floor (?<floor>[IV]+)$")
     private val nameRegex = Regex("^ (?<username>\\w+): (?<className>\\w+) \\((?<classLevel>\\d+)\\)$")
     private val classRegex = Regex("^Currently Selected: (?<className>\\w+)$")
@@ -145,21 +144,16 @@ object PartyFinder : Module(
             statsCache.entries.removeIf { (_, cached) -> now - cached.storedAt > 1.hours.inWholeMicroseconds }
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("stats") {
-                    thenCallback("username", StringArgumentType.word()) {
-                        val username = StringArgumentType.getString(this, "username")
+        command(Athen.modId) {
+            "stats" / word("username") {
+                val username = string("username")
+                val cached = statsCache[username]
+                if (cached != null && !cached.stats.loading) return@word cached.stats.stats(username)
 
-                        val cached = statsCache[username]
-                        if (cached != null && !cached.stats.loading) return@thenCallback cached.stats.stats(username)
-
-                        fetchPlayerStats(username, setOf("armor_data", "talisman_bag_data"), onSuccess = { stats ->
-                            statsCache[username] = CachedStats(stats)
-                            stats.stats(username)
-                        })
-                    }
-                }
+                fetchPlayerStats(username, setOf("armor_data", "talisman_bag_data"), onSuccess = { stats ->
+                    statsCache[username] = CachedStats(stats)
+                    stats.stats(username)
+                })
             }
         }
 

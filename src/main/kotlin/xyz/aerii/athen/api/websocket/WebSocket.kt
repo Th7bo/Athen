@@ -7,9 +7,7 @@ import kotlinx.coroutines.launch
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.Athen.SCOPE
 import xyz.aerii.athen.annotations.Priority
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.InternalEvent
-import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.handlers.Chronos
 import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
@@ -18,6 +16,7 @@ import xyz.aerii.library.api.client
 import xyz.aerii.library.api.name
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.Task
+import xyz.aerii.library.kommand.ICommand
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -27,7 +26,7 @@ import java.util.concurrent.CompletionStage
 import kotlin.time.Duration.Companion.seconds
 
 @Priority
-object WebSocket {
+object WebSocket : ICommand {
     private val http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()
     private val url = URI(wsUrl)
     private var ws: WebSocket? = null
@@ -39,20 +38,16 @@ object WebSocket {
         private set
 
     init {
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("ws") {
-                    thenCallback("connect") {
-                        "<gray>Connecting to WebSocket...".parse().modMessage()
-                        SCOPE.launch { connect() }
-                    }
+        command(Athen.modId) {
+            "ws" / "connect" {
+                "<gray>Connecting to WebSocket...".parse().modMessage()
+                SCOPE.launch { connect() }
+            }
 
-                    thenCallback("disconnect") {
-                        if (!auth) return@thenCallback "Not connected to WebSocket!".modMessage(Typo.PrefixType.ERROR)
-                        SCOPE.launch { close() }
-                        "<gray>Disconnected from WebSocket.".parse().modMessage()
-                    }
-                }
+            "ws" / "disconnect" {
+                if (!auth) return@invoke "Not connected to WebSocket!".modMessage(Typo.PrefixType.ERROR)
+                SCOPE.launch { close() }
+                "<gray>Disconnected from WebSocket.".parse().modMessage()
             }
         }
 

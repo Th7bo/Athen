@@ -7,7 +7,6 @@ import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.handlers.Chronos
 import xyz.aerii.athen.handlers.Scribble
@@ -18,6 +17,7 @@ import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.stripped
 import xyz.aerii.library.utils.toDuration
 
@@ -27,7 +27,7 @@ object SlayerTimers : Module(
     "Slayer timers",
     "Kill and spawn timers for slayer bosses.",
     Category.SLAYER
-) {
+), ICommand {
     private val scribble = Scribble("features/slayerTimers")
     private val killPBs = scribble.mutableMap("kill_pbs", Codec.STRING, Codec.DOUBLE)
     private var questStartTime: Long = 0
@@ -94,34 +94,30 @@ object SlayerTimers : Module(
             "Slayer$p killed in $str<r>.".parse().onHover("<red>$time0 ticks.".parse()).modMessage()
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("times") {
-                    thenCallback("slayers") {
-                        val b0 = "<gray>${"-".repeat()}".parse()
-                        val b1 = "<dark_gray>${"-".repeat()}".parse()
+        command(Athen.modId) {
+            "times" / "slayers" {
+                val b0 = "<gray>${"-".repeat()}".parse()
+                val b1 = "<dark_gray>${"-".repeat()}".parse()
 
-                        b0.lie()
+                b0.lie()
 
-                        val a = killPBs.value.entries.groupBy { it.key.substringBeforeLast("_T") }
-                        var f = true
+                val a = killPBs.value.entries.groupBy { it.key.substringBeforeLast("_T") }
+                var f = true
 
-                        for (type in a.keys.sorted()) {
-                            if (!f) b1.lie()
-                            f = false
+                for (type in a.keys.sorted()) {
+                    if (!f) b1.lie()
+                    f = false
 
-                            "<aqua>✦ ${type.str()}".parse().lie()
+                    "<aqua>✦ ${type.str()}".parse().lie()
 
-                            val b = a[type]?.sortedBy { it.key } ?: return@thenCallback
-                            for ((k, d) in b) {
-                                val tier = k.substringAfterLast("_")
-                                "  • <red>$tier<r>: <green>${d.toDuration(secondsDecimals = 1)}".parse().lie()
-                            }
-                        }
-
-                        b0.lie()
+                    val b = a[type]?.sortedBy { it.key } ?: return@invoke
+                    for ((k, d) in b) {
+                        val tier = k.substringAfterLast("_")
+                        "  • <red>$tier<r>: <green>${d.toDuration(secondsDecimals = 1)}".parse().lie()
                     }
                 }
+
+                b0.lie()
             }
         }
     }

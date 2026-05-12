@@ -8,7 +8,6 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.MessageEvent
 import xyz.aerii.athen.events.core.runWhen
@@ -21,6 +20,7 @@ import xyz.aerii.athen.modules.Module
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.Task
 import xyz.aerii.library.handlers.time.client
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.fromLongDuration
 import xyz.aerii.library.utils.showTitle
 import xyz.aerii.library.utils.toDurationFromMillis
@@ -34,7 +34,7 @@ object KatReminder : Module(
     "Kat reminder",
     "Reminds you about your pet that you gave to upgrade to Kat!",
     Category.GENERAL
-) {
+), ICommand {
     private val showTitle by config.switch("Show title", true)
     private val message by config.textInput("Alert message", "<red>#pet<white> is waiting for you at Kat!")
     private val _unused0 by config.textParagraph("Variable: <red>#pet")
@@ -55,34 +55,28 @@ object KatReminder : Module(
     init {
         fn()
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("clear") {
-                    thenCallback("kat") {
-                        if (!Commander.StateTracker.`warning$kat$sentOnce`) {
-                            "<red>This WILL clear your Kat time info! Only use this if you know what you're doing.".parse().modMessage(Typo.PrefixType.ERROR)
-                            Commander.StateTracker.`warning$kat$sentOnce` = true
-                            return@thenCallback
-                        }
-
-                        reset()
-                        "Kat time info was successfully reset.".modMessage(Typo.PrefixType.SUCCESS)
-                        Commander.StateTracker.`warning$kat$sentOnce` = false
-                    }
+        command(Athen.modId) {
+            "clear" / "kat" {
+                if (!Commander.StateTracker.`warning$kat$sentOnce`) {
+                    "<red>This WILL clear your Kat time info! Only use this if you know what you're doing.".parse().modMessage(Typo.PrefixType.ERROR)
+                    Commander.StateTracker.`warning$kat$sentOnce` = true
+                    return@invoke
                 }
 
-                then("times") {
-                    thenCallback("kat") {
-                        if (time == 0L) return@thenCallback "No pet being upgraded!".modMessage(Typo.PrefixType.ERROR)
+                reset()
+                "Kat time info was successfully reset.".modMessage(Typo.PrefixType.SUCCESS)
+                Commander.StateTracker.`warning$kat$sentOnce` = false
+            }
 
-                        val d = (time - System.currentTimeMillis()).toDurationFromMillis()
-                        "Time until upgrade for <red>$pet<r>: <red>$d".parse().modMessage()
-                    }
-                }
+            "times" / "kat" {
+                if (time == 0L) return@invoke "No pet being upgraded!".modMessage(Typo.PrefixType.ERROR)
+
+                val d = (time - System.currentTimeMillis()).toDurationFromMillis()
+                "Time until upgrade for <red>$pet<r>: <red>$d".parse().modMessage()
             }
         }
 
-        on<LocationEvent.SkyBlockJoin> {
+        on<LocationEvent.SkyBlock.Connect> {
             if (time <= 0) return@on
             if (time > System.currentTimeMillis()) return@on
 

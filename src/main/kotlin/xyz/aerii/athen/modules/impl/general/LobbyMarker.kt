@@ -16,7 +16,7 @@ object LobbyMarker : Module(
     private val lobbies = mutableSetOf<String>()
 
     init {
-        on<LocationEvent.ServerChange> {
+        on<LocationEvent.Hypixel.Server> {
             if (type?.name != "SkyBlock") return@on
             if (mode != "crystal_hollows" && onlyCrystalHollows) return@on
             if (!lobbies.add(name)) "You've been in this lobby!".modMessage()

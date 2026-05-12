@@ -9,7 +9,6 @@ import xyz.aerii.athen.Athen
 import xyz.aerii.athen.Athen.GSON
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.GameEvent
 import xyz.aerii.athen.events.MessageEvent
 import xyz.aerii.athen.handlers.Chronos
@@ -23,6 +22,7 @@ import xyz.aerii.athen.modules.impl.general.messageactions.data.MatchType
 import xyz.aerii.athen.modules.impl.general.messageactions.data.ResolvedEntry
 import xyz.aerii.athen.modules.impl.general.messageactions.ui.MessageActionsGUI
 import xyz.aerii.library.api.client
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.safely
@@ -32,7 +32,7 @@ object MessageActions : Module(
     "Message actions",
     "Allows you to run actions when you receive a message.",
     Category.GENERAL
-) {
+), ICommand {
     private val _unused by config.button("Open manager") { client.setScreen(MessageActionsGUI) }
     private val _unused0 by config.textParagraph("You can use the commands <red>\"/${Athen.modId} [import|export] messageactions\"<r> to share configs!")
 
@@ -92,47 +92,38 @@ object MessageActions : Module(
             }
         }
 
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                then("messageactions") {
-                    callback {
-                        MessageActionsGUI.open()
-                    }
+        command(Athen.modId) {
+            "messageactions" {
+                MessageActionsGUI.open()
+            }
 
-                    thenCallback("gui") {
-                        MessageActionsGUI.open()
-                    }
-                }
+            "messageactions" / "gui" {
+                MessageActionsGUI.open()
+            }
 
-                then("export") {
-                    thenCallback("messageactions") {
-                        disk()
-                        val data = mapOf("actions" to actions, "categories" to categories)
-                        McClient.clipboard = GSON.toJson(data).compress()
-                        "Exported ${actions.size} actions to clipboard!".modMessage()
-                    }
-                }
+            "export" / "messageactions" {
+                disk()
+                McClient.clipboard = GSON.toJson(mapOf("actions" to actions, "categories" to categories)).compress()
+                "Exported ${actions.size} actions to clipboard!".modMessage()
+            }
 
-                then("import") {
-                    thenCallback("messageactions") {
-                        val a = McClient.clipboard
-                        if (a.isEmpty()) return@thenCallback "No data found in clipboard!".modMessage()
+            "import" / "messageactions" {
+                val a = McClient.clipboard
+                if (a.isEmpty()) return@invoke "No data found in clipboard!".modMessage()
 
-                        safely {
-                            val map = GSON.fromJson(a.decompress(), object : TypeToken<Map<String, Any>>() {}.type) as Map<String, Any>
-                            val b = GSON.fromJson<List<ActionEntry>>(GSON.toJson(map["actions"]), object : TypeToken<List<ActionEntry>>() {}.type)
-                            val c = GSON.fromJson<List<CategoryEntry>>(GSON.toJson(map["categories"]), object : TypeToken<List<CategoryEntry>>() {}.type)
+                safely {
+                    val map = GSON.fromJson(a.decompress(), object : TypeToken<Map<String, Any>>() {}.type) as Map<String, Any>
+                    val b = GSON.fromJson<List<ActionEntry>>(GSON.toJson(map["actions"]), object : TypeToken<List<ActionEntry>>() {}.type)
+                    val c = GSON.fromJson<List<CategoryEntry>>(GSON.toJson(map["categories"]), object : TypeToken<List<CategoryEntry>>() {}.type)
 
-                            actions.clear()
-                            actions.addAll(b)
-                            categories.clear()
-                            categories.addAll(c)
+                    actions.clear()
+                    actions.addAll(b)
+                    categories.clear()
+                    categories.addAll(c)
 
-                            fn()
-                            disk()
-                            "Imported ${b.size} actions and ${c.size} categories!".modMessage()
-                        }
-                    }
+                    fn()
+                    disk()
+                    "Imported ${b.size} actions and ${c.size} categories!".modMessage()
                 }
             }
         }

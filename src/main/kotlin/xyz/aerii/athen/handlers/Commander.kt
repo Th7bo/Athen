@@ -2,15 +2,11 @@
 
 package xyz.aerii.athen.handlers
 
-import com.mojang.brigadier.arguments.BoolArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.config.ConfigManager
 import xyz.aerii.athen.config.ui.ClickGUI
-import xyz.aerii.athen.events.CommandRegistration
 import xyz.aerii.athen.events.MessageEvent
-import xyz.aerii.athen.events.core.on
 import xyz.aerii.athen.handlers.Notifier.notify
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.hud.HUDEditor
@@ -27,11 +23,12 @@ import xyz.aerii.library.api.client
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
 import xyz.aerii.library.utils.literal
 
 @Load
-object Commander {
+object Commander : ICommand {
     private val r = Regex("(?<!^)([A-Z])")
 
     object StateTracker {
@@ -61,164 +58,131 @@ object Commander {
     )
 
     init {
-        on<CommandRegistration> {
-            event.register(Athen.modId) {
-                callback {
-                    if (!ModSettings.commandConfig) return@callback showHelp()
+        command(Athen.modId) {
+            executes {
+                if (!ModSettings.commandConfig) return@executes showHelp()
 
-                    ClickGUI.open()
-                    "Opened the config! <gray>(use /athen help to view commands)".parse().modMessage()
+                ClickGUI.open()
+                "Opened the config! <gray>(use /athen help to view commands)".parse().modMessage()
+            }
+
+            "help" {
+                showHelp()
+            }
+
+            "config" {
+                ClickGUI.open()
+            }
+
+            "hud" {
+                HUDEditor.open()
+            }
+
+            "keybinds" {
+                KeybindsGUI.open()
+            }
+
+            "calc" / greedyString("operation") {
+                val string = string("operation")
+                val result = Calculator.calc(string).formatted()
+                "<gray>$string = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
+            }
+
+            "toggle" / "dev" {
+                debug = !debug
+                val a = if (debug) "<green>Enabled" else "<red>Disabled"
+
+                "Debug mode is now: $a<r>.".parse().modMessage()
+            }
+
+            "toggle" / "help" {
+                clickUiHelperCollapsed = !clickUiHelperCollapsed
+                if (clickUiHelperCollapsed) "Click UI helper has been <yellow>collapsed<r> and moved to the <aqua>top right corner<r>. Left-click it to expand. Use <yellow>/${Athen.modId} hide help<r> to permanently hide (not recommended).".parse().modMessage()
+                else "Click UI helper has been <green>expanded<r>.".parse().modMessage()
+            }
+
+            "toggle" / "feature" / string("key") {
+                val key = string("key")
+
+                val b = ConfigManager.getValue(key) as? Boolean ?: return@string "Not a valid feature!".modMessage()
+                ConfigManager.updateConfig(key, !b)
+
+                val s = key.replace(r, " $1").lowercase().replaceFirstChar { it.uppercase() }
+                "<${Mocha.Mauve.argb}>$s <gray>➤ ${if (b) "<red>Disabled" else "<green>Enabled"}".parse().modMessage()
+            }
+
+            "hide" / "help" {
+                if (!StateTracker.`warning$clickUiHelper$sentOnce` && !clickUiHelperHidden) {
+                    StateTracker.`warning$clickUiHelper$sentOnce` = true
+
+                    "<red>THIS IS NOT RECOMMENDED! Run this command again to confirm!".parse().modMessage(Typo.PrefixType.ERROR)
+                    return@invoke
                 }
 
-                then("config") {
-                    callback {
-                        ClickGUI.open()
+                clickUiHelperHidden = !clickUiHelperHidden
+                "Click UI helper is now: <${if (clickUiHelperHidden) "red" else "green"}>${if (clickUiHelperHidden) "Hidden" else "Visible"}<r>.".parse().modMessage()
+                StateTracker.`warning$clickUiHelper$sentOnce` = false
+            }
+
+            "hide" / "updater" {
+                ModUpdater.checkForUpdate().thenAccept { update ->
+                    if (!update.isUpdateAvailable) return@thenAccept "No update available to hide.".modMessage(Typo.PrefixType.ERROR)
+
+                    val newVersion = update.update.versionName
+
+                    if (!StateTracker.`warning$updater$sentOnce`) {
+                        StateTracker.`warning$updater$sentOnce` = true
+
+                        "<red>THIS IS NOT RECOMMENDED! Run this command again to confirm!".parse().modMessage(Typo.PrefixType.ERROR)
+                        return@thenAccept
                     }
 
-                    thenCallback("keybinds") {
-                        KeybindsGUI.open()
-                    }
+                    ModUpdater.trulySkip = newVersion
+                    "Update skip is now set for version <red>$newVersion<r>.".parse().modMessage()
+                    StateTracker.`warning$updater$sentOnce` = false
+                }.exceptionally { e ->
+                    Athen.LOGGER.error("Failed to fetch update version", e)
+                    "Failed to fetch update version.".modMessage(Typo.PrefixType.ERROR)
+                    null
                 }
+            }
 
-                thenCallback("hud") {
-                    HUDEditor.open()
-                }
+            "simulate" / "chat" / bool("actionbar") / greedyString("message") {
+                val actionBar = bool("actionbar")
+                val message = string("message")
 
-                thenCallback("keybinds") {
-                    KeybindsGUI.open()
-                }
+                if (actionBar) MessageEvent.ActionBar(message.literal()).post()
+                else MessageEvent.Chat.Receive(message.literal()).post()
 
-                then("calc") {
-                    thenCallback("operation", StringArgumentType.greedyString()) {
-                        val str = StringArgumentType.getString(this, "operation")
-                        if (str.isEmpty()) return@thenCallback "Empty operation!".modMessage(Typo.PrefixType.ERROR)
+                "<gray>Simulated (actionBar=$actionBar): <red>$message".parse().modMessage()
+            }
 
-                        val result = Calculator.calc(str).formatted()
-                        "<gray>$str = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
-                    }
-                }
+            "simulate" / "notification" / greedyString("message") {
+                string("message").notify()
+            }
 
-                thenCallback("help") {
-                    showHelp()
-                }
+            "clear" / "chat" {
+                client.gui.chat.clearMessages(false)
+            }
 
-                then("toggle") {
-                    thenCallback("dev") {
-                        debug = !debug
-                        val stateColor = if (debug) "green" else "red"
+            "clear" / "broadcast" {
+                Dev.lastBroadcast = ""
+            }
 
-                        "Debug mode is now: <$stateColor>${if (debug) "Enabled" else "Disabled"}<r>.".parse().modMessage()
-                    }
+            "checkupdate" {
+                ModUpdater.checkAndNotify(silent = false)
+            }
 
-                    thenCallback("help") {
-                        clickUiHelperCollapsed = !clickUiHelperCollapsed
-                        if (clickUiHelperCollapsed) "Click UI helper has been <yellow>collapsed<r> and moved to the <aqua>top right corner<r>. Left-click it to expand. Use <yellow>/${Athen.modId} hide help<r> to permanently hide (not recommended).".parse().modMessage()
-                        else "Click UI helper has been <green>expanded<r>.".parse().modMessage()
-                    }
+            "checkupdate" / string("stream") {
+                ModUpdater.checkAndNotify(string("stream"), false)
+            }
 
-                    then("feature") {
-                        thenCallback("key", StringArgumentType.string()) {
-                            val key = StringArgumentType.getString(this, "key")
+            "update" {
+                ModUpdater.installUpdate()
+            }
 
-                            val b = ConfigManager.getValue(key) as? Boolean ?: return@thenCallback "Not a valid feature!".modMessage()
-                            ConfigManager.updateConfig(key, !b)
-
-                            val s = key.replace(r, " $1").lowercase().replaceFirstChar { it.uppercase() }
-                            "<${Mocha.Mauve.argb}>$s <gray>➤ ${if (b) "<red>Disabled" else "<green>Enabled"}".parse().modMessage()
-                        }
-                    }
-                }
-
-                then("hide") {
-                    thenCallback("help") {
-                        if (!StateTracker.`warning$clickUiHelper$sentOnce` && !clickUiHelperHidden) {
-                            StateTracker.`warning$clickUiHelper$sentOnce` = true
-
-                            "<red>THIS IS NOT RECOMMENDED! Run this command again to confirm!".parse().modMessage(Typo.PrefixType.ERROR)
-                            return@thenCallback
-                        }
-
-                        clickUiHelperHidden = !clickUiHelperHidden
-                        "Click UI helper is now: <${if (clickUiHelperHidden) "red" else "green"}>${if (clickUiHelperHidden) "Hidden" else "Visible"}<r>.".parse().modMessage()
-                        StateTracker.`warning$clickUiHelper$sentOnce` = false
-                    }
-
-                    thenCallback("updater") {
-                        ModUpdater.checkForUpdate().thenAccept { update ->
-                            if (!update.isUpdateAvailable) return@thenAccept "No update available to hide.".modMessage(Typo.PrefixType.ERROR)
-
-                            val newVersion = update.update.versionName
-
-                            if (!StateTracker.`warning$updater$sentOnce`) {
-                                StateTracker.`warning$updater$sentOnce` = true
-
-                                "<red>THIS IS NOT RECOMMENDED! Run this command again to confirm!".parse().modMessage(Typo.PrefixType.ERROR)
-                                return@thenAccept
-                            }
-
-                            ModUpdater.trulySkip = newVersion
-                            "Update skip is now set for version <red>$newVersion<r>.".parse().modMessage()
-                            StateTracker.`warning$updater$sentOnce` = false
-                        }.exceptionally { e ->
-                            Athen.LOGGER.error("Failed to fetch update version", e)
-                            "Failed to fetch update version.".modMessage(Typo.PrefixType.ERROR)
-                            null
-                        }
-                    }
-                }
-
-
-                then("simulate") {
-                    then("chat") {
-                        then("actionbar", BoolArgumentType.bool()) {
-                            thenCallback("message", StringArgumentType.greedyString()) {
-                                val actionBar = BoolArgumentType.getBool(this, "actionbar")
-                                val message = StringArgumentType.getString(this, "message")
-
-                                if (actionBar) MessageEvent.ActionBar(message.literal()).post()
-                                else MessageEvent.Chat.Receive(message.literal()).post()
-
-                                "<gray>Simulated (actionBar=$actionBar): <red>$message".parse().modMessage()
-                            }
-                        }
-                    }
-
-                    then("notification") {
-                        thenCallback("message", StringArgumentType.greedyString()) {
-                            StringArgumentType.getString(this, "message").notify()
-                        }
-                    }
-                }
-
-                then("clear") {
-                    thenCallback("chat") {
-                        client.gui.chat.clearMessages(false)
-                    }
-
-                    thenCallback("broadcast") {
-                        Dev.lastBroadcast = ""
-                    }
-                }
-
-                then("checkupdate") {
-                    callback {
-                        ModUpdater.checkAndNotify(silent = false)
-                    }
-
-                    thenCallback("stream", StringArgumentType.string()) {
-                        ModUpdater.checkAndNotify(StringArgumentType.getString(this, "stream"), false)
-                    }
-                }
-
-                then("update") {
-                    callback {
-                        ModUpdater.installUpdate()
-                    }
-
-                    thenCallback("stream", StringArgumentType.string()) {
-                        ModUpdater.installUpdate(StringArgumentType.getString(this, "stream"))
-                    }
-                }
+            "update" / string("stream") {
+                ModUpdater.installUpdate(string("stream"))
             }
         }
     }
