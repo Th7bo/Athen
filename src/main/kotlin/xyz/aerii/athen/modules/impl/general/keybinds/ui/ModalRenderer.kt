@@ -11,21 +11,26 @@ import xyz.aerii.athen.modules.impl.general.keybinds.KeybindCondition
 import xyz.aerii.athen.modules.impl.general.keybinds.KeybindWorkIn
 import xyz.aerii.athen.modules.impl.general.keybinds.Keybinds
 import xyz.aerii.athen.modules.impl.general.keybinds.ui.BindingsListRenderer.Companion.str
+import xyz.aerii.athen.ui.IZoneType
 import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
+import xyz.aerii.athen.ui.base.AbstractModalRenderer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
 
 class ModalRenderer(
-    private val mw: Int,
-    private val mh: Int,
-    private val fh: Int,
-    private val padding: Int
-) {
+    mw: Int,
+    mh: Int,
+    fh: Int,
+    padding: Int
+) : AbstractModalRenderer<BindingEntry>(mw, mh, fh, padding) {
     val allPhases = listOf(1, 2, 3, 4, 5)
 
-    var open = false
-    var entry: BindingEntry? = null
+    override val create = "Create Keybind"
+    override val edit = "Edit Keybind"
+    override val zone0: IZoneType = UIZoneType.MODAL_SAVE
+    override val zone1: IZoneType = UIZoneType.MODAL_CANCEL
+
     val cmdField = InputField("Command or message")
     var keysBuf = mutableListOf<Int>()
     var keysListening = false
@@ -56,99 +61,75 @@ class ModalRenderer(
     var f7PhaseDropdownY = 0
     var f7PhaseScroll = 0
 
-    val opened: Boolean
+    override val dropdown: Boolean
         get() = categoryOpen || workInOpen || islandOpen || floorOpen || classOpen || f7PhaseOpen
 
-    fun draw(guiGraphics: GuiGraphics, mx: Int, my: Int, sw: Int, sh: Int, zones: MutableList<UIZone>) {
-        guiGraphics.rectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
-        val mx0 = (sw - mw) / 2
-        val my0 = (sh - mh) / 2
-        val fw = mw - padding * 2
-
-        guiGraphics.rectangle(mx0, my0, mw, mh, Mocha.Base.argb)
-        guiGraphics.outline(mx0, my0, mw, mh, 1, Mocha.Surface0.argb)
-
-        guiGraphics.extractText(if (entry == null) "Create Keybind" else "Edit Keybind", mx0 + padding, my0 + padding + 2, false, Mocha.Mauve.argb)
-        guiGraphics.rectangle(mx0, my0 + 24, mw, 1, Mocha.Surface0.argb)
-
-        var cy = my0 + 34
+    override fun fields(graphics: GuiGraphics, mx: Int, my: Int, x0: Int, y0: Int, cy: Int, fw: Int, zones: MutableList<UIZone>) {
+        var cy = cy
         val halfW = fw / 2 - 4
 
-        guiGraphics.extractText("Command", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.extractText("Keys", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Command", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Keys", x0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
-        cmdField.draw(guiGraphics, mx, my, mx0 + padding, cy, halfW) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_CMD)) }
-        drawKeysField(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
+        cmdField.draw(graphics, mx, my, x0 + padding, cy, halfW) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_CMD)) }
+        drawKeysField(graphics, mx, my, x0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.extractText("Category", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.extractText("Work In", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Category", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Work In", x0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         categoryDropdownY = cy
         workInDropdownY = cy
-        drawCategoryDropdown(guiGraphics, mx, my, mx0 + padding, cy, halfW, zones)
-        drawWorkInDropdown(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
+        drawCategoryDropdown(graphics, mx, my, x0 + padding, cy, halfW, zones)
+        drawWorkInDropdown(graphics, mx, my, x0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.extractText("Islands", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.extractText("Dungeon Floors", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Islands", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Dungeon Floors", x0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         islandDropdownY = cy
         floorDropdownY = cy
-        drawIslandDropdown(guiGraphics, mx, my, mx0 + padding, cy, halfW, zones)
-        drawFloorDropdown(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
+        drawIslandDropdown(graphics, mx, my, x0 + padding, cy, halfW, zones)
+        drawFloorDropdown(graphics, mx, my, x0 + padding + halfW + 8, cy, halfW, zones)
         cy += fh + 8
 
-        guiGraphics.extractText("Dungeon Classes", mx0 + padding, cy, false, Mocha.Subtext0.argb)
-        guiGraphics.extractText("F7 Phases", mx0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("Dungeon Classes", x0 + padding, cy, false, Mocha.Subtext0.argb)
+        graphics.extractText("F7 Phases", x0 + padding + halfW + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
         classDropdownY = cy
         f7PhaseDropdownY = cy
-        drawClassDropdown(guiGraphics, mx, my, mx0 + padding, cy, halfW, zones)
-        drawF7PhaseDropdown(guiGraphics, mx, my, mx0 + padding + halfW + 8, cy, halfW, zones)
+        drawClassDropdown(graphics, mx, my, x0 + padding, cy, halfW, zones)
+        drawF7PhaseDropdown(graphics, mx, my, x0 + padding + halfW + 8, cy, halfW, zones)
 
-        val btnY = my0 + mh - fh - padding
-        val cancelX = mx0 + padding
-        val saveX = cancelX + halfW + 8
+    }
 
-        val sepY = btnY - 8
-        guiGraphics.rectangle(mx0 + padding, sepY, fw, 1, Mocha.Surface0.argb)
+    override fun overlays(graphics: GuiGraphics, mx: Int, my: Int, x0: Int, y0: Int, fw: Int, zones: MutableList<UIZone>) {
+        val halfW = fw / 2 - 4
 
-        val saveHov = !opened && mx in saveX until saveX + halfW && my in btnY until btnY + fh
-        guiGraphics.rectangle(saveX, btnY, halfW, fh, if (saveHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.outline(saveX, btnY, halfW, fh, 1, Mocha.Green.argb)
-        guiGraphics.extractText("Save", saveX + (halfW - client.font.width("Save")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
-        zones.add(UIZone(saveX, btnY, halfW, fh, UIZoneType.MODAL_SAVE))
-
-        val cancelHov = !opened && mx in cancelX until cancelX + halfW && my in btnY until btnY + fh
-        guiGraphics.rectangle(cancelX, btnY, halfW, fh, if (cancelHov) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.outline(cancelX, btnY, halfW, fh, 1, Mocha.Red.argb)
-        guiGraphics.extractText("Cancel", cancelX + (halfW - client.font.width("Cancel")) / 2, btnY + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
-        zones.add(UIZone(cancelX, btnY, halfW, fh, UIZoneType.MODAL_CANCEL))
-
-        if (categoryOpen) drawCategoryMenu(guiGraphics, mx, my, mx0 + padding, categoryDropdownY + fh, halfW)
-        if (workInOpen) drawWorkInMenu(guiGraphics, mx, my, mx0 + padding + halfW + 8, workInDropdownY + fh, halfW)
-        if (islandOpen) drawIslandMenu(guiGraphics, mx, my, mx0 + padding, islandDropdownY + fh, halfW)
-        if (floorOpen) drawFloorMenu(guiGraphics, mx, my, mx0 + padding + halfW + 8, floorDropdownY + fh, halfW)
-        if (classOpen) drawClassMenu(guiGraphics, mx, my, mx0 + padding, classDropdownY + fh, halfW)
-        if (f7PhaseOpen) drawF7PhaseMenu(guiGraphics, mx, my, mx0 + padding + halfW + 8, f7PhaseDropdownY + fh, halfW)
+        if (categoryOpen) drawCategoryMenu(graphics, mx, my, x0 + padding, categoryDropdownY + fh, halfW)
+        if (workInOpen) drawWorkInMenu(graphics, mx, my, x0 + padding + halfW + 8, workInDropdownY + fh, halfW)
+        if (islandOpen) drawIslandMenu(graphics, mx, my, x0 + padding, islandDropdownY + fh, halfW)
+        if (floorOpen) drawFloorMenu(graphics, mx, my, x0 + padding + halfW + 8, floorDropdownY + fh, halfW)
+        if (classOpen) drawClassMenu(graphics, mx, my, x0 + padding, classDropdownY + fh, halfW)
+        if (f7PhaseOpen) drawF7PhaseMenu(graphics, mx, my, x0 + padding + halfW + 8, f7PhaseDropdownY + fh, halfW)
 
         if (keysListening) {
+            val sw = x0 * 2 + mw
             val tt = "Press Enter to confirm | Escape to cancel"
             val tw = client.font.width(tt)
             val bx = (sw - tw - 12) / 2
-            guiGraphics.rectangle(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, Mocha.Base.argb)
-            guiGraphics.outline(bx, my0 + mh + 6, tw + 12, client.font.lineHeight + 8, 1, Mocha.Overlay0.argb)
-            guiGraphics.extractText(tt, bx + 6, my0 + mh + 10, false, Mocha.Text.argb)
+            graphics.rectangle(bx, y0 + mh + 6, tw + 12, client.font.lineHeight + 8, Mocha.Base.argb)
+            graphics.outline(bx, y0 + mh + 6, tw + 12, client.font.lineHeight + 8, 1, Mocha.Overlay0.argb)
+            graphics.extractText(tt, bx + 6, y0 + mh + 10, false, Mocha.Text.argb)
         }
     }
 
     private fun drawCategoryDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || categoryOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || categoryOpen) && mx in x until x + w && my in y until y + fh
 
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (categoryOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
@@ -193,7 +174,7 @@ class ModalRenderer(
     }
 
     private fun drawWorkInDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || workInOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || workInOpen) && mx in x until x + w && my in y until y + fh
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (workInOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
@@ -227,7 +208,7 @@ class ModalRenderer(
     }
 
     private fun drawIslandDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || islandOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || islandOpen) && mx in x until x + w && my in y until y + fh
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (islandOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
@@ -272,7 +253,7 @@ class ModalRenderer(
     }
 
     private fun drawFloorDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || floorOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || floorOpen) && mx in x until x + w && my in y until y + fh
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (floorOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
@@ -317,7 +298,7 @@ class ModalRenderer(
     }
 
     private fun drawClassDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || classOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || classOpen) && mx in x until x + w && my in y until y + fh
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (classOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
@@ -363,7 +344,7 @@ class ModalRenderer(
     }
 
     private fun drawF7PhaseDropdown(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || f7PhaseOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || f7PhaseOpen) && mx in x until x + w && my in y until y + fh
         guiGraphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (f7PhaseOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
@@ -408,7 +389,7 @@ class ModalRenderer(
     }
 
     private fun drawKeysField(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = !opened && (mx in x until x + w && my in y until y + fh)
+        val hov = !dropdown && (mx in x until x + w && my in y until y + fh)
         guiGraphics.rectangle(x, y, w, fh, if (keysListening) Mocha.Peach.withAlpha(0.3f) else if (hov) Mocha.Surface1.argb else Mocha.Surface0.argb)
         guiGraphics.outline(x, y, w, fh, 1, if (keysListening) Mocha.Peach.argb else Mocha.Overlay0.argb)
 
@@ -432,10 +413,9 @@ class ModalRenderer(
 
     fun open(e0: BindingEntry) {
         entry = e0
+        cmdField.reset(true)
         cmdField.value = e0.binding.command
         cmdField.cursor = cmdField.value.length
-        cmdField.selectionStart = -1
-        cmdField.scrollOffset = 0
         cmdField.focused = true
         keysBuf = e0.binding.keys.toMutableList()
         condition = e0.condition.copy()
@@ -453,9 +433,7 @@ class ModalRenderer(
         open = true
     }
 
-    fun close() {
-        open = false
-        entry = null
+    override fun onClose() {
         cmdField.focused = false
     }
 
@@ -687,10 +665,7 @@ class ModalRenderer(
     }
 
     private fun reset() {
-        cmdField.value = ""
-        cmdField.cursor = 0
-        cmdField.selectionStart = -1
-        cmdField.scrollOffset = 0
+        cmdField.reset(true)
         cmdField.focused = true
         keysBuf = mutableListOf()
         condition = KeybindCondition()

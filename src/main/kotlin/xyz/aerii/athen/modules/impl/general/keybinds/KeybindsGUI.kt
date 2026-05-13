@@ -24,7 +24,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
     override fun onScramInit() {
         recreate()
         modal.close()
-        categoryBar.cancelCreate()
+        categoryBar.create1()
     }
 
     override fun onScramClose() = Keybinds.storage.save()
@@ -50,7 +50,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         listRenderer.draw(graphics, mouseX, mouseY, mainX + 6, py + 6, 448, 260, list, modal.open, zones)
         drawFooter(graphics, mouseX, mouseY, mainX, py)
 
-        if (!modal.open) categoryBar.drawTooltip(graphics)
+        if (!modal.open) categoryBar.tooltip(graphics)
         if (modal.open) modal.draw(graphics, mouseX, mouseY, width, height, zones)
     }
 
@@ -84,7 +84,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
                 return true
             }
 
-            categoryBar.confirmCreate()
+            categoryBar.create0()
             recreate()
             return true
         }
@@ -147,7 +147,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         }
 
         if (hit.type == UIZoneType.CATEGORY_ADD) {
-            categoryBar.startCreate()
+            categoryBar.create()
             return true
         }
 
@@ -240,12 +240,12 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         }
 
         if (mouseX < (width - 576) / 2 + 110) {
-            categoryBar.handleScroll(amount, 300)
+            categoryBar.scroll(amount, 300)
             return true
         }
 
         if (entries.isEmpty()) return false
-        listRenderer.handleScroll(amount)
+        listRenderer.scroll(amount)
         return true
     }
 
@@ -279,13 +279,13 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
 
         if (categoryBar.creating) {
             if (keyCode == GLFW.GLFW_KEY_ENTER) {
-                categoryBar.confirmCreate()
+                categoryBar.create0()
                 recreate()
                 return true
             }
 
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                categoryBar.cancelCreate()
+                categoryBar.create1()
                 return true
             }
 

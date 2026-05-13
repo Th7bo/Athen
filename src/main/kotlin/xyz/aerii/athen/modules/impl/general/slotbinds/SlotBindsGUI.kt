@@ -45,7 +45,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         creating = false
         deleting = null
         selected = null
-        name.reset()
+        name.reset(true)
         s = 0
     }
 
@@ -319,7 +319,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
                 deleting = null
                 selected = null
 
-                name.reset()
+                name.reset(true)
                 name.focused = true
             }
 
@@ -343,7 +343,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         }
 
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            name.reset()
+            name.reset(true)
             creating = false
             return true
         }
@@ -377,7 +377,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
             SlotBinds.add(str)
         }
 
-        name.reset()
+        name.reset(true)
         creating = false
     }
 

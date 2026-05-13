@@ -46,13 +46,10 @@ object Commander : ICommand {
         "/${Athen.modId} carry help" to "Info about slayer carry commands",
         "/${Athen.modId} dcarry help" to "Info about dungeon carry commands",
         "/${Athen.modId} kcarry help" to "Info about kuudra carry commands",
-        "/${Athen.modId} toggle help" to "Toggle the UI helper tooltip",
         "/${Athen.modId} clear chat" to "Clear the chat history",
         "/${Athen.modId} stats <name>" to "View stats for any player",
         "/${Athen.modId} times slayers" to "Shows the slayer kill times",
         "/${Athen.modId} times kuudra <tier>" to "Shows the kuudra pbs",
-        "/${Athen.modId} update [stream]" to "Install updates (release/beta/alpha)",
-        "/${Athen.modId} checkupdate [stream]" to "Check for available updates",
         "/${Athen.modId} toggle feature <featureKey>" to "Toggles the specified feature!",
         "/${Athen.modId} irc help" to "View all IRC commands"
     )

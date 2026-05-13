@@ -8,22 +8,27 @@ import xyz.aerii.athen.modules.impl.general.messageactions.data.MatchType
 import xyz.aerii.athen.modules.impl.general.messageactions.MessageActions
 import xyz.aerii.athen.modules.impl.general.messageactions.actions.IMessageAction
 import xyz.aerii.athen.modules.impl.general.messageactions.ui.UIZoneType
+import xyz.aerii.athen.ui.IZoneType
 import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
+import xyz.aerii.athen.ui.base.AbstractModalRenderer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
 
 class ActionModalRenderer(
-    private val mw: Int,
-    private val mh: Int,
-    private val fh: Int,
-    private val padding: Int
-) {
+    mw: Int,
+    mh: Int,
+    fh: Int,
+    padding: Int
+) : AbstractModalRenderer<ActionEntryView>(mw, mh, fh, padding) {
+    override val create = "Create Action"
+    override val edit = "Edit Action"
+    override val zone0: IZoneType = UIZoneType.MODAL_SAVE
+    override val zone1: IZoneType = UIZoneType.MODAL_CANCEL
+
     val patternField = InputField("Pattern to match")
     val valueField = InputField("Action value")
     val delayField = InputField("0")
-    var open = false
-    var entry: ActionEntryView? = null
     var match = MatchType.CONTAINS
     var action = 0
     var cancel = false
@@ -35,23 +40,12 @@ class ActionModalRenderer(
     var catOpen = false
     var catY = 0
 
-    val opened: Boolean
+    override val dropdown: Boolean
         get() = matchOpen || catOpen
 
-    fun draw(graphics: GuiGraphics, mx: Int, my: Int, sw: Int, sh: Int, zones: MutableList<UIZone>) {
-        graphics.rectangle(0, 0, sw, sh, Mocha.Crust.withAlpha(0.6f))
-        val x0 = (sw - mw) / 2
-        val y0 = (sh - mh) / 2
-        val w = mw - padding * 2
-
-        graphics.rectangle(x0, y0, mw, mh, Mocha.Base.argb)
-        graphics.outline(x0, y0, mw, mh, 1, Mocha.Surface0.argb)
-
-        graphics.extractText(if (entry == null) "Create Action" else "Edit Action", x0 + padding, y0 + padding + 2, false, Mocha.Mauve.argb)
-        graphics.rectangle(x0, y0 + 24, mw, 1, Mocha.Surface0.argb)
-
-        var cy = y0 + 34
-        val hw = w / 2 - 4
+    override fun fields(graphics: GuiGraphics, mx: Int, my: Int, x0: Int, y0: Int, cy: Int, fw: Int, zones: MutableList<UIZone>) {
+        var cy = cy
+        val hw = fw / 2 - 4
 
         graphics.extractText("Pattern", x0 + padding, cy, false, Mocha.Subtext0.argb)
         graphics.extractText("Match Type", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
@@ -66,13 +60,13 @@ class ActionModalRenderer(
         cy += client.font.lineHeight + 2
 
         val actions = IMessageAction.all()
-        val aw = (w - (actions.size - 1) * 4) / actions.size
+        val aw = (fw - (actions.size - 1) * 4) / actions.size
         for (a in actions) {
             val i = a.id
             val idx = actions.indexOf(a)
             val ax = x0 + padding + idx * (aw + 4)
             val selected = action == i
-            val hovered = !opened && mx in ax until ax + aw && my in cy until cy + 14
+            val hovered = !dropdown && mx in ax until ax + aw && my in cy until cy + 14
 
             graphics.rectangle(ax, cy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
             graphics.outline(ax, cy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
@@ -102,7 +96,7 @@ class ActionModalRenderer(
         val c0 = client.font.width(c)
         val cx = x0 + padding
         val cy0 = cy + (fh - 14) / 2
-        val ch = !opened && mx in cx until cx + 14 && my in cy0 until cy0 + 14
+        val ch = !dropdown && mx in cx until cx + 14 && my in cy0 until cy0 + 14
 
         graphics.rectangle(cx, cy0, 14, 14, if (ch) Mocha.Surface2.argb else Mocha.Base.argb)
         graphics.outline(cx, cy0, 14, 14, 1, if (cancel) Mocha.Red.argb else Mocha.Overlay0.argb)
@@ -114,30 +108,17 @@ class ActionModalRenderer(
         graphics.extractText("Delay (s)", x0 + padding + hw + 8, cy + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
         delayField.draw(graphics, mx, my, x0 + padding + hw + 8 + client.font.width("Delay (s)") + 4, cy, hw - client.font.width("Delay (s)") - 4) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_DELAY)) }
 
-        val y1 = y0 + mh - fh - padding
-        val x1 = x0 + padding
-        val x2 = x1 + hw + 8
+        graphics.extractText("Regex: use $0 for full message, and $1, $2, $3... for groups", x0 + padding, y0 + mh - fh - padding - 8 - client.font.lineHeight - 2, false, Mocha.Overlay0.argb)
+    }
 
-        graphics.rectangle(x0 + padding, y1 - 8, w, 1, Mocha.Surface0.argb)
-
-        graphics.rectangle(x2, y1, hw, fh, if (!opened && mx in x2 until x2 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.outline(x2, y1, hw, fh, 1, Mocha.Green.argb)
-        graphics.extractText("Save", x2 + (hw - client.font.width("Save")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
-        zones.add(UIZone(x2, y1, hw, fh, UIZoneType.MODAL_SAVE))
-
-        graphics.rectangle(x1, y1, hw, fh, if (!opened && mx in x1 until x1 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        graphics.outline(x1, y1, hw, fh, 1, Mocha.Red.argb)
-        graphics.extractText("Cancel", x1 + (hw - client.font.width("Cancel")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
-        zones.add(UIZone(x1, y1, hw, fh, UIZoneType.MODAL_CANCEL))
-
-        graphics.extractText("Regex: use $0 for full message, and $1, $2, $3... for groups", x1, y1 - 8 - client.font.lineHeight - 2, false, Mocha.Overlay0.argb)
-
+    override fun overlays(graphics: GuiGraphics, mx: Int, my: Int, x0: Int, y0: Int, fw: Int, zones: MutableList<UIZone>) {
+        val hw = fw / 2 - 4
         if (matchOpen) matchType(graphics, mx, my, x0 + padding + hw + 8, matchY + fh, hw)
         if (catOpen) category(graphics, mx, my, x0 + padding + hw + 8, catY + fh, hw)
     }
 
     private fun dropdown0(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || matchOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || matchOpen) && mx in x until x + w && my in y until y + fh
         graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x, y, w, fh, 1, if (matchOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
         graphics.extractText(match.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
@@ -163,7 +144,8 @@ class ActionModalRenderer(
     }
 
     private fun dropdown1(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!opened || catOpen) && mx in x until x + w && my in y until y + fh
+        val hov = (!dropdown || catOpen) && mx in x until x + w && my in y until y + fh
+
         graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x, y, w, fh, 1, if (catOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
         graphics.enableScissor(x + 2, y, x + w - 14, y + fh)
@@ -208,31 +190,29 @@ class ActionModalRenderer(
 
     fun open(a: ActionEntryView) {
         entry = a
-        patternField.value = a.entry.pattern
-        patternField.cursor = patternField.value.length
-        patternField.selectionStart = -1
-        patternField.scrollOffset = 0
-        patternField.focused = true
-        match = a.entry.match
-        action = a.entry.id
-        valueField.value = a.entry.value
-        valueField.cursor = valueField.value.length
-        valueField.selectionStart = -1
-        valueField.scrollOffset = 0
-        cancel = a.entry.cancel
-        category = a.entry.category
-        delayField.value = if (a.entry.delay > 0.0) a.entry.delay.toString() else ""
-        delayField.cursor = delayField.value.length
-        delayField.selectionStart = -1
-        delayField.scrollOffset = 0
         matchOpen = false
         catOpen = false
         open = true
+
+        patternField.reset(true)
+        patternField.value = a.entry.pattern
+        patternField.cursor = patternField.value.length
+        patternField.focused = true
+        match = a.entry.match
+        action = a.entry.id
+
+        valueField.reset(true)
+        valueField.value = a.entry.value
+        valueField.cursor = valueField.value.length
+        cancel = a.entry.cancel
+        category = a.entry.category
+
+        delayField.reset(true)
+        delayField.value = if (a.entry.delay > 0.0) a.entry.delay.toString() else ""
+        delayField.cursor = delayField.value.length
     }
 
-    fun close() {
-        open = false
-        entry = null
+    override fun onClose() {
         patternField.focused = false
         valueField.focused = false
         delayField.focused = false
@@ -312,23 +292,14 @@ class ActionModalRenderer(
     }
 
     private fun reset() {
-        patternField.value = ""
-        patternField.cursor = 0
-        patternField.selectionStart = -1
-        patternField.scrollOffset = 0
+        patternField.reset(true)
         patternField.focused = true
-        valueField.value = ""
-        valueField.cursor = 0
-        valueField.selectionStart = -1
-        valueField.scrollOffset = 0
+        valueField.reset(true)
         match = MatchType.CONTAINS
         action = 0
         cancel = false
         category = ""
-        delayField.value = ""
-        delayField.cursor = 0
-        delayField.selectionStart = -1
-        delayField.scrollOffset = 0
+        delayField.reset(true)
         matchOpen = false
         catOpen = false
     }

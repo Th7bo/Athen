@@ -212,8 +212,8 @@ class InputField(val placeholder: String) {
         return true
     }
 
-    fun reset() {
-        value = ""
+    fun reset(v: Boolean = false) {
+        if (v) value = ""
         cursor = 0
         selectionStart = -1
         scrollOffset = 0
