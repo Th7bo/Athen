@@ -10,6 +10,7 @@ A **Hypixel SkyBlock Quality-of-Life** mod, developed by Starred.
 
 * Colored enchants
 * Commission display
+* IRC
 * Item tweaks:
   * Show item age
   * Show item hex color
@@ -23,7 +24,9 @@ A **Hypixel SkyBlock Quality-of-Life** mod, developed by Starred.
 * Keybinds
 * Lag detector
 * Lobby marker
+* Message actions
 * Missing enchants
+* Slot binds
 * Snap tap
 * Sound replacer
 * Terminator sounds
@@ -32,6 +35,7 @@ A **Hypixel SkyBlock Quality-of-Life** mod, developed by Starred.
 ### Render
 
 * Arrow hitboxes
+* Custom highlight
 * Custom scale
 * Custom tooltip
 * Game tint
@@ -40,13 +44,16 @@ A **Hypixel SkyBlock Quality-of-Life** mod, developed by Starred.
 * Item rarity background
 * Radial menus
 * Render optimiser
-* Visual words [Text replacer]
+* Render tweaks
+* Visual words
 
 ### Slayers
 
 * Attunement display
+* Big slayer drops
 * Carry tracker
 * Cocoon alert and timer
+* Enderman laser hider
 * Miniboss alerts
 * Slayer display
 * Slayer highlights:
