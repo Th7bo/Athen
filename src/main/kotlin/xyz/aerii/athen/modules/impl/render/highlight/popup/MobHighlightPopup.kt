@@ -1,6 +1,7 @@
 package xyz.aerii.athen.modules.impl.render.highlight.popup
 
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.EntityType
 import org.lwjgl.glfw.GLFW
 import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
@@ -73,7 +74,7 @@ object MobHighlightPopup : Scram("Add Highlight [Athen]") {
 
         graphics.extractText("${if (typed) "Type" else "Name"}: ", px + 8, cy + 1, false, Catppuccin.Mocha.Subtext0.argb)
         graphics.enableScissor(px + 8 + client.font.width("${if (typed) "Type" else "Name"}: "), cy, px + 252, cy + client.font.lineHeight + 2)
-        graphics.extractText(if (typed) type0.toString() else name0 ?: "\u2014", px + 8 + client.font.width("${if (typed) "Type" else "Name"}: "), cy + 1, false, Catppuccin.Mocha.Text.argb)
+        graphics.extractText(if (typed) type0?.let { BuiltInRegistries.ENTITY_TYPE.getKey(it).toString() } ?: "???" else name0 ?: "\u2014", px + 8 + client.font.width("${if (typed) "Type" else "Name"}: "), cy + 1, false, Catppuccin.Mocha.Text.argb)
         graphics.disableScissor()
 
         cy += client.font.lineHeight + 4

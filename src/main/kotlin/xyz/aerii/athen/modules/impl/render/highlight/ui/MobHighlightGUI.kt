@@ -3,6 +3,7 @@
 package xyz.aerii.athen.modules.impl.render.highlight.ui
 
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.EntityType
 import org.lwjgl.glfw.GLFW
 import xyz.aerii.athen.api.rendering.ui.effects.outline.outline
@@ -268,7 +269,7 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
         }
 
         for ((i, e) in MobHighlight.e1.value.withIndex()) {
-            entries.add(HighlightEntry(i, e.type.toString(), e.color, e.max, true))
+            entries.add(HighlightEntry(i, BuiltInRegistries.ENTITY_TYPE.getKey(e.type).toString(), e.color, e.max, true))
         }
     }
 }
