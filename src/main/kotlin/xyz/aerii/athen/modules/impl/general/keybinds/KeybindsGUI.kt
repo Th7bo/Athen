@@ -13,6 +13,7 @@ import xyz.aerii.athen.modules.impl.general.keybinds.ui.*
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
     private val entries = mutableListOf<BindingEntry>()
@@ -27,9 +28,13 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         categoryBar.create1()
     }
 
-    override fun onScramClose() = Keybinds.storage.save()
+    override fun onScramClose() {
+        Keybinds.storage.save()
+    }
 
-    override fun isPauseScreen() = false
+    override fun isPauseScreen(): Boolean {
+        return false
+    }
 
     override fun onScramRender(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         zones.clear()
@@ -40,7 +45,7 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         val px = (width - 576) / 2
         val py = (height - 300) / 2
 
-        categoryBar.draw(graphics, mouseX, mouseY, px, py, 300, modal.open, zones)
+        categoryBar.draw(graphics, px, py, 300, modal.open, zones)
 
         val mainX = px + 116
         graphics.rectangle(mainX, py, 460, 300, Mocha.Base.argb)
@@ -48,34 +53,33 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
 
         val list = categoryBar.selected?.let { s -> entries.filter { it.binding.category == s } } ?: entries
         listRenderer.draw(graphics, mouseX, mouseY, mainX + 6, py + 6, 448, 260, list, modal.open, zones)
-        drawFooter(graphics, mouseX, mouseY, mainX, py)
+        drawFooter(graphics, mainX, py)
 
         if (!modal.open) categoryBar.tooltip(graphics)
         if (modal.open) modal.draw(graphics, mouseX, mouseY, width, height, zones)
     }
 
-    private fun drawFooter(guiGraphics: GuiGraphics, mx: Int, my: Int, mainX: Int, py: Int) {
+    private fun drawFooter(graphics: GuiGraphics, mainX: Int, py: Int) {
         val fy = py + 272
-        guiGraphics.rectangle(mainX, fy, 460, 1, Mocha.Surface0.argb)
+        graphics.rectangle(mainX, fy, 460, 1, Mocha.Surface0.argb)
 
-        val btnX = mainX + 170
-        val fieldY = fy + 6
-        val hovered = !modal.open && mx in btnX until btnX + 120 && my in fieldY until fieldY + 16
-        guiGraphics.rectangle(btnX, fieldY, 120, 16, if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
-        guiGraphics.outline(btnX, fieldY, 120, 16, 1, Mocha.Green.argb)
-        guiGraphics.extractText("+ Create Keybind", btnX + (120 - client.font.width("+ Create Keybind")) / 2, fieldY + (16 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
-        zones.add(UIZone(btnX, fieldY, 120, 16, UIZoneType.BUTTON_CREATE))
+        val x = mainX + 170
+        val y1 = fy + 6
+        graphics.rectangle(x, y1, 120, 16, if (!modal.open && hovered(x, y1, 120, 16, true)) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.outline(x, y1, 120, 16, 1, Mocha.Green.argb)
+        graphics.extractText("+ Create Keybind", x + (120 - client.font.width("+ Create Keybind")) / 2, y1 + (16 - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
+        zones.add(UIZone(x, y1, 120, 16, UIZoneType.BUTTON_CREATE))
     }
 
     override fun onScramMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean {
         if (modal.open) {
-            clickModal(mouseX, mouseY, button)
+            clickModal(mouseX, button)
             return true
         }
 
         if (categoryBar.creating) {
             val z = zones.firstOrNull { it.type == UIZoneType.CATEGORY_ADD }
-            if (z != null && mouseX in z.x until z.x + z.w && mouseY in z.y until z.y + z.h) {
+            if (z != null && hovered(z.x, z.y, z.w, z.h, true)) {
                 if (button == 0) {
                     categoryBar.nameField.focused = true
                     categoryBar.nameField.updateClick(mouseX, z.x)
@@ -90,14 +94,14 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         }
 
         if (button == 1) {
-            val z = zones.lastOrNull { it.type == UIZoneType.CATEGORY_TAB && it.category.isNotEmpty() && mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+            val z = zones.lastOrNull { it.type == UIZoneType.CATEGORY_TAB && it.category.isNotEmpty() && hovered(it.x, it.y, it.w, it.h, true) }
             categoryBar.deleting = if (z == null || categoryBar.deleting == z.category) null else z.category
             return true
         }
 
         if (button != 0) return false
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h } ?: return false
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) } ?: return false
         if (hit.type == UIZoneType.BUTTON_CREATE) {
             modal.open()
             return true
@@ -154,10 +158,10 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
         return true
     }
 
-    private fun clickModal(mouseX: Int, mouseY: Int, button: Int) {
+    private fun clickModal(mouseX: Int, button: Int) {
         if (modal.keysListening) {
             val z = zones.firstOrNull { it.type == UIZoneType.MODAL_KEYS }
-            if (z != null && mouseX in z.x until z.x + z.w && mouseY in z.y until z.y + z.h) {
+            if (z != null && hovered(z.x, z.y, z.w, z.h, true)) {
                 modal.recorded.add(-(button + 1))
                 return
             }
@@ -170,15 +174,15 @@ object KeybindsGUI : Scram("Keybinds Manager [Athen]") {
             return
         }
 
-        if (modal.categoryOpen) return modal.clickCategory(mouseX, mouseY)
-        if (modal.workInOpen) return modal.clickWorkIn(mouseX, mouseY)
-        if (modal.islandOpen) return modal.clickIsland(mouseX, mouseY)
-        if (modal.floorOpen) return modal.clickFloor(mouseX, mouseY)
-        if (modal.classOpen) return modal.clickClass(mouseX, mouseY)
-        if (modal.f7PhaseOpen) return modal.clickF7Phase(mouseX, mouseY)
+        if (modal.categoryOpen) return modal.clickCategory(mouseX)
+        if (modal.workInOpen) return modal.clickWorkIn(mouseX)
+        if (modal.islandOpen) return modal.clickIsland(mouseX)
+        if (modal.floorOpen) return modal.clickFloor(mouseX)
+        if (modal.classOpen) return modal.clickClass(mouseX)
+        if (modal.f7PhaseOpen) return modal.clickF7Phase(mouseX)
         if (button != 0) return
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h}
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) }
         val pre = modal.cmdField.focused
         modal.cmdField.focused = false
 

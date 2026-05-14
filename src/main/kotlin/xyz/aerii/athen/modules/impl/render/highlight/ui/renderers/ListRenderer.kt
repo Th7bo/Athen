@@ -10,6 +10,7 @@ import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.base.AbstractListRenderer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 class ListRenderer(
     height: Int,
@@ -20,7 +21,7 @@ class ListRenderer(
     override val string = "No highlights"
 
     override fun entry(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, entry: HighlightEntry, open: Boolean, zones: MutableList<UIZone>) {
-        val b = !open && mx in x until x + w && my in y until y + height
+        val b = !open && hovered(x, y, w, height, true)
 
         graphics.rectangle(x, y, w, height, if (b) Mocha.Surface1.argb else Mocha.Surface0.argb)
         graphics.outline(x, y, w, height, 1, Mocha.Overlay0.argb)
@@ -46,14 +47,14 @@ class ListRenderer(
         graphics.disableScissor()
 
         val x0 = x + w - 60 - padding * 2
-        val b0 = !open && mx in x0 until x0 + 40 && my in y + (height - fh) / 2 until y + (height - fh) / 2 + fh
+        val b0 = !open && hovered(x0, y + (height - fh) / 2, 40, fh, true)
         graphics.rectangle(x0, y + (height - fh) / 2, 40, fh, if (b0) Mocha.Surface2.argb else Mocha.Base.argb)
         graphics.outline(x0, y + (height - fh) / 2, 40, fh, 1, Mocha.Overlay0.argb)
         graphics.extractText("Edit", x0 + (40 - client.font.width("Edit")) / 2, y + (height - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         zones.add(UIZone(x0, y + (height - fh) / 2, 40, fh, UIZoneType.ENTRY_EDIT, entry.index))
 
         val x1 = x + w - 20 - padding
-        val b1 = !open && mx in x1 until x1 + 20 && my in y + (height - fh) / 2 until y + (height - fh) / 2 + fh
+        val b1 = !open && hovered(x1, y + (height - fh) / 2, 20, fh, true)
         graphics.rectangle(x1, y + (height - fh) / 2, 20, fh, if (b1) Mocha.Red.argb else Mocha.Base.argb)
         graphics.outline(x1, y + (height - fh) / 2, 20, fh, 1, Mocha.Overlay0.argb)
         graphics.extractText("×", x1 + (21 - client.font.width("×")) / 2, y + (height - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)

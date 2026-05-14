@@ -14,6 +14,7 @@ import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 object MobHighlightPopup : Scram("Add Highlight [Athen]") {
     private val colorField = InputField("Hex color (e.g. ff0000)")
@@ -65,7 +66,7 @@ object MobHighlightPopup : Scram("Add Highlight [Athen]") {
         graphics.extractText("Named", px + 8 + (120 - client.font.width("Named")) / 2, cy + (16 - client.font.lineHeight) / 2 + 1, false, if (name0 == null) Catppuccin.Mocha.Overlay0.argb else if (!typed) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Subtext0.argb)
         if (name0 != null) zones.add(UIZone(px + 8, cy, 120, 16, UIZoneType.TOGGLE_NAMED))
 
-        graphics.rectangle(px + 132, cy, 120, 16, if (typed) Catppuccin.Mocha.Surface1.argb else if (mouseX in px + 132 until px + 252 && mouseY in cy until cy + 16) Catppuccin.Mocha.Surface0.withAlpha(0.5f) else Catppuccin.Mocha.Mantle.argb)
+        graphics.rectangle(px + 132, cy, 120, 16, if (typed) Catppuccin.Mocha.Surface1.argb else if (hovered(px + 132, cy, 120, 16, true)) Catppuccin.Mocha.Surface0.withAlpha(0.5f) else Catppuccin.Mocha.Mantle.argb)
         graphics.outline(px + 132, cy, 120, 16, 1, if (typed) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Crust.argb)
         graphics.extractText("Typed", px + 132 + (120 - client.font.width("Typed")) / 2, cy + (16 - client.font.lineHeight) / 2 + 1, false, if (typed) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Subtext0.argb)
         zones.add(UIZone(px + 132, cy, 120, 16, UIZoneType.TOGGLE_TYPED))
@@ -101,18 +102,18 @@ object MobHighlightPopup : Scram("Add Highlight [Athen]") {
             }
         }
 
-        colorField.draw(graphics, mouseX, mouseY, px + 26, cy, 226) { zx, zy, zw, zh -> zones.add(
+        colorField.draw(graphics, px + 26, cy, 226) { zx, zy, zw, zh -> zones.add(
             UIZone(zx, zy, zw, zh, UIZoneType.COLOR_FIELD)
         ) }
 
         graphics.rectangle(px, py + 112, 260, 1, Catppuccin.Mocha.Surface0.argb)
 
-        graphics.rectangle(px + 8, py + 118, 118, 16, if (mouseX in px + 8 until px + 126 && mouseY in py + 118 until py + 134) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
+        graphics.rectangle(px + 8, py + 118, 118, 16, if (hovered(px + 8, py + 118, 118, 16, true)) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
         graphics.outline(px + 8, py + 118, 118, 16, 1, Catppuccin.Mocha.Red.argb)
         graphics.extractText("Cancel", px + 8 + (118 - client.font.width("Cancel")) / 2, py + 118 + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Red.argb)
         zones.add(UIZone(px + 8, py + 118, 118, 16, UIZoneType.CANCEL))
 
-        graphics.rectangle(px + 134, py + 118, 118, 16, if (mouseX in px + 134 until px + 252 && mouseY in py + 118 until py + 134) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
+        graphics.rectangle(px + 134, py + 118, 118, 16, if (hovered(px + 134, py + 118, 118, 16, true)) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
         graphics.outline(px + 134, py + 118, 118, 16, 1, Catppuccin.Mocha.Green.argb)
         graphics.extractText("Save", px + 134 + (118 - client.font.width("Save")) / 2, py + 118 + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Green.argb)
         zones.add(UIZone(px + 134, py + 118, 118, 16, UIZoneType.SAVE))
@@ -121,7 +122,7 @@ object MobHighlightPopup : Scram("Add Highlight [Athen]") {
     override fun onScramMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean {
         if (button != 0) return false
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h } ?: return true
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) } ?: return true
         when (hit.type) {
             UIZoneType.TOGGLE_NAMED -> {
                 typed = false

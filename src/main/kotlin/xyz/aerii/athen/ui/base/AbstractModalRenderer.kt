@@ -8,6 +8,7 @@ import xyz.aerii.athen.ui.IZoneType
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 abstract class AbstractModalRenderer<T : IEntryView>(
     protected val mw: Int,
@@ -46,12 +47,12 @@ abstract class AbstractModalRenderer<T : IEntryView>(
 
         graphics.rectangle(x0 + padding, y1 - 8, fw, 1, Mocha.Surface0.argb)
 
-        graphics.rectangle(x2, y1, hw, fh, if (!dropdown && mx in x2 until x2 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.rectangle(x2, y1, hw, fh, if (!dropdown && hovered(x2, y1, hw, fh, true)) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x2, y1, hw, fh, 1, Mocha.Green.argb)
         graphics.extractText("Save", x2 + (hw - client.font.width("Save")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Green.argb)
         zones.add(UIZone(x2, y1, hw, fh, zone0))
 
-        graphics.rectangle(x1, y1, hw, fh, if (!dropdown && mx in x1 until x1 + hw && my in y1 until y1 + fh) Mocha.Surface2.argb else Mocha.Surface1.argb)
+        graphics.rectangle(x1, y1, hw, fh, if (!dropdown && hovered(x1, y1, hw, fh, true)) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x1, y1, hw, fh, 1, Mocha.Red.argb)
         graphics.extractText("Cancel", x1 + (hw - client.font.width("Cancel")) / 2, y1 + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Red.argb)
         zones.add(UIZone(x1, y1, hw, fh, zone1))

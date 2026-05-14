@@ -14,6 +14,7 @@ import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.base.AbstractModalRenderer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 class ActionModalRenderer(
     mw: Int,
@@ -51,9 +52,9 @@ class ActionModalRenderer(
         graphics.extractText("Match Type", x0 + padding + hw + 8, cy, false, Mocha.Subtext0.argb)
         cy += client.font.lineHeight + 2
 
-        patternField.draw(graphics, mx, my, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_PATTERN)) }
+        patternField.draw(graphics, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_PATTERN)) }
         matchY = cy
-        dropdown0(graphics, mx, my, x0 + padding + hw + 8, cy, hw, zones)
+        dropdown0(graphics, x0 + padding + hw + 8, cy, hw, zones)
         cy += fh + 8
 
         graphics.extractText("Action", x0 + padding, cy, false, Mocha.Subtext0.argb)
@@ -66,7 +67,7 @@ class ActionModalRenderer(
             val idx = actions.indexOf(a)
             val ax = x0 + padding + idx * (aw + 4)
             val selected = action == i
-            val hovered = !dropdown && mx in ax until ax + aw && my in cy until cy + 14
+            val hovered = !dropdown && hovered(ax, cy, aw, 14, true)
 
             graphics.rectangle(ax, cy, aw, 14, if (selected) Mocha.Mauve.argb else if (hovered) Mocha.Surface2.argb else Mocha.Surface1.argb)
             graphics.outline(ax, cy, aw, 14, 1, if (selected) Mocha.Mauve.argb else Mocha.Overlay0.argb)
@@ -85,18 +86,18 @@ class ActionModalRenderer(
             graphics.rectangle(x0 + padding, cy, hw, fh, Mocha.Crust.argb)
             graphics.outline(x0 + padding, cy, hw, fh, 1, Mocha.Surface0.argb)
         } else {
-            valueField.draw(graphics, mx, my, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_ACTION_VALUE)) }
+            valueField.draw(graphics, x0 + padding, cy, hw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_ACTION_VALUE)) }
         }
 
         catY = cy
-        dropdown1(graphics, mx, my, x0 + padding + hw + 8, cy, hw, zones)
+        dropdown1(graphics, x0 + padding + hw + 8, cy, hw, zones)
         cy += fh + 8
 
         val c = "Cancel message"
         val c0 = client.font.width(c)
         val cx = x0 + padding
         val cy0 = cy + (fh - 14) / 2
-        val ch = !dropdown && mx in cx until cx + 14 && my in cy0 until cy0 + 14
+        val ch = !dropdown && hovered(cx, cy0, 14, 14, true)
 
         graphics.rectangle(cx, cy0, 14, 14, if (ch) Mocha.Surface2.argb else Mocha.Base.argb)
         graphics.outline(cx, cy0, 14, 14, 1, if (cancel) Mocha.Red.argb else Mocha.Overlay0.argb)
@@ -106,27 +107,28 @@ class ActionModalRenderer(
         zones.add(UIZone(cx, cy0, 14 + 4 + c0, 14, UIZoneType.MODAL_CANCEL_TOGGLE))
 
         graphics.extractText("Delay (s)", x0 + padding + hw + 8, cy + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Subtext0.argb)
-        delayField.draw(graphics, mx, my, x0 + padding + hw + 8 + client.font.width("Delay (s)") + 4, cy, hw - client.font.width("Delay (s)") - 4) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_DELAY)) }
+        delayField.draw(graphics,
+            x0 + padding + hw + 8 + client.font.width("Delay (s)") + 4, cy, hw - client.font.width("Delay (s)") - 4) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, UIZoneType.MODAL_DELAY)) }
 
         graphics.extractText("Regex: use $0 for full message, and $1, $2, $3... for groups", x0 + padding, y0 + mh - fh - padding - 8 - client.font.lineHeight - 2, false, Mocha.Overlay0.argb)
     }
 
     override fun overlays(graphics: GuiGraphics, mx: Int, my: Int, x0: Int, y0: Int, fw: Int, zones: MutableList<UIZone>) {
         val hw = fw / 2 - 4
-        if (matchOpen) matchType(graphics, mx, my, x0 + padding + hw + 8, matchY + fh, hw)
-        if (catOpen) category(graphics, mx, my, x0 + padding + hw + 8, catY + fh, hw)
+        if (matchOpen) matchType(graphics, x0 + padding + hw + 8, matchY + fh, hw)
+        if (catOpen) category(graphics, x0 + padding + hw + 8, catY + fh, hw)
     }
 
-    private fun dropdown0(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!dropdown || matchOpen) && mx in x until x + w && my in y until y + fh
-        graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
+    private fun dropdown0(graphics: GuiGraphics, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
+        val b0 = (!dropdown || matchOpen) && hovered(x, y, w, fh, true)
+        graphics.rectangle(x, y, w, fh, if (b0) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x, y, w, fh, 1, if (matchOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
         graphics.extractText(match.displayName, x + 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         graphics.extractText(if (matchOpen) "▾" else "▸", x + w - client.font.width(if (matchOpen) "▾" else "▸") - 4, y + (fh - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_MATCH_TYPE))
     }
 
-    private fun matchType(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
+    private fun matchType(graphics: GuiGraphics, x: Int, y: Int, w: Int) {
         val entries = MatchType.entries
         val menuH = entries.size * 14
         graphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
@@ -134,7 +136,7 @@ class ActionModalRenderer(
 
         var cy = y
         for (e in entries) {
-            if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+            if (hovered(x, cy, w, 14, true)) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
 
             val sel = match == e
             graphics.extractText(e.displayName, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
@@ -143,8 +145,8 @@ class ActionModalRenderer(
         }
     }
 
-    private fun dropdown1(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
-        val hov = (!dropdown || catOpen) && mx in x until x + w && my in y until y + fh
+    private fun dropdown1(graphics: GuiGraphics, x: Int, y: Int, w: Int, zones: MutableList<UIZone>) {
+        val hov = (!dropdown || catOpen) && hovered(x, y, w, fh, true)
 
         graphics.rectangle(x, y, w, fh, if (hov) Mocha.Surface2.argb else Mocha.Surface1.argb)
         graphics.outline(x, y, w, fh, 1, if (catOpen) Mocha.Mauve.argb else Mocha.Overlay0.argb)
@@ -155,7 +157,7 @@ class ActionModalRenderer(
         zones.add(UIZone(x, y, w, fh, UIZoneType.MODAL_CATEGORY))
     }
 
-    private fun category(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int) {
+    private fun category(graphics: GuiGraphics, x: Int, y: Int, w: Int) {
         val cats = MessageActions.categories
         val menuH = ((cats.size + 1) * 14).coerceAtMost(80)
         graphics.rectangle(x, y, w, menuH, Mocha.Base.argb)
@@ -163,14 +165,14 @@ class ActionModalRenderer(
         graphics.enableScissor(x, y, x + w, y + menuH)
 
         var cy = y
-        if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+        if (hovered(x, cy, w, 14, true)) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
         graphics.extractText("Uncategorized", x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (category.isEmpty()) Mocha.Mauve.argb else Mocha.Text.argb)
         if (category.isEmpty()) graphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
         cy += 14
 
         for (cat in cats) {
             if (cy + 14 > y && cy < y + menuH) {
-                if (mx in x until x + w && my in cy until cy + 14) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
+                if (hovered(x, cy, w, 14, true)) graphics.rectangle(x, cy, w, 14, Mocha.Surface1.argb)
                 val sel = category == cat.name
                 graphics.extractText(cat.name, x + 4, cy + (14 - client.font.lineHeight) / 2 + 1, false, if (sel) Mocha.Mauve.argb else Mocha.Text.argb)
                 if (sel) graphics.extractText("✔", x + w - 12, cy + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Mauve.argb)
@@ -218,7 +220,7 @@ class ActionModalRenderer(
         delayField.focused = false
     }
 
-    fun click0(mouseX: Int, mouseY: Int) {
+    fun click0(mouseX: Int) {
         val sw = client.window.guiScaledWidth
         val mx0 = (sw - mw) / 2
         val fw = mw - padding * 2
@@ -234,10 +236,10 @@ class ActionModalRenderer(
         val e = MatchType.entries
         val h = e.size * 14
 
-        if (mouseY in y0 until y0 + h) {
+        if (hovered(x0, y0, hw, h, true)) {
             var iy = y0
             for (e in e) {
-                if (mouseY !in iy until iy + 14) {
+                if (!hovered(x0, iy, hw, 14, true)) {
                     iy += 14
                     continue
                 }
@@ -251,7 +253,7 @@ class ActionModalRenderer(
         matchOpen = false
     }
 
-    fun click1(mouseX: Int, mouseY: Int) {
+    fun click1(mouseX: Int) {
         val sw = client.window.guiScaledWidth
         val mx0 = (sw - mw) / 2
         val fw = mw - padding * 2
@@ -267,9 +269,9 @@ class ActionModalRenderer(
         val e = MessageActions.categories
         val h = ((e.size + 1) * 14).coerceAtMost(80)
 
-        if (mouseY in y0 until y0 + h) {
+        if (hovered(menuX, y0, halfW, h, true)) {
             var iy = y0
-            if (mouseY in iy until iy + 14) {
+            if (hovered(menuX, iy, halfW, 14, true)) {
                 category = ""
                 catOpen = false
                 return
@@ -277,7 +279,7 @@ class ActionModalRenderer(
 
             iy += 14
             for (cat in e) {
-                if (mouseY !in iy until iy + 14) {
+                if (!hovered(menuX, iy, halfW, 14, true)) {
                     iy += 14
                     continue
                 }

@@ -18,6 +18,7 @@ import xyz.aerii.athen.modules.impl.render.highlight.ui.renderers.ModalRenderer
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
     private val entries = mutableListOf<HighlightEntry>()
@@ -48,31 +49,31 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
         graphics.rectangle(px, py, pw, ph, Catppuccin.Mocha.Base.argb)
         graphics.outline(px, py, pw, ph, 1, Catppuccin.Mocha.Surface0.argb)
 
-        tabs(graphics, mouseX, mouseY, px, py, pw)
+        tabs(graphics, px, py, pw)
 
         val ly = py + 34
         val lh = ph - 34 - 28
         val list = entries.filter { it.typed == tab }
         listRenderer.draw(graphics, mouseX, mouseY, px + 6, ly, pw - 12, lh, list, modal.open, zones)
 
-        footer(graphics, mouseX, mouseY, px, py, pw, ph)
+        footer(graphics, px, py, pw, ph)
         if (modal.open) modal.draw(graphics, mouseX, mouseY, width, height, zones)
     }
 
-    private fun tabs(graphics: GuiGraphics, mx: Int, my: Int, px: Int, py: Int, pw: Int) {
+    private fun tabs(graphics: GuiGraphics, px: Int, py: Int, pw: Int) {
         val tw = (pw - 3 * 2 - 4) / 2
         val th = 22
         val ty = py + 3
 
         val x0 = px + 3
-        val b0 = !modal.open && mx in x0 until x0 + tw && my in ty until ty + th
+        val b0 = !modal.open && hovered(x0, ty, tw, th, true)
         graphics.rectangle(x0, ty, tw, th, if (!tab) Catppuccin.Mocha.Surface1.argb else if (b0) Catppuccin.Mocha.Surface0.withAlpha(0.5f) else Catppuccin.Mocha.Mantle.argb)
         graphics.outline(x0, ty, tw, th, 1, if (!tab) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Crust.argb)
         graphics.extractText("Named", x0 + (tw - client.font.width("Named")) / 2, ty + (th - client.font.lineHeight) / 2 + 1, false, if (!tab) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Subtext0.argb)
         zones.add(UIZone(x0, ty, tw, th, UIZoneType.TAB_NAMED))
 
         val x1 = x0 + tw + 4
-        val b1 = !modal.open && mx in x1 until x1 + tw && my in ty until ty + th
+        val b1 = !modal.open && hovered(x1, ty, tw, th, true)
         graphics.rectangle(x1, ty, tw, th, if (tab) Catppuccin.Mocha.Surface1.argb else if (b1) Catppuccin.Mocha.Surface0.withAlpha(0.5f) else Catppuccin.Mocha.Mantle.argb)
         graphics.outline(x1, ty, tw, th, 1, if (tab) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Crust.argb)
         graphics.extractText("Typed", x1 + (tw - client.font.width("Typed")) / 2, ty + (th - client.font.lineHeight) / 2 + 1, false, if (tab) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Subtext0.argb)
@@ -81,7 +82,7 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
         graphics.rectangle(px, py + 29, pw, 1, Catppuccin.Mocha.Surface0.argb)
     }
 
-    private fun footer(graphics: GuiGraphics, mx: Int, my: Int, px: Int, py: Int, pw: Int, ph: Int) {
+    private fun footer(graphics: GuiGraphics, px: Int, py: Int, pw: Int, ph: Int) {
         val fy = py + ph - 28
         graphics.rectangle(px, fy, pw, 1, Catppuccin.Mocha.Surface0.argb)
 
@@ -89,7 +90,7 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
         val bw = 120
         val bx = px + (pw - bw) / 2
         val by = fy + 6
-        val hov = !modal.open && mx in bx until bx + bw && my in by until by + 16
+        val hov = !modal.open && hovered(bx, by, bw, 16, true)
         graphics.rectangle(bx, by, bw, 16, if (hov) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
         graphics.outline(bx, by, bw, 16, 1, Catppuccin.Mocha.Green.argb)
         graphics.extractText(label, bx + (bw - client.font.width(label)) / 2, by + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Green.argb)
@@ -104,7 +105,7 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
 
         if (button != 0) return false
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h } ?: return false
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) } ?: return false
 
         if (hit.type == UIZoneType.TAB_NAMED) {
             tab = false
@@ -140,7 +141,13 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
     private fun clickModal(mouseX: Int, mouseY: Int, button: Int) {
         if (button != 0) return
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) }
+
+        if (hit != null && hit.type == UIZoneType.MODAL_SUGGESTION) {
+            modal.click(mouseX, mouseY)
+            return
+        }
+
         val p0 = modal.nameField.focused
         val p1 = modal.colorField.focused
         val p2 = modal.maxHpField.focused
@@ -231,7 +238,10 @@ object MobHighlightGUI : Scram("Mob Highlights [Athen]") {
     }
 
     override fun onScramMouseScroll(mouseX: Int, mouseY: Int, horizontal: Double, vertical: Double): Boolean {
-        if (modal.open) return true
+        if (modal.open) {
+            if (modal.dropdown) modal.scroll((vertical * 10).toInt())
+            return true
+        }
         if (entries.isEmpty()) return false
         listRenderer.scroll((vertical * 10).toInt())
         return true

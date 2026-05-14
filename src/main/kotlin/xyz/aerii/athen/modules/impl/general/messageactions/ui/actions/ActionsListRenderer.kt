@@ -10,6 +10,7 @@ import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.base.AbstractListRenderer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 class ActionsListRenderer(
     height: Int,
@@ -20,7 +21,7 @@ class ActionsListRenderer(
     override val string = "No actions"
 
     override fun entry(graphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, entry: ActionEntryView, open: Boolean, zones: MutableList<UIZone>) {
-        val a = !open && mx in x until x + w && my in y until y + height
+        val a = !open && hovered(x, y, w, height, true)
         val b = entry.entry.enabled && (entry.entry.category.isEmpty() || MessageActions.categories.find { it.name == entry.entry.category }?.enabled != false)
 
         graphics.rectangle(x, y, w, height, if (a) Mocha.Surface1.argb else if (!b) Mocha.Red.withAlpha(0.15f) else Mocha.Surface0.argb)
@@ -28,7 +29,7 @@ class ActionsListRenderer(
 
         var c = x + padding
         val d = y + (height - 14) / 2
-        val e = !open && mx in c until c + 14 && my in d until d + 14
+        val e = !open && hovered(c, d, 14, 14, true)
 
         graphics.rectangle(c, d, 14, 14, if (e) Mocha.Surface2.argb else Mocha.Base.argb)
         graphics.outline(c, d, 14, 14, 1, if (b) Mocha.Green.argb else Mocha.Overlay0.argb)
@@ -56,14 +57,14 @@ class ActionsListRenderer(
         graphics.disableScissor()
 
         val a1 = x + w - 60 - padding * 2
-        val b1 = !open && mx in a1 until a1 + 40 && my in y + (height - fh) / 2 until y + (height - fh) / 2 + fh
+        val b1 = !open && hovered(a1, y + (height - fh) / 2, 40, fh, true)
         graphics.rectangle(a1, y + (height - fh) / 2, 40, fh, if (b1) Mocha.Surface2.argb else Mocha.Base.argb)
         graphics.outline(a1, y + (height - fh) / 2, 40, fh, 1, Mocha.Overlay0.argb)
         graphics.extractText("Edit", a1 + (40 - client.font.width("Edit")) / 2, y + (height - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)
         zones.add(UIZone(a1, y + (height - fh) / 2, 40, fh, UIZoneType.ENTRY_EDIT, entry.index))
 
         val a2 = x + w - 20 - padding
-        val b2 = !open && mx in a2 until a2 + 20 && my in y + (height - fh) / 2 until y + (height - fh) / 2 + fh
+        val b2 = !open && hovered(a2, y + (height - fh) / 2, 20, fh, true)
         graphics.rectangle(a2, y + (height - fh) / 2, 20, fh, if (b2) Mocha.Red.argb else Mocha.Base.argb)
         graphics.outline(a2, y + (height - fh) / 2, 20, fh, 1, Mocha.Overlay0.argb)
         graphics.extractText("×", a2 + (21 - client.font.width("×")) / 2, y + (height - client.font.lineHeight) / 2 + 1, false, Mocha.Text.argb)

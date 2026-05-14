@@ -8,6 +8,7 @@ import xyz.aerii.athen.api.rendering.ui.shapes.rectangle.rectangle
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 import xyz.aerii.library.api.shift
 import kotlin.math.abs
 import kotlin.math.max
@@ -28,13 +29,13 @@ class InputField(val placeholder: String) {
     val selectionBool: Boolean
         get() = selectionStart != -1 && selectionStart != cursor
 
-    fun draw(guiGraphics: GuiGraphics, mx: Int, my: Int, x: Int, y: Int, w: Int, onZone: ((Int, Int, Int, Int) -> Unit)? = null) {
+    fun draw(graphics: GuiGraphics, x: Int, y: Int, w: Int, onZone: ((Int, Int, Int, Int) -> Unit)? = null) {
         val fh = 16
-        val hovered = mx in x until x + w && my in y until y + fh
-        guiGraphics.rectangle(x, y, w, fh, if (focused) Mocha.Surface2.argb else if (hovered) Mocha.Surface1.argb else Mocha.Surface0.argb)
-        guiGraphics.outline(x, y, w, fh, 1, if (focused) Mocha.Mauve.argb else Mocha.Overlay0.argb)
+        val hovered = hovered(x, y, w, fh, true)
+        graphics.rectangle(x, y, w, fh, if (focused) Mocha.Surface2.argb else if (hovered) Mocha.Surface1.argb else Mocha.Surface0.argb)
+        graphics.outline(x, y, w, fh, 1, if (focused) Mocha.Mauve.argb else Mocha.Overlay0.argb)
 
-        guiGraphics.enableScissor(x + 2, y, x + w - 2, y + fh)
+        graphics.enableScissor(x + 2, y, x + w - 2, y + fh)
 
         val displayTxt = if (value.isEmpty() && !focused) placeholder else value
         val color = if (value.isEmpty() && !focused) Mocha.Subtext0.argb else Mocha.Text.argb
@@ -53,17 +54,17 @@ class InputField(val placeholder: String) {
             val (s, e) = selection
             val s1 = client.font.width(value.substring(0, s))
             val s2 = client.font.width(value.substring(0, e))
-            guiGraphics.rectangle(tx + s1, y + 2, s2 - s1, fh - 4, Mocha.Mauve.withAlpha(0.5f))
+            graphics.rectangle(tx + s1, y + 2, s2 - s1, fh - 4, Mocha.Mauve.withAlpha(0.5f))
         }
 
-        guiGraphics.extractText(displayTxt, tx, y + (fh - client.font.lineHeight) / 2 + 1, false, color)
+        graphics.extractText(displayTxt, tx, y + (fh - client.font.lineHeight) / 2 + 1, false, color)
 
         if (focused && (System.currentTimeMillis() / 500) % 2 == 0L) {
             val cx = client.font.width(value.substring(0, cursor))
-            guiGraphics.rectangle(tx + cx, y + 2, 1, fh - 4, Mocha.Mauve.argb)
+            graphics.rectangle(tx + cx, y + 2, 1, fh - 4, Mocha.Mauve.argb)
         }
 
-        guiGraphics.disableScissor()
+        graphics.disableScissor()
         onZone?.invoke(x, y, w, fh)
     }
 

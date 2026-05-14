@@ -8,6 +8,7 @@ import xyz.aerii.athen.handlers.Scram
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 class UpdateGUI(
     private val currentVersion: String,
@@ -24,10 +25,10 @@ class UpdateGUI(
 
     override fun onScramRender(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         graphics.rectangle(0, 0, width, height, Mocha.Crust.withAlpha(0.6f))
-        graphics.drawPanel(mouseX, mouseY, (width - 360) / 2, (height - 175) / 2)
+        graphics.drawPanel((width - 360) / 2, (height - 175) / 2)
     }
 
-    private fun GuiGraphics.drawPanel(mouseX: Int, mouseY: Int, px: Int, py: Int) {
+    private fun GuiGraphics.drawPanel(px: Int, py: Int) {
         rectangle(px, py, 360, 28, Mocha.Base.argb)
         rectangle(px, py + 28, 360, 175 - 28, Mocha.Mantle.argb)
         outline(px, py, 360, 175, 1, Mocha.Surface0.argb)
@@ -46,13 +47,13 @@ class UpdateGUI(
 
         rectangle(px + 16, b + a + 30, 330, 1, Mocha.Surface0.argb)
 
-        drawButton(mouseX, mouseY, px + 16, py + 175 - 34, "Update Now",   Mocha.Green.argb)
-        drawButton(mouseX, mouseY, px + 128, py + 175 - 34, "Remind Later", Mocha.Peach.argb)
-        drawButton(mouseX, mouseY, px + 240, py + 175 - 34, if (booling) "Confirm?" else "Skip Version", Mocha.Red.argb)
+        drawButton(px + 16, py + 175 - 34, "Update Now",   Mocha.Green.argb)
+        drawButton(px + 128, py + 175 - 34, "Remind Later", Mocha.Peach.argb)
+        drawButton(px + 240, py + 175 - 34, if (booling) "Confirm?" else "Skip Version", Mocha.Red.argb)
     }
 
-    private fun GuiGraphics.drawButton( mouseX: Int, mouseY: Int, x: Int, y: Int, label: String, color: Int) {
-        val b = mouseX in x until x + 104 && mouseY in y until y + 22
+    private fun GuiGraphics.drawButton(x: Int, y: Int, label: String, color: Int) {
+        val b = hovered(x, y, 104, 22, true)
         rectangle(x, y, 104, 22, if (b) color else Mocha.Surface1.argb)
         outline(x, y, 104, 22, 1, color)
         extractText(label, x + (104 - client.font.width(label)) / 2, y + (22 - client.font.lineHeight) / 2 + 1, false, if (b) Mocha.Base.argb else color)
@@ -66,7 +67,7 @@ class UpdateGUI(
 
         fun fn(i: Int): Boolean {
             val xo = x + i * (104 + 8)
-            return mouseX in xo until xo + 104 && mouseY in y until y + 22
+            return hovered(xo, y, 104, 22, true)
         }
 
         when {

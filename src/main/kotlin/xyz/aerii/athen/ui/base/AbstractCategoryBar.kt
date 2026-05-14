@@ -9,6 +9,7 @@ import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 abstract class AbstractCategoryBar(
     protected val height0: Int,
@@ -33,7 +34,7 @@ abstract class AbstractCategoryBar(
     protected abstract fun categories(): List<ICategoryEntry>
     abstract fun addCategory(name: String)
 
-    fun draw(graphics: GuiGraphics, mx: Int, my: Int, sx: Int, sy: Int, sh: Int, modalOpen: Boolean, zones: MutableList<UIZone>) {
+    fun draw(graphics: GuiGraphics, sx: Int, sy: Int, sh: Int, modalOpen: Boolean, zones: MutableList<UIZone>) {
         graphics.rectangle(sx, sy, height0, sh, Mocha.Base.argb)
         graphics.outline(sx, sy, height0, sh, 1, Mocha.Surface0.argb)
 
@@ -48,14 +49,14 @@ abstract class AbstractCategoryBar(
         tooltipText = null
 
         if (selected == null) graphics.rectangle(lx, cy, lw, height1, Mocha.Surface0.argb)
-        else if (!modalOpen && mx in lx until lx + lw && my in cy until cy + height1) graphics.rectangle(lx, cy, lw, height1, Mocha.Surface0.withAlpha(0.5f))
+        else if (!modalOpen && hovered(lx, cy, lw, height1, true)) graphics.rectangle(lx, cy, lw, height1, Mocha.Surface0.withAlpha(0.5f))
 
         graphics.extractText("All", lx + 4, cy + (height1 - client.font.lineHeight) / 2 + 1, false, if (selected == null) Mocha.Mauve.argb else Mocha.Subtext0.argb)
         zones.add(UIZone(lx, cy, lw, height1, zone0, category = ""))
         cy += height1
 
         for ((i, cat) in cats.withIndex()) {
-            val b = !modalOpen && mx in lx until lx + lw && my in cy until cy + height1
+            val b = !modalOpen && hovered(lx, cy, lw, height1, true)
 
             if (deleting == cat.name) {
                 graphics.rectangle(lx + 1, cy + 1, lw - 2, height1 - 2, Mocha.Red.withAlpha(0.15f))
@@ -92,7 +93,7 @@ abstract class AbstractCategoryBar(
 
             val tx = lx + lw - 14
             val ty = cy + (height1 - 10) / 2
-            val th = !modalOpen && mx in tx until tx + 10 && my in ty until ty + 10
+            val th = !modalOpen && hovered(tx, ty, 10, 10, true)
             graphics.rectangle(tx, ty, 10, 10, if (th) Mocha.Surface2.argb else Mocha.Mantle.argb)
             graphics.outline(tx, ty, 10, 10, 1, if (cat.enabled) Mocha.Green.argb else Mocha.Overlay0.argb)
             if (cat.enabled) graphics.rectangle(tx + 2, ty + 2, 6, 6, Mocha.Green.argb)
@@ -103,12 +104,12 @@ abstract class AbstractCategoryBar(
         }
 
         if (creating) {
-            nameField.draw(graphics, mx, my, lx, cy + 2, lw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, zone2)) }
+            nameField.draw(graphics, lx, cy + 2, lw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, zone2)) }
             graphics.disableScissor()
             return
         }
 
-        if (!modalOpen && mx in lx until lx + lw && my in cy + 2 until cy + 16) graphics.rectangle(lx, cy + 2, lw, 14, Mocha.Surface0.withAlpha(0.5f))
+        if (!modalOpen && hovered(lx, cy + 2, lw, 14, true)) graphics.rectangle(lx, cy + 2, lw, 14, Mocha.Surface0.withAlpha(0.5f))
         graphics.extractText("+", lx + (lw - client.font.width("+")) / 2, cy + 2 + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
         zones.add(UIZone(lx, cy + 2, lw, 14, zone2))
         graphics.disableScissor()

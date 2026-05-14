@@ -14,6 +14,7 @@ import xyz.aerii.athen.ui.InputField
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
     private enum class ZoneType : IZoneType {
@@ -67,8 +68,8 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         val px = (width - pw) / 2
         val py = (height - ph) / 2
 
-        graphics.profiles(mouseX, mouseY, px, py, ph)
-        graphics.preview(mouseX, mouseY, px + sideW + gapW, py, previewW, ph)
+        graphics.profiles(px, py, ph)
+        graphics.preview(px + sideW + gapW, py, previewW, ph)
 
         tt?.let { tip ->
             val tw = client.font.width(tip)
@@ -78,7 +79,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         }
     }
 
-    private fun GuiGraphics.profiles(mx: Int, my: Int, sx: Int, sy: Int, sh: Int) {
+    private fun GuiGraphics.profiles(sx: Int, sy: Int, sh: Int) {
         val sideW = 110
         rectangle(sx, sy, sideW, sh, Mocha.Base.argb)
         outline(sx, sy, sideW, sh, 1, Mocha.Surface0.argb)
@@ -93,7 +94,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         var cy = sy + 4 + s
 
         for (name in names) {
-            val hov = mx in lx until lx + lw && my in cy until cy + rowH
+            val hov = hovered(lx, cy, lw, rowH, true)
             val selected = name == SlotBinds.active
 
             if (deleting == name) {
@@ -131,9 +132,9 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         }
 
         if (creating) {
-            name.draw(this, mx, my, lx, cy + 2, lw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.PROFILE_NAME)) }
+            name.draw(this, lx, cy + 2, lw) { zx, zy, zw, zh -> zones.add(UIZone(zx, zy, zw, zh, ZoneType.PROFILE_NAME)) }
         } else {
-            if (mx in lx until lx + lw && my in cy + 2 until cy + 16) rectangle(lx, cy + 2, lw, 14, Mocha.Surface0.withAlpha(0.5f))
+            if (hovered(lx, cy + 2, lw, 14, true)) rectangle(lx, cy + 2, lw, 14, Mocha.Surface0.withAlpha(0.5f))
             extractText("+", lx + (lw - client.font.width("+")) / 2, cy + 2 + (14 - client.font.lineHeight) / 2 + 1, false, Mocha.Overlay0.argb)
             zones.add(UIZone(lx, cy + 2, lw, 14, ZoneType.PROFILE_ADD))
         }
@@ -143,7 +144,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         s = s.coerceIn(ms, 0)
     }
 
-    private fun GuiGraphics.preview(mx: Int, my: Int, px: Int, py: Int, pw: Int, ph: Int) {
+    private fun GuiGraphics.preview(px: Int, py: Int, pw: Int, ph: Int) {
         rectangle(px, py, pw, ph, Mocha.Base.argb)
         outline(px, py, pw, ph, 1, Mocha.Surface0.argb)
 
@@ -166,8 +167,8 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
             extractText(lbl, x + (18 - client.font.width(lbl)) / 2, y + (18 - client.font.lineHeight) / 2 + 1, false, if (bool) Mocha.Lavender.argb else if (bound) bc else Mocha.Subtext0.argb)
 
             zones.add(UIZone(x, y, 18, 18, ZoneType.SLOT, data = slot))
-            if (mx in x until x + 18 && my in y until y + 18) {
-                if (selected != null && (selected!! in 36..44) != (slot in 36..44)) {
+            if (hovered(x, y, 18, 18, true)) {
+                if (selected != null && (selected!! in 36..44)) {
                     tt = "Click to bind"
                     tc = Mocha.Green.argb
                 } else if (bound) {
@@ -197,8 +198,8 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
             extractText(lbl, x + (18 - client.font.width(lbl)) / 2, y + (18 - client.font.lineHeight) / 2 + 1, false, if (bool) Mocha.Lavender.argb else if (bound) bc else Mocha.Subtext0.argb)
 
             zones.add(UIZone(x, y, 18, 18, ZoneType.SLOT, data = slot))
-            if (mx in x until x + 18 && my in y until y + 18) {
-                if (selected != null && (selected!! in 36..44) != (slot in 36..44)) {
+            if (hovered(x, y, 18, 18, true)) {
+                if (selected != null && selected!! !in 36..44) {
                     tt = "Click to bind"
                     tc = Mocha.Green.argb
                 } else if (bound) {
@@ -228,7 +229,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
     override fun onScramMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean {
         if (creating) {
             val z = zones.firstOrNull { it.type == ZoneType.PROFILE_NAME }
-            if (z != null && mouseX in z.x until z.x + z.w && mouseY in z.y until z.y + z.h) {
+            if (z != null && hovered(z.x, z.y, z.w, z.h, true)) {
                 if (button == 0) {
                     name.focused = true
                     name.updateClick(mouseX, z.x)
@@ -241,7 +242,7 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
             return true
         }
 
-        val sz = zones.lastOrNull { it.type == ZoneType.SLOT && mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+        val sz = zones.lastOrNull { it.type == ZoneType.SLOT && hovered(it.x, it.y, it.w, it.h, true) }
         if (sz != null) {
             val slot = sz.data
             val bound = fn(slot)
@@ -278,14 +279,14 @@ object SlotBindsGUI : Scram("Slot Binds Editor [Athen]") {
         }
 
         if (button == 1) {
-            val z = zones.lastOrNull { it.type == ZoneType.PROFILE_TAB && it.category.isNotEmpty() && mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+            val z = zones.lastOrNull { it.type == ZoneType.PROFILE_TAB && it.category.isNotEmpty() && hovered(it.x, it.y, it.w, it.h, true) }
             deleting = if (z == null || deleting == z.category) null else z.category
             return true
         }
 
         if (button != 0) return false
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h } ?: return false
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) } ?: return false
         val zt = hit.type as? ZoneType ?: return false
 
         when (zt) {

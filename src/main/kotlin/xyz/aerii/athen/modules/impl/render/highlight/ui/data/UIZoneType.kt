@@ -13,5 +13,6 @@ enum class UIZoneType : IZoneType {
     MODAL_COLOR,
     MODAL_MAX_HP,
     MODAL_SAVE,
-    MODAL_CANCEL
+    MODAL_CANCEL,
+    MODAL_SUGGESTION
 }

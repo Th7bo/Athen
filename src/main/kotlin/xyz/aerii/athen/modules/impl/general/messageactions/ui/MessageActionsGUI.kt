@@ -15,6 +15,7 @@ import xyz.aerii.athen.modules.impl.general.messageactions.ui.actions.ActionsLis
 import xyz.aerii.athen.ui.UIZone
 import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.library.api.client
+import xyz.aerii.library.utils.hovered
 
 object MessageActionsGUI : Scram("Message actions [Athen]") {
     private val entries = mutableListOf<ActionEntryView>()
@@ -46,7 +47,7 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
         val px = (width - 576) / 2
         val py = (height - 300) / 2
 
-        categoryBar.draw(graphics, mouseX, mouseY, px, py, 300, modal.open, zones)
+        categoryBar.draw(graphics, px, py, 300, modal.open, zones)
 
         val x = px + 116
         graphics.rectangle(x, py, 460, 300, Catppuccin.Mocha.Base.argb)
@@ -54,19 +55,19 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
 
         val list = categoryBar.selected?.let { s -> entries.filter { it.entry.category == s } } ?: entries
         listRenderer.draw(graphics, mouseX, mouseY, x + 6, py + 6, 448, 260, list, modal.open, zones)
-        footer(graphics, mouseX, mouseY, x, py)
+        footer(graphics, x, py)
 
         if (!modal.open) categoryBar.tooltip(graphics)
         if (modal.open) modal.draw(graphics, mouseX, mouseY, width, height, zones)
     }
 
-    private fun footer(graphics: GuiGraphics, mx: Int, my: Int, mainX: Int, py: Int) {
+    private fun footer(graphics: GuiGraphics, mainX: Int, py: Int) {
         val y0 = py + 272
         graphics.rectangle(mainX, y0, 460, 1, Catppuccin.Mocha.Surface0.argb)
 
         val x0 = mainX + 170
         val y1 = y0 + 6
-        graphics.rectangle(x0, y1, 120, 16, if (!modal.open && mx in x0 until x0 + 120 && my in y1 until y1 + 16) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
+        graphics.rectangle(x0, y1, 120, 16, if (!modal.open && hovered(x0, y1, 120, 16, true)) Catppuccin.Mocha.Surface2.argb else Catppuccin.Mocha.Surface1.argb)
         graphics.outline(x0, y1, 120, 16, 1, Catppuccin.Mocha.Green.argb)
         graphics.extractText("+ Create Action", x0 + (120 - client.font.width("+ Create Action")) / 2, y1 + (16 - client.font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Green.argb)
         zones.add(UIZone(x0, y1, 120, 16, UIZoneType.BUTTON_CREATE))
@@ -74,13 +75,13 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
 
     override fun onScramMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean {
         if (modal.open) {
-            click(mouseX, mouseY, button)
+            click(mouseX, button)
             return true
         }
 
         if (categoryBar.creating) {
             val z = zones.firstOrNull { it.type == UIZoneType.CATEGORY_ADD }
-            if (z != null && mouseX in z.x until z.x + z.w && mouseY in z.y until z.y + z.h) {
+            if (z != null && hovered(z.x, z.y, z.w, z.h, true)) {
                 if (button == 0) {
                     categoryBar.nameField.focused = true
                     categoryBar.nameField.updateClick(mouseX, z.x)
@@ -95,7 +96,7 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
         }
 
         if (button == 1) {
-            val z = zones.lastOrNull { it.type == UIZoneType.CATEGORY_TAB && it.category.isNotEmpty() && mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+            val z = zones.lastOrNull { it.type == UIZoneType.CATEGORY_TAB && it.category.isNotEmpty() && hovered(it.x, it.y, it.w, it.h, true) }
             categoryBar.deleting = if (z == null || categoryBar.deleting == z.category) null else z.category
             return true
         }
@@ -104,7 +105,7 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
             return false
         }
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h } ?: return false
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) } ?: return false
 
         if (hit.type == UIZoneType.BUTTON_CREATE) {
             modal.open()
@@ -160,12 +161,12 @@ object MessageActionsGUI : Scram("Message actions [Athen]") {
         return true
     }
 
-    private fun click(mouseX: Int, mouseY: Int, button: Int) {
-        if (modal.matchOpen) return modal.click0(mouseX, mouseY)
-        if (modal.catOpen) return modal.click1(mouseX, mouseY)
+    private fun click(mouseX: Int, button: Int) {
+        if (modal.matchOpen) return modal.click0(mouseX)
+        if (modal.catOpen) return modal.click1(mouseX)
         if (button != 0) return
 
-        val hit = zones.lastOrNull { mouseX in it.x until it.x + it.w && mouseY in it.y until it.y + it.h }
+        val hit = zones.lastOrNull { hovered(it.x, it.y, it.w, it.h, true) }
         val p0 = modal.patternField.focused
         val p1 = modal.valueField.focused
         val p2 = modal.delayField.focused
