@@ -57,6 +57,11 @@ object MelodySolver : ITerminal(TerminalType.MELODY) {
         }
     }
 
+    fun click(int: Int) {
+        if (int !in 1..4) return
+        click(16 + (int - 1) * 9, 0)
+    }
+
     override fun forSlot(slot: Int): Click? = (slot in listOf(16, 25, 34, 43)).also { if (it) click(slot, 0) }.let { null }
 
     override fun valid(click: Click): Boolean = false

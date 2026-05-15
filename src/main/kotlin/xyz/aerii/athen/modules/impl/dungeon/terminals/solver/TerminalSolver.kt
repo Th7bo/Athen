@@ -4,6 +4,7 @@ package xyz.aerii.athen.modules.impl.dungeon.terminals.solver
 
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
+import org.lwjgl.glfw.GLFW
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.api.dungeon.terminals.TerminalAPI
 import xyz.aerii.athen.api.dungeon.terminals.TerminalType
@@ -36,6 +37,16 @@ object TerminalSolver : Module(
     val keybindR by config.keybind("Keybind right click").childOf { settingsExpandable }
     val `rubix$left` by config.switch("Rubix: left click only").childOf { settingsExpandable }
     val solve by config.multiCheckbox("Enabled solvers", listOf("Colors", "Melody", "Name", "Numbers", "Panes", "Rubix"), listOf(0, 1, 2, 3, 4, 5)).childOf { settingsExpandable }
+
+    private val rubixExpandable by config.expandable("Rubix")
+    val `rubix$left` by config.switch("Left click only").childOf { rubixExpandable }
+
+    private val melodyExpandable by config.expandable("Melody")
+    val `melody$num` by config.switch("Number keys").childOf { melodyExpandable }
+    val `melody$key0` by config.keybind("Keybind 1", GLFW.GLFW_KEY_1).dependsOn { `melody$num` }.childOf { melodyExpandable }
+    val `melody$key1` by config.keybind("Keybind 2", GLFW.GLFW_KEY_2).dependsOn { `melody$num` }.childOf { melodyExpandable }
+    val `melody$key2` by config.keybind("Keybind 3", GLFW.GLFW_KEY_3).dependsOn { `melody$num` }.childOf { melodyExpandable }
+    val `melody$key3` by config.keybind("Keybind 4", GLFW.GLFW_KEY_4).dependsOn { `melody$num` }.childOf { melodyExpandable }
 
     private val guiExpandable by config.expandable("GUI")
     val `ui$scale` by config.slider("Scale", 1f, 0.1f, 3f, showDouble = true).childOf { guiExpandable }
@@ -106,11 +117,27 @@ object TerminalSolver : Module(
         }.runWhen(TerminalAPI.terminalOpen)
 
         on<GuiEvent.Input.Key.Press> {
-            TerminalAPI.currentTerminal ?: return@on
+            val t = TerminalAPI.currentTerminal ?: return@on
             if (client.player?.containerMenu?.containerId != TerminalAPI.lastId) return@on
             if (System.currentTimeMillis() - TerminalAPI.openTime < fcDelay) return@on
 
             when (keyEvent.key) {
+                `melody$key0` if t == TerminalType.MELODY -> {
+                    MelodySolver.click(1)
+                }
+
+                `melody$key1` if t == TerminalType.MELODY -> {
+                    MelodySolver.click(2)
+                }
+
+                `melody$key2` if t == TerminalType.MELODY -> {
+                    MelodySolver.click(3)
+                }
+
+                `melody$key3` if t == TerminalType.MELODY -> {
+                    MelodySolver.click(4)
+                }
+
                 keybindL -> {
                     c(mouse = 0)
                     cancel()
