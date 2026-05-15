@@ -35,7 +35,6 @@ object TerminalSolver : Module(
     val dropKey by config.switch("Allow using drop key", true).childOf { settingsExpandable }
     val keybindL by config.keybind("Keybind left click").childOf { settingsExpandable }
     val keybindR by config.keybind("Keybind right click").childOf { settingsExpandable }
-    val `rubix$left` by config.switch("Rubix: left click only").childOf { settingsExpandable }
     val solve by config.multiCheckbox("Enabled solvers", listOf("Colors", "Melody", "Name", "Numbers", "Panes", "Rubix"), listOf(0, 1, 2, 3, 4, 5)).childOf { settingsExpandable }
 
     private val rubixExpandable by config.expandable("Rubix")
@@ -51,24 +50,28 @@ object TerminalSolver : Module(
     private val guiExpandable by config.expandable("GUI")
     val `ui$scale` by config.slider("Scale", 1f, 0.1f, 3f, showDouble = true).childOf { guiExpandable }
     val `ui$roundness` by config.slider("Roundness", 0f, 0f, 10f, showDouble = true).childOf { guiExpandable }
-    val `ui$bg` by config.colorPicker("Background", Color(0, 0, 0, 150)).childOf { guiExpandable }
-    val `ui$hideHeader` by config.switch("Hide header", true).childOf { guiExpandable }
-    val `ui$hideTitle` by config.switch("Hide title", true).dependsOn { `ui$hideHeader` }.childOf { guiExpandable }
-    val `ui$titleColor` by config.colorPicker("Title color", Color(Mocha.Subtext0.argb, true)).dependsOn { `ui$hideHeader` && !`ui$hideTitle` }.childOf { guiExpandable }
-    val `ui$border` by config.colorPicker("Border", Color(Mocha.Mauve.argb, true)).childOf { guiExpandable }
-    val `ui$header` by config.colorPicker("Header", Color(20, 20, 20, 200)).childOf { guiExpandable }
-    val `ui$slots$fill` by config.switch("Slots: Fill").childOf { guiExpandable }
-    val `ui$slots$roundness` by config.slider("Slots: Roundness", 0f, 0f, 10f, showDouble = true).childOf { guiExpandable }
-    val `ui$gap` by config.slider("Gap", 2f, 0f, 10f, showDouble = true).childOf { guiExpandable }
-    val `ui$melodyGap` by config.slider("Melody gap", 2f, 0f, 10f, showDouble = true).childOf { guiExpandable }
     val `ui$padding` by config.slider("Padding", 5f, 0f, 20f, showDouble = true).childOf { guiExpandable }
-    val `ui$numbers$showText` by config.switch("Numbers: Text", true).childOf { guiExpandable }
+    val `ui$gap` by config.slider("Slot gap", 2f, 0f, 10f, showDouble = true).childOf { guiExpandable }
+    val `ui$melodyGap` by config.slider("Melody gap", 2f, 0f, 10f, showDouble = true).childOf { guiExpandable }
+    val `ui$bg` by config.colorPicker("Background color", Color(0, 0, 0, 150)).childOf { guiExpandable }
+    val `ui$border` by config.colorPicker("Border color", Color(Mocha.Mauve.argb, true)).childOf { guiExpandable }
+
+    private val slotsExpandable by config.expandable("Slots")
+    val `ui$slots$fill` by config.switch("Fill").childOf { slotsExpandable }
+    val `ui$slots$roundness` by config.slider("Roundness", 0f, 0f, 10f, showDouble = true).childOf { slotsExpandable }
+    val `ui$numbers$showText` by config.switch("Numbers: Show text", true).childOf { slotsExpandable }
+
+    private val headerExpandable by config.expandable("Header")
+    val `ui$hideHeader` by config.switch("Hide header", true).childOf { headerExpandable }
+    val `ui$hideTitle` by config.switch("Hide title", true).dependsOn { `ui$hideHeader` }.childOf { headerExpandable }
+    val `ui$titleColor` by config.colorPicker("Title color", Color(Mocha.Subtext0.argb, true)).dependsOn { `ui$hideHeader` && !`ui$hideTitle` }.childOf { headerExpandable }
+    val `ui$header` by config.colorPicker("Header color", Color(20, 20, 20, 200)).childOf { headerExpandable }
 
     private val soundExpandable by config.expandable("Sounds")
     val `sound$enabled` by config.switch("Enable sounds").childOf { soundExpandable }
     val clickSound by config.sound("Click sound", "block.note_block.pling").childOf { soundExpandable }
 
-    private val colorExpandable by config.expandable("Colors")
+    private val colorExpandable by config.expandable("Solver colors")
     val `colors$correct` by config.colorPicker("Colors: Solution", Color(0, 255, 0, 180)).childOf { colorExpandable }
     val `names$correct` by config.colorPicker("Names: Solution", Color(0, 255, 0, 180)).childOf { colorExpandable }
     val `panes$correct` by config.colorPicker("Panes: Solution", Color(0, 255, 0, 180)).childOf { colorExpandable }
