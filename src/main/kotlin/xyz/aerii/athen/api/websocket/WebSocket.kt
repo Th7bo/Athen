@@ -66,7 +66,14 @@ object WebSocket : ICommand {
         auth = false
 
         val s = UUID.randomUUID().toString()
-        client.services().sessionService().joinServer(client.user.profileId, client.user.accessToken, s)
+
+        try {
+            client.services().sessionService().joinServer(client.user.profileId, client.user.accessToken, s)
+        } catch (e: Exception) {
+            Athen.LOGGER.error("Failed to authenticate with Mojang!", e)
+            "Failed to authenticate with Mojang! This shouldn't happen, please message @skies.starred on discord with a copy of your logs.".modMessage(Typo.PrefixType.ERROR)
+            return
+        }
 
         http.newWebSocketBuilder().buildAsync(url, object : WebSocket.Listener {
             private val buffer = StringBuilder()
