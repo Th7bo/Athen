@@ -55,6 +55,10 @@ object IRC : Module(
                 ob.value = b
                 "Send all messages to IRC <gray>➤ ${if (b) "<green>Enabled" else "<red>Disabled"}".parse().modMessage()
             }
+
+            "help" {
+                help()
+            }
         }
 
         command(Athen.modId) {
