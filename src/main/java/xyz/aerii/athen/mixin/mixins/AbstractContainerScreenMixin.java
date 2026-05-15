@@ -72,6 +72,8 @@ public class AbstractContainerScreenMixin {
         if (hoveredSlot == athen$previousHoveredSlot) return;
 
         if (hoveredSlot != null) new GuiEvent.Slots.Hover(hoveredSlot).post();
+        else new GuiEvent.Slots.Unhover(athen$previousHoveredSlot).post();
+
         athen$previousHoveredSlot = hoveredSlot;
     }
 }

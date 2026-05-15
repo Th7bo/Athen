@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack
 import xyz.aerii.athen.accessors.hovered
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.config.ConfigBuilder
+import xyz.aerii.athen.ducks.item.`athen$cached$tooltip`
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.on
 import xyz.aerii.library.api.client
@@ -19,63 +20,54 @@ object Itemizer { // TODO: make this check the parent config of added keys if th
     private val pressed = mutableSetOf<Int>()
 
     private val `watched$tooltip` = mutableListOf<() -> Int>()
-    private val `cache$tooltip` = WeakHashMap<ItemStack, Pair<List<*>, List<*>>>()
-
     private val `watched$slot` = mutableListOf<() -> Int>()
+
     private val `cache$slot` = WeakHashMap<Slot, Pair<ItemStack, List<(GuiGraphics, Slot) -> Unit>?>>()
-
-    fun Slot.`invalidate$render`() {
-        `cache$slot`.remove(this)
-    }
-
-    fun ItemStack.`invalidate$tooltip`() {
-        `cache$tooltip`.remove(this)
-    }
 
     init {
         on<GuiEvent.Close.Container> {
             `cache$slot`.clear()
-            `cache$tooltip`.clear()
         }
 
         on<GuiEvent.Slots.Hover> {
-            slot.item?.takeIf { !it.isEmpty }?.`invalidate$tooltip`()
+            slot.item?.takeIf { !it.isEmpty }?.`athen$cached$tooltip` = null
         }
 
         on<GuiEvent.Input.Key.Press> {
             if (!pressed.add(keyEvent.key)) return@on
             val screen = client.screen as? AbstractContainerScreen<*> ?: return@on
 
-            if (`watched$tooltip`.any { it() == keyEvent.key }) screen.hovered?.item?.`invalidate$tooltip`()
-            if (`watched$slot`.any { it() == keyEvent.key }) screen.menu?.slots?.forEach { it.`invalidate$render`() }
+            if (`watched$tooltip`.any { it() == keyEvent.key }) screen.hovered?.item?.`athen$cached$tooltip` = null
+            if (`watched$slot`.any { it() == keyEvent.key }) screen.menu?.slots?.forEach { `cache$slot`.remove(it) }
         }
 
         on<GuiEvent.Input.Key.Release> {
             if (!pressed.remove(keyEvent.key)) return@on
             val screen = client.screen as? AbstractContainerScreen<*> ?: return@on
 
-            if (`watched$tooltip`.any { it() == keyEvent.key }) screen.hovered?.item?.`invalidate$tooltip`()
-            if (`watched$slot`.any { it() == keyEvent.key }) screen.menu?.slots?.forEach { it.`invalidate$render`() }
+            if (`watched$tooltip`.any { it() == keyEvent.key }) screen.hovered?.item?.`athen$cached$tooltip` = null
+            if (`watched$slot`.any { it() == keyEvent.key }) screen.menu?.slots?.forEach { `cache$slot`.remove(it) }
         }
 
         on<GuiEvent.Tooltip.Render> {
-            val current = tooltip.toList()
-            val cached = `cache$tooltip`[item]
+            val cached = item.`athen$cached$tooltip`
 
-            if (cached != null && cached.first == current) {
+            if (cached != null && cached.first == tooltip) {
                 tooltip.clear()
-                tooltip.addAll(cached.second as List<Nothing>)
+                tooltip.addAll(cached.second)
                 return@on
             }
 
+            val a = ArrayList(tooltip)
             GuiEvent.Tooltip.Update(item, tooltip).post()
-            `cache$tooltip`[item] = current to tooltip.toList()
+            item.`athen$cached$tooltip` = a to ArrayList(tooltip)
         }
 
         on<GuiEvent.Slots.Render.Pre> {
             val cached = `cache$slot`[slot] ?: return@on
             if (cached.first != slot.item) return@on
             if (cached.second != null) return@on
+
             cancel()
         }
 

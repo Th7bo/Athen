@@ -45,14 +45,14 @@ object ItemRarityBackground : Module(
     private val `color$divine` by config.colorPicker("Divine color", Color(SkyBlockRarity.DIVINE.color)).childOf { colorExpandable }
     private val `color$special` by config.colorPicker("Special color", Color(SkyBlockRarity.SPECIAL.color)).childOf { colorExpandable }
 
-    private val common = Resourceful.identify("common")
-    private val uncommon = Resourceful.identify("uncommon")
-    private val rare = Resourceful.identify("rare")
-    private val epic = Resourceful.identify("epic")
-    private val leg = Resourceful.identify("legendary")
-    private val mythic = Resourceful.identify("mythic")
-    private val divine = Resourceful.identify("divine")
-    private val special = Resourceful.identify("special")
+    private val common = Resourceful.identify("rarity/common")
+    private val uncommon = Resourceful.identify("rarity/uncommon")
+    private val rare = Resourceful.identify("rarity/rare")
+    private val epic = Resourceful.identify("rarity/epic")
+    private val leg = Resourceful.identify("rarity/legendary")
+    private val mythic = Resourceful.identify("rarity/mythic")
+    private val divine = Resourceful.identify("rarity/divine")
+    private val special = Resourceful.identify("rarity/special")
 
     init {
         on<GuiEvent.Items.Render.Pre> {

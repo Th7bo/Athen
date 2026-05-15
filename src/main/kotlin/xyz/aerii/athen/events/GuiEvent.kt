@@ -116,6 +116,10 @@ sealed class GuiEvent {
         data class Hover(
             val slot: Slot
         ) : Event()
+
+        data class Unhover(
+            val slot: Slot
+        ) : Event()
     }
 
     sealed class Items {

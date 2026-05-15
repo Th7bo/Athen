@@ -49,7 +49,6 @@ public class GuiGraphicsMixin {
         else ScrollableTooltip.fn(self(), font, components, x, y, positioner, background);
     }
 
-
     @Unique
     private GuiGraphics self() {
         return (GuiGraphics) (Object) this;

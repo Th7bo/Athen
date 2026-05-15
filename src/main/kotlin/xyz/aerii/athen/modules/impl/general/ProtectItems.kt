@@ -21,11 +21,11 @@ import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.PlayerEvent
 import xyz.aerii.athen.events.core.runWhen
+import xyz.aerii.athen.handlers.Itemizer.`watch$slot`
 import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
-import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.held
 import xyz.aerii.library.api.lie
@@ -46,7 +46,7 @@ object ProtectItems : Module(
 
     private val render = config.switch("Render protected").custom("render")
     private val renderKey by config.switch("Only when key pressed", true).dependsOn { render.value }
-    private val renderKeybind by config.keybind("Keybind", GLFW.GLFW_KEY_P).dependsOn { render.value }
+    private val renderKeybind by config.keybind("Keybind", GLFW.GLFW_KEY_P).`watch$slot`().dependsOn { render.value }
 
     private val scribble = Scribble("features/protectItems")
     private val uuids = scribble.mutableSet("uuid", Codec.STRING)
@@ -75,9 +75,10 @@ object ProtectItems : Module(
 
         on<GuiEvent.Slots.Render.Update> {
             if (!slot.item.fn()) return@on
+            if (renderKey && !renderKeybind.pressed) return@on
 
             renders.add { graphics, slot ->
-                if (!renderKey || (renderKeybind.bound && renderKeybind.pressed)) graphics.extractText(p, slot.x, slot.y)
+                graphics.extractText(p, slot.x, slot.y)
             }
         }.runWhen(render.state)
 
