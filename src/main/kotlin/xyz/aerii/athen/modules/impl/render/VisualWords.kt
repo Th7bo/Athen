@@ -119,7 +119,7 @@ object VisualWords : Module(
     private fun String.fn() {
         if (nameChanger.value && isNotEmpty()) {
             val cmp = parse(true)
-            words.put(name, this, cmp, cmp.visualOrderText)
+            words.put(name, cmp.string, cmp, cmp.visualOrderText)
             words.build()
             return
         }
