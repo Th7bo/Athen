@@ -4,6 +4,7 @@ package xyz.aerii.athen.modules.impl.slayer
 
 import net.minecraft.util.FormattedCharSequence
 import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerMob
+import tech.thatgravyboat.skyblockapi.api.area.slayer.SlayerType
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
@@ -23,6 +24,7 @@ import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
 import xyz.aerii.library.utils.literal
+import xyz.aerii.library.utils.stripped
 import xyz.aerii.library.utils.toDuration
 
 @Load
@@ -102,6 +104,7 @@ object SlayerStats : Module(
 
         on<SlayerEvent.Boss.Death> {
             if (!slayerInfo.isOwnedByPlayer) return@on
+            if (slayerInfo.type == SlayerType.TARANTULA_BROODFATHER && slayerInfo.tier == 5 && entity.customName?.stripped()?.contains("Conjoined Brood") != true) return@on
 
             kills++
             total += entity.tickCount / 20.0
