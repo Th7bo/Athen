@@ -228,11 +228,13 @@ object MobHighlight : Module(
         }
 
         on<InputEvent.Keyboard.Press> {
+            if (client.screen != null) return@on
             if (keyEvent.key() != keybind) return@on
             fn()
         }
 
         on<InputEvent.Mouse.Press> {
+            if (client.screen != null) return@on
             if (buttonInfo.button() != keybind) return@on
             fn()
         }
