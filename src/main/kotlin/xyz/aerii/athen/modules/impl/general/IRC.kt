@@ -44,6 +44,9 @@ object IRC : Module(
     init {
         command("airc") {
             greedyString("message") {
+                if (!auth) return@greedyString er0()
+                if (!enabled) return@greedyString er1()
+
                 send(string("message"))
             }
 
@@ -57,41 +60,55 @@ object IRC : Module(
         command(Athen.modId) {
             "irc" / "chat" / greedyString("message") {
                 if (!auth) return@greedyString er0()
+                if (!enabled) return@greedyString er1()
+
                 send(string("message"))
             }
 
             "irc" / "create" / string("channel") {
                 if (!auth) return@string er0()
+                if (!enabled) return@string er1()
+
                 create(string("channel"))
             }
 
             "irc" / "create" / string("channel") / string("pin") {
                 if (!auth) return@string er0()
+                if (!enabled) return@string er1()
+
                 create(string("channel"),string("pin"))
             }
 
             "irc" / "pin" / string("pin") {
                 if (!auth) return@string er0()
+                if (!enabled) return@string er1()
+
                 pin(string("pin"))
             }
 
             "irc" / "join" / string("channel") {
                 if (!auth) return@string er0()
+                if (!enabled) return@string er1()
+
                 join(string("channel"))
             }
 
             "irc" / "join" / string("channel") / string("pin") {
                 if (!auth) return@string er0()
+                if (!enabled) return@string er1()
+
                 join(string("channel"), string("pin"))
             }
 
             "irc" / "leave" {
                 if (!auth) return@invoke er0()
+
                 leave()
             }
 
             "irc" / "list" {
                 if (!auth) return@invoke er0()
+
                 list()
             }
 
@@ -230,5 +247,9 @@ object IRC : Module(
 
     private fun er0() {
         "Not connected to IRC! Use <yellow>/${Athen.modId} ws connect".parse().modMessage(Typo.PrefixType.ERROR)
+    }
+
+    private fun er1() {
+        "<red>IRC module not enabled!".parse().modMessage(Typo.PrefixType.ERROR)
     }
 }
