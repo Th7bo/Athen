@@ -20,6 +20,7 @@ import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.athen.utils.render.fcs
+import xyz.aerii.library.api.client
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
@@ -104,7 +105,7 @@ object SlayerStats : Module(
 
         on<SlayerEvent.Boss.Death> {
             if (!slayerInfo.isOwnedByPlayer) return@on
-            if (slayerInfo.type == SlayerType.TARANTULA_BROODFATHER && slayerInfo.tier == 5 && entity.customName?.stripped()?.contains("Conjoined Brood") != true) return@on
+            if (slayerInfo.type == SlayerBoss.Tarantula && slayerInfo.tier == SlayerTier.Five && client.level?.getEntity(entity.id + 1)?.customName?.stripped()?.contains("Conjoined Brood") != true) return@on
 
             kills++
             total += entity.tickCount / 20.0
