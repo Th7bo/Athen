@@ -99,7 +99,6 @@ object TerminalAPI {
 
             currentItems.clear()
             for ((i, it) in items.withIndex()) if (i < (currentTerminal?.slots ?: 0)) currentItems[i] = it
-            if (currentItems.size == currentTerminal?.slots) DungeonEvent.Terminal.Update(-1, ItemStack.EMPTY).post()
         }.runWhen(state)
 
         on<PacketEvent.Process.Pre, ClientboundContainerClosePacket> {
