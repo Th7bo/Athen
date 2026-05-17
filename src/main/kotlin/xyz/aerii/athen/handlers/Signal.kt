@@ -115,13 +115,10 @@ object Signal {
             if (client.isSingleplayer) TickEvent.Server.post()
         }
 
-        //~ if >= 26.1 'WorldRenderEvents' -> 'LevelRenderEvents'
-        WorldRenderEvents.END_EXTRACTION.register { _ ->
-            WorldRenderEvent.Extract.post()
-        }
-
-        //~ if >= 26.1 'WorldRenderEvents' -> 'LevelRenderEvents'
+        //~ if >= 26.1 'WorldRenderEvents.END_MAIN' -> 'LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN'
         WorldRenderEvents.END_MAIN.register { context ->
+            WorldRenderEvent.Extract.post()
+
             //~ if >= 26.1 'matrices' -> 'poseStack'
             //~ if >= 26.1 'consumers' -> 'bufferSource'
             WorldRenderEvent.Render(context.matrices(), context.consumers() as? MultiBufferSource.BufferSource ?: return@register).post()

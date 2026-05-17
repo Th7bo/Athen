@@ -21,17 +21,15 @@ object TextRenderer : ILevelRenderer {
     }
 
     private fun fn(poseStack: PoseStack, consumers: MultiBufferSource.BufferSource) {
-        val cam = client.gameRenderer.mainCamera
+        val a = client.gameRenderer.mainCamera.rotation()
 
         for (text in LevelQueueImpl.texts) {
             poseStack.pushPose()
 
-            val pose = poseStack.last().pose()
             val scale = text.scale * 0.025f
-
-            pose.translate(text.pos.x.toFloat(), text.pos.y.toFloat(), text.pos.z.toFloat())
-                .rotate(cam.rotation())
-                .scale(scale, -scale, scale)
+            poseStack.translate(text.pos.x, text.pos.y, text.pos.z)
+            poseStack.mulPose(a)
+            poseStack.scale(scale, -scale, scale)
 
             client.font.drawInBatch(
                 text.text,
@@ -39,7 +37,7 @@ object TextRenderer : ILevelRenderer {
                 0f,
                 text.color0,
                 text.shadow,
-                pose,
+                poseStack.last().pose(),
                 consumers,
                 if (text.depth) Font.DisplayMode.NORMAL else Font.DisplayMode.SEE_THROUGH,
                 text.color1,
