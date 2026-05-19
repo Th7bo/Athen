@@ -4,7 +4,6 @@ package xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import xyz.aerii.athen.api.dungeon.terminals.TerminalAPI
 import xyz.aerii.athen.api.dungeon.terminals.TerminalType
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.base.Click
@@ -14,16 +13,13 @@ import xyz.aerii.athen.utils.nvg.NVGRenderer
 import kotlin.math.abs
 
 object RubixSolver : ITerminal(TerminalType.RUBIX) {
+    private val ints = intArrayOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
+    private val colors = listOf(Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE)
+
     override val int0 = 3
     override val int1 = 3
 
-    private val colorOrder = listOf(
-        Items.RED_STAINED_GLASS_PANE,
-        Items.ORANGE_STAINED_GLASS_PANE,
-        Items.YELLOW_STAINED_GLASS_PANE,
-        Items.GREEN_STAINED_GLASS_PANE,
-        Items.BLUE_STAINED_GLASS_PANE,
-    )
+    private var last: Int? = null
 
     override fun render(ox: Float, oy: Float, headerH: Float, uiScale: Float) {
         for (c in list) {
@@ -39,27 +35,38 @@ object RubixSolver : ITerminal(TerminalType.RUBIX) {
         }
     }
 
-    override fun forSlot(slot: Int): Click? = list.find { it.slot == slot }?.button?.let { Click(slot, if (it > 0) 0 else 1) }
+    override fun forSlot(slot: Int): Click? {
+        return list.find { it.slot == slot }?.button?.let { Click(slot, if (it > 0) 0 else 1) }
+    }
 
     override fun valid(click: Click): Boolean {
         val sol = list.find { it.slot == click.slot }
         return sol != null && ((sol.button > 0 && click.button == 0) || (sol.button < 0 && click.button == 1))
     }
 
-    override fun compute(slot: Int, item: ItemStack) {
+    override fun onClose() {
+        last = null
+        super.onClose()
+    }
+
+    override fun compute(items: List<ItemStack>) {
         list.clear()
 
         val allowed = BooleanArray(54)
-        for (s in intArrayOf(12, 13, 14, 21, 22, 23, 30, 31, 32)) allowed[s] = true
+        for (s in ints) allowed[s] = true
 
         val slots = IntArray(9)
         val ides = IntArray(9)
         var count = 0
 
-        for ((id, stack) in TerminalAPI.currentItems) {
-            if (id >= allowed.size || !allowed[id]) continue
-            val idx = colorOrder.indexOf(stack.item).takeIf { it != -1 } ?: continue
-            slots[count] = id
+        for (i in items.indices) {
+            val s = items[i]
+
+            if (i >= allowed.size) continue
+            if (!allowed[i]) continue
+
+            val idx = colors.indexOf(s.item).takeIf { it != -1 } ?: continue
+            slots[count] = i
             ides[count] = idx
             count++
         }
@@ -79,7 +86,7 @@ object RubixSolver : ITerminal(TerminalType.RUBIX) {
         var best = 0
         for (i in 1 until 5) if (costs[i] < costs[best]) best = i
 
-        val o = TerminalAPI.`rubix$lastTarget`?.takeIf { costs[it] != 0 } ?: best.also { TerminalAPI.`rubix$lastTarget` = it }
+        val o = last?.takeIf { costs[it] != 0 } ?: best.also { last = it }
         for (i in 0 until count) {
             val idx = ides[i]
             if (idx == o) continue

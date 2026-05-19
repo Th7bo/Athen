@@ -20,11 +20,20 @@ abstract class ITerminal(val terminalType: TerminalType) {
     protected open val float: Float
         get() = 16f + TerminalSolver.`ui$gap`
 
-    open fun onOpen() {}
+    var clicked: Boolean = false
 
-    open fun onClose() {}
+    open fun onOpen() {
+        clicked = false
+    }
 
-    protected abstract fun compute(slot: Int = 0, item: ItemStack = ItemStack.EMPTY)
+    open fun onClose() {
+        clicked = false
+    }
+
+    open fun onResync() {
+    }
+
+    protected abstract fun compute(items: List<ItemStack>)
 
     protected abstract fun render(ox: Float, oy: Float, headerH: Float, uiScale: Float)
 
@@ -78,27 +87,33 @@ abstract class ITerminal(val terminalType: TerminalType) {
         c.click()
     }
 
-    fun update(slot: Int, item: ItemStack) {
-        compute(slot, item)
+    fun update(items: List<ItemStack>) {
+        compute(items)
     }
 
-    protected fun Click.click() {
+    open fun click(slot: Int, button: Int) {
+        if (TerminalSimulator.s.value) {
+            val screen = client.screen as? ITerminalSim ?: return
+            val slot0 = screen.menu.slots.getOrNull(slot) ?: return
+
+            screen.slotClicked(slot0, slot, button, if (button == 0) ClickType.CLONE else ClickType.PICKUP)
+            TerminalSolver.last = System.currentTimeMillis()
+            clicked = true
+
+            return
+        }
+
+        guiClick(TerminalAPI.id, slot, if (button == 0) 2 else button, if (button == 0) ClickType.CLONE else ClickType.PICKUP)
+        TerminalSolver.last = System.currentTimeMillis()
+        clicked = true
+    }
+
+    fun Click.click() {
         click(slot, button)
     }
 
     protected fun drawSlot(x: Float, y: Float, w: Float, h: Float, color: Int, uiScale: Float, radius: Float = TerminalSolver.`ui$slots$roundness` * uiScale) =
         if (TerminalSolver.`ui$slots$fill`) NVGRenderer.drawRectangle(x, y, w, h, color, radius) else NVGRenderer.drawHollowRectangle(x, y, w, h, uiScale, color, radius)
-
-    protected fun click(slot: Int, button: Int) {
-        if (TerminalSimulator.s.value) {
-            val screen = client.screen as? ITerminalSim ?: return
-            val slot0 = screen.menu.slots.getOrNull(slot) ?: return
-            screen.slotClicked(slot0, slot, button, if (button == 0) ClickType.CLONE else ClickType.PICKUP)
-            return
-        }
-
-        guiClick(TerminalAPI.lastId, slot, if (button == 0) 2 else button, if (button == 0) ClickType.CLONE else ClickType.PICKUP)
-    }
 
     private fun main(ox: Float, oy: Float, gridW: Float, headerH: Float, uiScale: Float) {
         val titleText = terminalType.name.lowercase().replaceFirstChar { it.uppercase() }

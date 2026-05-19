@@ -2,7 +2,6 @@ package xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import xyz.aerii.athen.api.dungeon.terminals.TerminalAPI
 import xyz.aerii.athen.api.dungeon.terminals.TerminalType
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.base.Click
@@ -20,13 +19,20 @@ object PanesSolver : ITerminal(TerminalType.PANES) {
         }
     }
 
-    override fun forSlot(slot: Int): Click? = list.find { it.slot == slot }
+    override fun forSlot(slot: Int): Click? {
+        return list.find { it.slot == slot }
+    }
 
-    override fun valid(click: Click): Boolean = list.any { it.button == click.button }
+    override fun valid(click: Click): Boolean {
+        return list.any { it.button == click.button }
+    }
 
-    override fun compute(slot: Int, item: ItemStack) {
+    override fun compute(items: List<ItemStack>) {
         list.clear()
 
-        for (i in TerminalAPI.currentItems) if (i.value.item == Items.RED_STAINED_GLASS_PANE) list.add(Click(i.key, 0))
+        for (i in items.indices) {
+            if (items[i].item != Items.RED_STAINED_GLASS_PANE) continue
+            list.add(Click(i, 0))
+        }
     }
 }

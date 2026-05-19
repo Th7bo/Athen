@@ -12,6 +12,13 @@
 package xyz.aerii.athen.api.dungeon.terminals
 
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.base.ITerminal
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.ColorsSolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.MelodySolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.NameSolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.NumbersSolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.PanesSolver
+import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl.RubixSolver
 
 enum class TerminalType(val slots: Int, val regex: Regex, val actual: String? = null) {
     COLORS(54, Regex("^Select all the ([\\w ]+) items!$")),
@@ -24,13 +31,23 @@ enum class TerminalType(val slots: Int, val regex: Regex, val actual: String? = 
 
     val solver: Boolean
         get() = when (this) {
-        COLORS -> 0
-        MELODY -> 1
-        NAME -> 2
-        NUMBERS -> 3
-        PANES -> 4
-        RUBIX -> 5
-    } in TerminalSolver.solve
+            COLORS -> 0
+            MELODY -> 1
+            NAME -> 2
+            NUMBERS -> 3
+            PANES -> 4
+            RUBIX -> 5
+        } in TerminalSolver.solve
+
+    val impl: ITerminal
+        get() = when (this) {
+            COLORS -> ColorsSolver
+            MELODY -> MelodySolver
+            NAME -> NameSolver
+            NUMBERS -> NumbersSolver
+            PANES -> PanesSolver
+            RUBIX -> RubixSolver
+        }
 
     companion object {
         fun get(windowTitle: String): TerminalType? = entries.firstOrNull { it.regex.matches(windowTitle) }

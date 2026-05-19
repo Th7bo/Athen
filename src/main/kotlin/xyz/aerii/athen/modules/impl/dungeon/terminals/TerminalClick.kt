@@ -41,7 +41,7 @@ object TerminalClick : Module(
     init {
         on<GuiEvent.Input.Mouse.Press> {
             clicks.add(Click(mouseRX, mouseRY, keyEvent.button()))
-        }.runWhen(TerminalAPI.terminalOpen)
+        }.runWhen(TerminalAPI.opened)
 
         on<GuiEvent.Render.Post> {
             val cs = clicks.toList()

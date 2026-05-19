@@ -2,6 +2,7 @@
 
 package xyz.aerii.athen.modules.impl.dungeon.terminals.solver
 
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.sounds.SoundEvents
 import org.lwjgl.glfw.GLFW
@@ -12,6 +13,7 @@ import xyz.aerii.athen.config.Category
 import xyz.aerii.athen.events.DungeonEvent
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.PacketEvent
+import xyz.aerii.athen.events.TickEvent
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.mixin.accessors.KeyMappingAccessor
 import xyz.aerii.athen.modules.Module
@@ -20,6 +22,7 @@ import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.athen.utils.nvg.NVGSpecialRenderer
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.ctrl
+import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.mouseRX
 import xyz.aerii.library.utils.mouseRY
 import java.awt.Color
@@ -29,9 +32,10 @@ object TerminalSolver : Module(
     "Terminal solver",
     "Shows solutions for F7/M7 terminals in a nice custom gui!",
     Category.DUNGEONS
-) {
+), ICommand {
     private val settingsExpandable by config.expandable("Settings")
     val fcDelay by config.slider("First click delay", 350, 150, 1000, "ms").childOf { settingsExpandable }
+    val resync by config.slider("Resync timeout", 800, 0, 2000, "ms").childOf { settingsExpandable }
     val dropKey by config.switch("Allow using drop key", true).childOf { settingsExpandable }
     val keybindL by config.keybind("Keybind left click").childOf { settingsExpandable }
     val keybindR by config.keybind("Keybind right click").childOf { settingsExpandable }
@@ -85,14 +89,7 @@ object TerminalSolver : Module(
     val `melody$wrong` by config.colorPicker("Melody: Wrong", Color(205, 0, 0, 180)).childOf { colorExpandable }
     val `melody$other` by config.colorPicker("Melody: Other", Color(Mocha.Base.argb, true)).childOf { colorExpandable }
 
-    private val solvers = mapOf(
-        TerminalType.NUMBERS to NumbersSolver,
-        TerminalType.PANES to PanesSolver,
-        TerminalType.NAME to NameSolver,
-        TerminalType.COLORS to ColorsSolver,
-        TerminalType.RUBIX to RubixSolver,
-        TerminalType.MELODY to MelodySolver
-    )
+    var last: Long = 0
 
     init {
         on<PacketEvent.Receive, ClientboundSoundPacket> {
@@ -101,28 +98,27 @@ object TerminalSolver : Module(
 
             it.cancel()
             clickSound.play()
-        }.runWhen(TerminalAPI.terminalOpen)
+        }.runWhen(TerminalAPI.opened)
 
         on<GuiEvent.Render.Screen.Pre> {
-            val term = TerminalAPI.currentTerminal ?: return@on
-            val solver = solvers[term] ?: return@on
+            val term = TerminalAPI.terminal?.impl ?: return@on
 
             cancel()
-            NVGSpecialRenderer.draw(graphics, 0, 0, graphics.guiWidth(), graphics.guiHeight()) { solver.main() }
-        }.runWhen(TerminalAPI.terminalOpen)
+            NVGSpecialRenderer.draw(graphics, 0, 0, graphics.guiWidth(), graphics.guiHeight()) { term.main() }
+        }.runWhen(TerminalAPI.opened)
 
         on<GuiEvent.Input.Mouse.Press> {
-            val term = TerminalAPI.currentTerminal ?: return@on
-            if (client.player?.containerMenu?.containerId != TerminalAPI.lastId) return@on
+            val term = TerminalAPI.terminal ?: return@on
+            if (client.player?.containerMenu?.containerId != TerminalAPI.id) return@on
 
             cancel()
-            if (System.currentTimeMillis() - TerminalAPI.openTime >= fcDelay) c(mouse = keyEvent.button())
-        }.runWhen(TerminalAPI.terminalOpen)
+            if (System.currentTimeMillis() - TerminalAPI.open >= fcDelay) c(mouse = keyEvent.button())
+        }.runWhen(TerminalAPI.opened)
 
         on<GuiEvent.Input.Key.Press> {
-            val t = TerminalAPI.currentTerminal ?: return@on
-            if (client.player?.containerMenu?.containerId != TerminalAPI.lastId) return@on
-            if (System.currentTimeMillis() - TerminalAPI.openTime < fcDelay) return@on
+            val t = TerminalAPI.terminal ?: return@on
+            if (client.player?.containerMenu?.containerId != TerminalAPI.id) return@on
+            if (System.currentTimeMillis() - TerminalAPI.open < fcDelay) return@on
 
             when (keyEvent.key) {
                 `melody$key0` if t == TerminalType.MELODY -> {
@@ -156,23 +152,36 @@ object TerminalSolver : Module(
                     cancel()
                 }
             }
-        }.runWhen(TerminalAPI.terminalOpen)
+        }.runWhen(TerminalAPI.opened)
+
+        on<TickEvent.Client.End> {
+            val a = TerminalAPI.terminal ?: return@on
+            val b = a.impl
+
+            if (resync == 0) return@on
+            if (!b.clicked) return@on
+            if (System.currentTimeMillis() - last <= resync) return@on
+
+            b.clicked = false
+            b.update((client.screen as? AbstractContainerScreen<*>)?.menu?.items?.subList(0, a.slots) ?: return@on)
+            b.onResync()
+        }.runWhen(TerminalAPI.opened)
 
         on<DungeonEvent.Terminal.Update> {
-            TerminalAPI.currentTerminal?.let { solvers[it] }?.update(slot, item)
+            TerminalAPI.terminal?.impl?.update(items)
         }
 
         on<DungeonEvent.Terminal.Open> {
-            for (s in solvers.values) s.onOpen()
+            for (a in TerminalType.entries) a.impl.onOpen()
         }
 
         on<DungeonEvent.Terminal.Close> {
-            for (s in solvers.values) s.onClose()
+            for (a in TerminalType.entries) a.impl.onClose()
         }
     }
 
     private fun c(mouse: Int) {
-        val solver = solvers[TerminalAPI.currentTerminal] ?: return
+        val solver = TerminalAPI.terminal?.impl ?: return
         val uiScale = 3f * `ui$scale`
         val mx = mouseRX / uiScale
         val my = mouseRY / uiScale

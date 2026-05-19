@@ -1,6 +1,7 @@
 package xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl
 
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import xyz.aerii.athen.api.dungeon.terminals.TerminalAPI
 import xyz.aerii.athen.api.dungeon.terminals.TerminalType
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
@@ -10,6 +11,8 @@ import xyz.aerii.athen.utils.glint
 import xyz.aerii.library.utils.stripped
 
 object NameSolver : ITerminal(TerminalType.NAME) {
+    private val i = mutableSetOf<Int>()
+
     override fun render(ox: Float, oy: Float, headerH: Float, uiScale: Float) {
         for (c in list) {
             val sx = (c.slot % 9 * float + ox + 1f) * uiScale
@@ -18,16 +21,43 @@ object NameSolver : ITerminal(TerminalType.NAME) {
         }
     }
 
-    override fun forSlot(slot: Int): Click? = list.find { it.slot == slot }
+    override fun forSlot(slot: Int): Click? {
+        return list.find { it.slot == slot }
+    }
 
-    override fun valid(click: Click): Boolean = list.any { it.button == click.button }
+    override fun valid(click: Click): Boolean {
+        return list.any { it.button == click.button }
+    }
 
-    override fun compute(slot: Int, item: ItemStack) {
+    override fun click(slot: Int, button: Int) {
+        i.add(slot)
+        super.click(slot, button)
+    }
+
+    override fun onClose() {
+        i.clear()
+        super.onClose()
+    }
+
+    override fun onResync() {
+        i.clear()
+    }
+
+    override fun compute(items: List<ItemStack>) {
         list.clear()
 
-        val match = TerminalType.NAME.regex.matchEntire(TerminalAPI.currentTitle)
+        val match = TerminalType.NAME.regex.matchEntire(TerminalAPI.title)
         val targetLetter = match?.groupValues?.get(1)?.lowercase() ?: return
 
-        for ((s, i) in TerminalAPI.currentItems) if (i.hoverName.stripped().lowercase().startsWith(targetLetter, true) && !i.glint()) list.add(Click(s, 0))
+        for (i0 in items.indices) {
+            val s = items[i0]
+            if (i0 in i) continue
+            if (s.isEmpty) continue
+            if (s.item == Items.BLACK_STAINED_GLASS_PANE) continue
+            if (s.glint()) continue
+            if (!s.hoverName.stripped().lowercase().startsWith(targetLetter, true)) continue
+
+            list.add(Click(i0, 0))
+        }
     }
 }

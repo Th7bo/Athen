@@ -13,9 +13,9 @@
 
 package xyz.aerii.athen.api.dungeon.terminals
 
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.protocol.game.*
 import net.minecraft.world.entity.decoration.ArmorStand
-import net.minecraft.world.item.ItemStack
 import xyz.aerii.athen.annotations.Priority
 import xyz.aerii.athen.api.dungeon.DungeonAPI
 import xyz.aerii.athen.events.DungeonEvent
@@ -28,46 +28,39 @@ import xyz.aerii.athen.handlers.Typo.devMessage
 import xyz.aerii.athen.mixin.accessors.ServerboundInteractPacketAccessor
 import xyz.aerii.athen.modules.impl.dungeon.terminals.simulator.TerminalSimulator
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
+import xyz.aerii.library.api.client
 import xyz.aerii.library.api.level
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.Observable.Companion.and
 import xyz.aerii.library.handlers.Observable.Companion.or
 import xyz.aerii.library.handlers.time.client
 import xyz.aerii.library.utils.stripped
-import java.util.concurrent.ConcurrentHashMap
 
 @Priority
 object TerminalAPI {
+    private var i = 0
     private var cd = 0
 
-    val currentItems = ConcurrentHashMap<Int, ItemStack>()
-    val slotCounts = mutableMapOf<Int, Int>()
+    val opened: Observable<Boolean> = Observable(false)
 
-    var terminalOpen: Observable<Boolean> = Observable(false)
+    var terminal: TerminalType? = null
         private set
 
-    var currentTerminal: TerminalType? = null
+    var title: String = ""
         private set
 
-    var currentTitle: String = ""
+    var open: Long = 0
         private set
 
-    var openTime: Long = 0
+    var id: Int = -1
         private set
-
-    var lastId: Int = -1
-        private set
-
-    var `rubix$lastTarget`: Int? = null
-    var `melody$button`: Int? = null
-    var `melody$current`: Int? = null
-    var `melody$correct`: Int? = null
 
     init {
         val state = (DungeonAPI.F7Phase.map { it == 3 } or TerminalSimulator.s) or TerminalSimulator.s0
         val state0 = state and TerminalSolver.observable
+        val state1 = state and opened
 
-        terminalOpen.onChange {
+        opened.onChange {
             (if (it) DungeonEvent.Terminal.Open else DungeonEvent.Terminal.Close).post()
         }
 
@@ -75,56 +68,58 @@ object TerminalAPI {
             val title = title.stripped()
             val type = TerminalType.get(title)?.takeIf { it.solver } ?: return@on reset()
 
-            if (!terminalOpen.value) openTime = System.currentTimeMillis()
-            terminalOpen.value = true
-            currentTerminal = type
-            currentTitle = title
-            lastId = containerId
-            currentItems.clear()
+            if (!opened.value) open = System.currentTimeMillis()
+            opened.value = true
+            terminal = type
+            TerminalAPI.title = title
+            id = containerId
+            i = 0
         }.runWhen(state)
 
         on<PacketEvent.Process.Pre, ClientboundContainerSetSlotPacket> {
-            if (!terminalOpen.value) return@on
-            if (containerId != lastId) return@on
-            if (slot > (currentTerminal?.slots ?: 0)) return@on
-            if (slot < 0) return@on
+            val a = terminal ?: return@on
+            val b = a.slots
+            val b0 = a != TerminalType.MELODY
 
-            currentItems[slot] = item
-            if (currentItems.size == currentTerminal?.slots || currentTerminal == TerminalType.MELODY) DungeonEvent.Terminal.Update(slot, item).post()
-        }.runWhen(state)
+            if (containerId != id) return@on
+            if (slot !in 0 until b) return@on
+
+            val c = (client.screen as? AbstractContainerScreen<*>)?.menu?.items?.takeIf { it.size >= b } ?: return@on
+            c[slot] = item
+            i++
+
+            val d = c.subList(0, b)
+            if (i < b && b0) return@on
+
+            DungeonEvent.Terminal.Update(d).post()
+        }.runWhen(state1)
 
         on<PacketEvent.Process.Pre, ClientboundContainerSetContentPacket> {
-            if (!terminalOpen.value) return@on
-            if (containerId != lastId) return@on
-
-            currentItems.clear()
-            for ((i, it) in items.withIndex()) if (i < (currentTerminal?.slots ?: 0)) currentItems[i] = it
-        }.runWhen(state)
+            if (containerId != id) return@on
+            i = items.size
+        }.runWhen(state1)
 
         on<PacketEvent.Process.Pre, ClientboundContainerClosePacket> {
-            if (terminalOpen.value) Chronos.schedule(1.client, ::reset)
-        }.runWhen(state)
+            Chronos.schedule(1.client, ::reset)
+        }.runWhen(state1)
 
         on<PacketEvent.Send, ServerboundContainerClickPacket> {
-            if (!terminalOpen.value) return@on
-            if (currentTerminal == TerminalType.MELODY) return@on
-            if (containerId != lastId) return@on it.cancel()
-            if (System.currentTimeMillis() - openTime >= TerminalSolver.fcDelay) return@on
+            if (terminal == TerminalType.MELODY) return@on
+            if (containerId != id) return@on it.cancel()
+            if (System.currentTimeMillis() - open >= TerminalSolver.fcDelay) return@on
 
             it.cancel()
-        }.runWhen(state0)
+        }.runWhen(state0 and opened)
 
         on<PacketEvent.Send, ServerboundContainerClosePacket> {
-            if (!terminalOpen.value) return@on
-
             reset()
-        }.runWhen(state)
+        }.runWhen(state1)
 
         on<PacketEvent.Send, ServerboundInteractPacket> {
             val entity = level?.getEntity((this as ServerboundInteractPacketAccessor).entityId()) as? ArmorStand ?: return@on
             if (entity.displayName?.stripped() != "Inactive Terminal") return@on
 
-            if (cd > 0 || lastId != -1) it.cancel() else cd = 15
+            if (cd > 0 || id != -1) it.cancel() else cd = 15
         }.runWhen(state0)
 
         on<TickEvent.Server> {
@@ -133,18 +128,14 @@ object TerminalAPI {
     }
 
     private fun reset() {
+        if (!opened.value) return
+
+        opened.value = false
+        terminal = null
+        title = ""
+        id = -1
+        i = 0
+
         "TerminalAPI: reset".devMessage()
-
-        `rubix$lastTarget` = null
-        `melody$button` = null
-        `melody$current` = null
-        `melody$correct` = null
-
-        terminalOpen.value = false
-        currentTerminal = null
-        currentTitle = ""
-        currentItems.clear()
-        slotCounts.clear()
-        lastId = -1
     }
 }

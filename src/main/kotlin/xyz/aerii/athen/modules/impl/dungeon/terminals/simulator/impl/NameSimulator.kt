@@ -16,7 +16,7 @@ import xyz.aerii.library.utils.literal
 import kotlin.random.Random
 
 class NameSimulator(
-    private val targetLetter: String = listOf("A", "B", "C", "D", "G", "M", "N", "R", "S", "T", "W").random()
+    private val targetLetter: String = listOf("A", "B", "C", "D", "E", "G", "M", "N", "R", "S", "T", "W").random()
 ) : ITerminalSim(TerminalType.NAME, component = "What starts with: \'$targetLetter\'?".literal()) {
 
     override fun s(): Map<Int, ItemStack> {
@@ -38,7 +38,7 @@ class NameSimulator(
         val name = item.hoverName.string
 
         if (!name.startsWith(targetLetter, ignoreCase = true)) return "Invalid item! Does not start with <red>$targetLetter".parse().modMessage(Typo.PrefixType.ERROR)
-        if (item.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) return
+        if (item.glint()) return
 
         mapOf(slot.containerSlot to item.apply { set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true) }).a()
 
@@ -51,7 +51,7 @@ class NameSimulator(
             val n = it.hoverName.string
 
             if (!n.startsWith(targetLetter, ignoreCase = true)) continue
-            if (!it.glint()) return false
+            if (it.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) != true) return false
         }
 
         return true

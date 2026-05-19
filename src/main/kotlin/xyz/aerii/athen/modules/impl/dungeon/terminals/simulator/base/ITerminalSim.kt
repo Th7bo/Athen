@@ -83,14 +83,13 @@ abstract class ITerminalSim(
         if (slot.container != inv) return
         if (slot.item.item == Items.BLACK_STAINED_GLASS_PANE) return
         if (!c) return
+        if (TerminalSimulator.ping <= 0) return click(slot, mouseButton)
 
-        if (TerminalSimulator.ping > 0) {
-            c = false
-            Chronos.schedule(TerminalSimulator.ping.milliseconds) {
-                c = true
-                click(slot, mouseButton)
-            }
-        } else click(slot, mouseButton)
+        c = false
+        Chronos.schedule(TerminalSimulator.ping.milliseconds) {
+            c = true
+            click(slot, mouseButton)
+        }
     }
 
     protected fun Map<Int, ItemStack>.a() {

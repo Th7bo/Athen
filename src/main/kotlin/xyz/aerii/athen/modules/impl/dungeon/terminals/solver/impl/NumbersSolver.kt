@@ -2,7 +2,6 @@ package xyz.aerii.athen.modules.impl.dungeon.terminals.solver.impl
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import xyz.aerii.athen.api.dungeon.terminals.TerminalAPI
 import xyz.aerii.athen.api.dungeon.terminals.TerminalType
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
 import xyz.aerii.athen.modules.impl.dungeon.terminals.solver.base.Click
@@ -11,6 +10,8 @@ import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.athen.utils.nvg.NVGRenderer
 
 object NumbersSolver : ITerminal(TerminalType.NUMBERS) {
+    private val counts = mutableMapOf<Int, Int>()
+
     override fun render(ox: Float, oy: Float, headerH: Float, uiScale: Float) {
         for ((i, c) in list.withIndex()) {
             if (i > 2) break
@@ -22,27 +23,36 @@ object NumbersSolver : ITerminal(TerminalType.NUMBERS) {
             drawSlot(sx, sy, 16f * uiScale, 16f * uiScale, color, uiScale)
 
             if (!TerminalSolver.`ui$numbers$showText`) continue
-            val countStr = TerminalAPI.slotCounts[c.slot]?.toString() ?: continue
-            val countWidth = NVGRenderer.getTextWidth(countStr, 11f * uiScale, NVGRenderer.defaultFont)
-            NVGRenderer.drawText(countStr, sx + 8f * uiScale - countWidth / 2, sy + 3f * uiScale, 11f * uiScale, Mocha.Text.rgba)
+            val a = counts[c.slot]?.toString() ?: continue
+            val b = NVGRenderer.getTextWidth(a, 11f * uiScale, NVGRenderer.defaultFont)
+            NVGRenderer.drawText(a, sx + 8f * uiScale - b / 2, sy + 3f * uiScale, 11f * uiScale, Mocha.Text.rgba)
         }
     }
 
-    override fun forSlot(slot: Int): Click? = list.firstOrNull()?.takeIf { it.slot == slot }
-
-    override fun valid(click: Click): Boolean {
-        val firstSol = list.firstOrNull()
-        return firstSol != null && firstSol.slot == click.slot
+    override fun forSlot(slot: Int): Click? {
+        return list.firstOrNull()?.takeIf { it.slot == slot }
     }
 
-    override fun compute(slot: Int, item: ItemStack) {
+    override fun valid(click: Click): Boolean {
+        val a = list.firstOrNull()
+        return a != null && a.slot == click.slot
+    }
+
+    override fun onClose() {
+        counts.clear()
+        super.onClose()
+    }
+
+    override fun compute(items: List<ItemStack>) {
         list.clear()
 
-        for ((slot, stack) in TerminalAPI.currentItems.entries.sortedBy { it.value.count }) {
-            if (stack.item != Items.RED_STAINED_GLASS_PANE) continue
+        val a = items.indices.sortedBy { items[it].count }
+        for (b in a) {
+            val c = items[b]
+            if (c.item != Items.RED_STAINED_GLASS_PANE) continue
 
-            TerminalAPI.slotCounts[slot] = stack.count
-            list.add(Click(slot, 0))
+            counts[b] = c.count
+            list.add(Click(b, 0))
         }
     }
 

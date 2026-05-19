@@ -31,8 +31,7 @@ sealed class DungeonEvent {
         data object Close : Event()
 
         data class Update(
-            val slot: Int,
-            val item: ItemStack
+            val items: List<ItemStack>
         ) : Event()
     }
 
