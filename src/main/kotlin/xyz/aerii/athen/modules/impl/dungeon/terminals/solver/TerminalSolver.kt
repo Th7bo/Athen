@@ -52,7 +52,7 @@ object TerminalSolver : Module(
     val `melody$key3` by config.keybind("Keybind 4", GLFW.GLFW_KEY_4).dependsOn { `melody$num` }.childOf { melodyExpandable }
 
     private val guiExpandable by config.expandable("GUI")
-    val `ui$scale` by config.slider("Scale", 1f, 0.1f, 3f, showDouble = true).childOf { guiExpandable }
+    val `ui$scale` by config.slider("Scale", 1f, 0.1f, 4f, showDouble = true).childOf { guiExpandable }
     val `ui$roundness` by config.slider("Roundness", 0f, 0f, 10f, showDouble = true).childOf { guiExpandable }
     val `ui$padding` by config.slider("Padding", 5f, 0f, 20f, showDouble = true).childOf { guiExpandable }
     val `ui$gap` by config.slider("Slot gap", 2f, 0f, 10f, showDouble = true).childOf { guiExpandable }
