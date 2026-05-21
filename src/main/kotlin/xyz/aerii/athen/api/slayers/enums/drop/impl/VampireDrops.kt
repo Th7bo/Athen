@@ -17,7 +17,8 @@ enum class VampireDrops(
     override val grade: SlayerDropGrade,
     override val drop: SlayerDropChance,
     override val parser: SlayerDropParserType = SlayerDropParserType.ITEM_ID,
-    override val str2: String? = null
+    override val str2: String? = null,
+    override val display2: String = display
 ) : ISlayerDrop {
     COVEN_SEAL("Coven seal", Items.NETHER_WART, SlayerDropGrade.GUARANTEED, SlayerDropChance(null, 100, 100.0, SlayerDropTable.TOKEN)),
     ENCHANTED_BOOK_BUNDLE_QUANTUM("Bundle of quantum book", Items.PLAYER_HEAD, SlayerDropGrade.OCCASIONAL, SlayerDropChance(1_687, 20, 13.3333, SlayerDropTable.MAIN)),
