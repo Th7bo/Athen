@@ -85,9 +85,8 @@ object SlayerDropsData : Module(
             val (a, b) = regex2.findGroups(stripped, "boss", "item") ?: return@on
             val a0 = a.boss ?: return@on
             val b0 = b.lowercase()
-            val b1 = ISlayerDrop.Companion.Names.ALL0.find { it == b0 } ?: return@on
 
-            ConfigManager.updateConfig(a0, (ISlayerDrop.Companion.Names.LOOKUP0[b1] as? Enum<*>)?.ordinal ?: return@on)
+            ConfigManager.updateConfig(a0, (ISlayerDrop.Companion.Names.LOOKUP0[b0] as? Enum<*>)?.ordinal ?: return@on)
             "Changed selected drop for <red>$a <r>to <red>$b<r>!".parse().modMessage()
         }.runWhen(auto.state)
 
