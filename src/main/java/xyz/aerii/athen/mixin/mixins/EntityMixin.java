@@ -143,7 +143,7 @@ public abstract class EntityMixin implements EntityDuck {
     }
 
     @Inject(method = "onRemoval", at = @At("RETURN"))
-    private void athen$remove(CallbackInfo ci) {
+    private void athen$remove(Entity.RemovalReason reason, CallbackInfo ci) {
         if (!(athen$attachedTo instanceof EntityDuck acc)) return;
 
         acc.athen$attachments().removeIf(ref -> ref.get() == entity());
