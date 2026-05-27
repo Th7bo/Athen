@@ -1,0 +1,63 @@
+@file:Suppress("Unused")
+
+package xyz.aerii.athen.api.rendering.ui.dsl.elements.primitives.impl
+
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.util.FormattedCharSequence
+import xyz.aerii.athen.api.rendering.ui.dsl.elements.primitives.base.impl.IPrimitiveElement
+import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import xyz.aerii.library.api.EMPTY_COMPONENT
+
+open class TextPrimitive : IPrimitiveElement<TextPrimitive>() {
+    private var _text: FormattedCharSequence = EMPTY_COMPONENT.visualOrderText
+    private var _texts: List<FormattedCharSequence>? = null
+
+    override var x: Int = 0
+    override var y: Int = 0
+    override var width: Int = 0
+    override var height: Int = 0
+    override var color: Int = -1
+
+    var text: Component = EMPTY_COMPONENT
+        set(value) {
+            if (field == value) return
+            field = value
+            _text = value.visualOrderText
+        }
+
+    var texts: List<Component>? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            _texts = value?.map { it.visualOrderText }
+        }
+
+    var shadow: Boolean = true
+    var center: Boolean = false
+    var scale: Float = 1f
+
+    override fun render(graphics: GuiGraphics) {
+        val text = _text
+        val texts = _texts
+        val pose = graphics.pose()
+
+        if (scale == 1f) {
+            if (texts != null) graphics.extractText(texts, x, y, shadow, color)
+            else graphics.extractText(text, x, y, shadow, color, center)
+
+            super.render(graphics)
+            return
+        }
+
+        pose.pushMatrix()
+        pose.translate(x.toFloat(), y.toFloat())
+        pose.scale(scale, scale)
+
+        if (texts != null) graphics.extractText(texts, 0, 0, shadow, color)
+        else graphics.extractText(text, 0, 0, shadow, color, center)
+
+        pose.popMatrix()
+        super.render(graphics)
+    }
+}
