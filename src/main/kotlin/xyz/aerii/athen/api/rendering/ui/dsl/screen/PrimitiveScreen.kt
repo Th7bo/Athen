@@ -24,10 +24,17 @@ open class PrimitiveScreen(title: String = "Primitive Screen [Athen]") : Screen(
         super.resize(/*? < 1.21.11 { */minecraft, /*? } */width, height)
     }
 
+    //? if >= 26.1 {
+    /*final override fun extractRenderState(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        scene.render(graphics)
+        super.extractRenderState(graphics, mouseX, mouseY, delta)
+    }
+    *///?} else {
     final override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         scene.render(graphics)
         super.render(graphics, mouseX, mouseY, partialTick)
     }
+    //?}
 
     final override fun mouseClicked(event: MouseButtonEvent, isDoubleClick: Boolean): Boolean {
         return scene.mousePress(event.x(), event.y(), event.button()) || super.mouseClicked(event, isDoubleClick)
