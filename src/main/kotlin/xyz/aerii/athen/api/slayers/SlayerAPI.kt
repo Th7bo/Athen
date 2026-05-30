@@ -54,31 +54,29 @@ object SlayerAPI {
         }
 
         on<EntityEvent.Update.Attach> {
-            val entity = entity.parent?.takeIf { logged.add(it.id) } ?: return@on
+            val entity = entity.parent ?: return@on
             val slayerInfo =
                 if (stripped.check()) bosses.computeIfAbsent(entity, ::SlayerInfo)
                 else bosses[entity] ?: return@on
 
-            if (
-                slayerInfo.type is ISlayerType &&
-                (slayerInfo.type !is SlayerBoss || slayerInfo.owner != null)
-            ) {
-                when (slayerInfo.type) {
-                    is SlayerBoss -> {
-                        if (slayerInfo.owned) slayer = slayerInfo
-                        SlayerEvent.Boss.Spawn(entity, slayerInfo).post()
-                        "SlayerAPI: Slayer spawned (owner=${slayerInfo.owner}, tier=${slayerInfo.tier}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
-                    }
+            if (slayerInfo.type is SlayerBoss && slayerInfo.owner == null) return@on
+            if (!logged.add(entity.id)) return@on
 
-                    is SlayerMini -> {
-                        SlayerEvent.Miniboss.Spawn(entity, slayerInfo).post()
-                        "SlayerAPI: Miniboss spawned (owner=${slayerInfo.owner}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
-                    }
+            when (slayerInfo.type) {
+                is SlayerBoss -> {
+                    if (slayerInfo.owned) slayer = slayerInfo
+                    SlayerEvent.Boss.Spawn(entity, slayerInfo).post()
+                    "SlayerAPI: Slayer spawned (owner=${slayerInfo.owner}, tier=${slayerInfo.tier}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
+                }
 
-                    is SlayerDemon -> {
-                        SlayerEvent.Demon.Spawn(entity, slayerInfo).post()
-                        "SlayerAPI: Demon spawned (owner=${slayerInfo.owner}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
-                    }
+                is SlayerMini -> {
+                    SlayerEvent.Miniboss.Spawn(entity, slayerInfo).post()
+                    "SlayerAPI: Miniboss spawned (owner=${slayerInfo.owner}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
+                }
+
+                is SlayerDemon -> {
+                    SlayerEvent.Demon.Spawn(entity, slayerInfo).post()
+                    "SlayerAPI: Demon spawned (owner=${slayerInfo.owner}, tickAge=${entity.tickCount / 20.0}s)".devMessage()
                 }
             }
         }
