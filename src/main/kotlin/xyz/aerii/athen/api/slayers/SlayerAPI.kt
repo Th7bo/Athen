@@ -54,9 +54,7 @@ object SlayerAPI {
         }
 
         on<EntityEvent.Update.Attach> {
-            if (!logged.add(entity.id)) return@on
-
-            val entity = entity.parent ?: return@on
+            val entity = entity.parent?.takeIf { logged.add(it.id) } ?: return@on
             val slayerInfo =
                 if (stripped.check()) bosses.computeIfAbsent(entity, ::SlayerInfo)
                 else bosses[entity] ?: return@on
