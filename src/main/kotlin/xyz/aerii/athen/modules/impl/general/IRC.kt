@@ -39,7 +39,7 @@ object IRC : Module(
     private val format1 by config.textInput("Discord format", "<#A6E3A1>#name <dark_gray>➤ <white>#message").dependsOn { discord }
 
     private val ob: Observable<Boolean> = Observable(false)
-    private var cc: String = "general"
+    private var cc: String = ""
 
     init {
         command("airc") {
@@ -133,6 +133,7 @@ object IRC : Module(
             when (id) {
                 SocketPacket.IRC.ClientBound.Join.id -> {
                     if (channel == null) return@on
+                    if (channel == cc) return@on
 
                     cc = channel
                     "<gray>Joined channel <aqua>#$channel".parse().modMessage()

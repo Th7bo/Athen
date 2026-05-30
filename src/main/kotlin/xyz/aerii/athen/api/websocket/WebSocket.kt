@@ -11,6 +11,7 @@ import xyz.aerii.athen.events.InternalEvent
 import xyz.aerii.athen.handlers.Chronos
 import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
+import xyz.aerii.athen.modules.impl.Dev
 import xyz.aerii.athen.utils.wsUrl
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.name
@@ -111,7 +112,7 @@ object WebSocket : ICommand {
                         SocketPacket.WebSocket.ClientBound.AuthSuccess.id -> {
                             auth = true
                             Athen.LOGGER.info("Websocket authenticated as $n")
-                            "<green>Connected to Websocket as <white>$n".parse().modMessage()
+                            if (Dev.debug) "<green>Connected to Websocket as <white>$n".parse().modMessage()
                         }
 
                         SocketPacket.WebSocket.ClientBound.AuthError.id -> {
