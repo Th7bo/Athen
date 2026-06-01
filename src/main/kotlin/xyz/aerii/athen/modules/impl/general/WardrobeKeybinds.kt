@@ -36,6 +36,11 @@ object WardrobeKeybinds : Module(
     private val keybindExpandable by config.expandable("Keybinds")
     private val useHotbar by config.switch("Use hotbar binds", true).childOf { keybindExpandable }
 
+    private val swapKey by config.switch("Swap key").childOf { keybindExpandable }
+    private val swapKeybind by config.keybind("Swap keybind").dependsOn { swapKey }.childOf { keybindExpandable }
+    private val swapKey1 by config.dropdown("Swap slot 1", listOf("Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5", "Slot 6", "Slot 7", "Slot 8", "Slot 9")).dependsOn { swapKey }.childOf { keybindExpandable }
+    private val swapKey2 by config.dropdown("Swap slot 2", listOf("Slot 1", "Slot 2", "Slot 3", "Slot 4", "Slot 5", "Slot 6", "Slot 7", "Slot 8", "Slot 9")).dependsOn { swapKey }.childOf { keybindExpandable }
+
     private val prevPage by config.keybind("Previous page").childOf { keybindExpandable }
     private val nextPage by config.keybind("Next page").childOf { keybindExpandable }
 
@@ -124,6 +129,18 @@ object WardrobeKeybinds : Module(
 
         if (key == nextPage) {
             if (currentPage < maxPage) guiClick(container.containerId, 53)
+            return
+        }
+
+        if (swapKey && key == swapKeybind) {
+            if (swapKey1 == swapKey2) return
+            val slot1 = wardrobeSlots.find { it.idx == swapKey1 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val slot2 = wardrobeSlots.find { it.idx == swapKey2 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val s = if (slot1.equipped) slot2.idx else slot1.idx
+
+            guiClick(container.containerId, s)
+            lastClick = System.currentTimeMillis()
+            cancel()
             return
         }
 
