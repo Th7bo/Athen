@@ -36,4 +36,6 @@ object ModSettings : Module(
 
     @JvmStatic
     val calculator by config.switch("Enable \"/calc\"", true)
+
+    private val _calculator by config.textParagraph("You will need to restart your game after toggling this option!")
 }
