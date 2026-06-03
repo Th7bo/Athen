@@ -33,4 +33,7 @@ object ModSettings : Module(
     val hideGuis by config.switch("Hide GUIs in F1")
 
     private val _oldApiText by config.textParagraph("Some features may not work with the old api.")
+
+    @JvmStatic
+    val calculator by config.switch("Enable \"/calc\"", true)
 }

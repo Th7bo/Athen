@@ -2,6 +2,7 @@ package xyz.aerii.athen.handlers
 
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.handlers.Typo.modMessage
+import xyz.aerii.athen.modules.impl.ModSettings
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
@@ -16,11 +17,15 @@ object Calculator : ICommand {
     private val priority = mapOf("+" to 1, "-" to 1, "*" to 2, "x" to 2, "/" to 2, "^" to 3)
 
     init {
-        command("calc") {
-            greedyString("operation") {
-                val string = string("operation")
-                val result = calc(string).formatted()
-                "<gray>$string = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
+        run {
+            if (!ModSettings.calculator) return@run
+
+            command("calc") {
+                greedyString("operation") {
+                    val string = string("operation")
+                    val result = calc(string).formatted()
+                    "<gray>$string = <green>$result".parse().modMessage(Typo.PrefixType.SUCCESS)
+                }
             }
         }
     }
