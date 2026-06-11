@@ -1,4 +1,4 @@
-@file:Suppress("ObjectPrivatePropertyName")
+@file:Suppress("ObjectPrivatePropertyName", "Unused")
 
 package xyz.aerii.athen.modules.impl.dungeon.carry
 
@@ -17,6 +17,7 @@ import xyz.aerii.athen.config.ConfigBuilder
 import xyz.aerii.athen.events.DungeonEvent
 import xyz.aerii.athen.events.WorldRenderEvent
 import xyz.aerii.athen.events.core.runWhen
+import xyz.aerii.athen.handlers.Beacon.request
 import xyz.aerii.athen.handlers.Ticking
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
@@ -30,6 +31,7 @@ import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.kommand.ICommand
+import xyz.aerii.library.utils.Request
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
 import java.awt.Color
@@ -43,6 +45,12 @@ object DungeonCarryTracker : Module(
 ), ICommand {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)
+
+    private val _webhook by config.expandable("Discord webhook")
+    private val webhook by config.switch("Send to webhook").childOf { _webhook }
+    private val webhookEach by config.switch("Send on each kill", true).childOf { _webhook }
+    private val webhookUrl by config.textInput("Webhook URL").childOf { _webhook }
+    private val _webhookUrl by config.textParagraph("Requires you to add your own webhook URL!").childOf { _webhook }
 
     private val highlightPlayer by config.switch("Highlight player", true)
     private val playerColor by config.colorPicker("Player color", Color(0, 255, 255, 150)).dependsOn { highlightPlayer }
@@ -151,11 +159,21 @@ object DungeonCarryTracker : Module(
 
                 "Completed run for <aqua>${teammate.name}".parse().modMessage()
                 if (announceInParty) "pc ${teammate.name}: ${result.current}/${result.total}".command()
+                if (webhookEach && webhook) {
+                    webhookUrl.request(Request.POST) {
+                        body(mapOf("content" to "Completed ${result.amount}/${result.total} ${floor.name} carries for ${teammate.name}"))
+                    }
+                }
 
                 if (result.completed) {
-                    "<${Mocha.Green.argb}>Completed carries for <${TextColor.AQUA}>${teammate.name} <${TextColor.GRAY}>[${floor.name}] <r>in <${TextColor.YELLOW}>${result.totalTime.toDuration()}"
-                        .parse()
-                        .modMessage()
+                    val time = result.totalTime.toDuration()
+                    "<${Mocha.Green.argb}>Completed carries for <${TextColor.AQUA}>${teammate.name} <${TextColor.GRAY}>[${floor.name}] <r>in <${TextColor.YELLOW}>$time".parse().modMessage()
+
+                    if (webhook) {
+                        webhookUrl.request(Request.POST) {
+                            body(mapOf("content" to "Completed ${result.amount}x ${floor.name} carries for ${teammate.name} ($time)"))
+                        }
+                    }
 
                     DungeonCarryStateTracker.add(teammate.name, result.amount, carry.getType())
                     tracked.remove(teammate.name)
