@@ -6,11 +6,11 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.config.Category
+import xyz.aerii.athen.ducks.entity.carry
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.events.TickEvent
 import xyz.aerii.athen.modules.Module
-import xyz.aerii.athen.modules.impl.slayer.carry.SlayerCarryStateTracker
 import kotlin.math.abs
 
 @Load
@@ -24,10 +24,10 @@ object EndermanLaserHider : Module(
     private val set: MutableSet<EnderMan> = mutableSetOf()
 
     init {
-        on<SlayerEvent.Boss.Spawn> {
+        on<SlayerEvent.Boss.Spawn>(Int.MAX_VALUE) {
             if (entity !is EnderMan) return@on
             if (slayerInfo.owned) return@on
-            if (!carry && slayerInfo.owner in SlayerCarryStateTracker.tracked.keys) return@on
+            if (!carry && entity.carry != null) return@on
 
             set.add(entity)
         }

@@ -4,6 +4,7 @@ package xyz.aerii.athen.ducks.entity
 
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
+import xyz.aerii.athen.modules.impl.slayer.carry.data.SlayerCarryPlayer
 import xyz.aerii.library.utils.stripped
 import java.lang.ref.WeakReference
 
@@ -11,6 +12,9 @@ interface EntityDuck {
     fun `athen$attachments`(): MutableList<WeakReference<Entity>>
     fun `athen$attach`(): Entity?
     fun `athen$attach`(entity: Entity)
+
+    fun `athen$feat$carry$boss`(): SlayerCarryPlayer?
+    fun `athen$feat$carry$boss`(carry: SlayerCarryPlayer?)
 }
 
 val Entity.parent: Entity?
@@ -24,3 +28,9 @@ val Entity.attachedNames: List<Component>
 
 val Entity.attachedStripped: List<String>
     get() = attached.mapNotNull { it.customName?.stripped() }
+
+var Entity.carry: SlayerCarryPlayer?
+    get() = (this as? EntityDuck)?.`athen$feat$carry$boss`()
+    set(value) {
+        (this as? EntityDuck)?.`athen$feat$carry$boss`(value)
+    }

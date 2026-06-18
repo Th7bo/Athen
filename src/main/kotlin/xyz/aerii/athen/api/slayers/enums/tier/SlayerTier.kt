@@ -1,5 +1,6 @@
 package xyz.aerii.athen.api.slayers.enums.tier
 
+import com.mojang.serialization.Codec
 import tech.thatgravyboat.skyblockapi.api.data.MayorPerks
 import tech.thatgravyboat.skyblockapi.utils.extentions.parseRomanNumeral
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
@@ -16,6 +17,7 @@ enum class SlayerTier(val int: Int, private val _xp: Int) {
 
     companion object {
         private val tierRegex = Regex("""(?:^|\s)(?<level>[MDCLXVI]{1,7})\s""")
+        val CODEC: Codec<SlayerTier> = Codec.STRING.xmap({ valueOf(it) }, { it.name })
 
         fun find(string: String): SlayerTier? {
             if ("Atoned Horror" in string) return Five
