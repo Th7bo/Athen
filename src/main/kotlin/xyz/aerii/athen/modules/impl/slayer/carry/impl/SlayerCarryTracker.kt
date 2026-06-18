@@ -96,7 +96,7 @@ object SlayerCarryTracker : Module(
 
         buildList {
             add("<bold>Slayer Carries:".parse())
-            for (carry in tracked.value) add(carry.toString().parse())
+            for (carry in tracked.value) add(carry.toString().parse(true))
         }.map { it.visualOrderText }
     }
 
@@ -163,16 +163,36 @@ object SlayerCarryTracker : Module(
                 val e0 = history.value.asReversed()
                 val i0 = maxOf(1, (e0.size + 9) / 10)
 
-                "Carry History <gray>(1/$i0)".parse().modMessage()
+                val c = ("<dark_gray>" + ("-".repeat())).parse()
+                val green = Mocha.Green.argb
+
+                c.lie()
+                "Carry History <gray>(1/$i0)<r>:".parse().modMessage()
+
                 val e1 = e0.take(10)
-                for (e in e0) {
-                    " <dark_gray>- <aqua>${e.name} <gray>• <yellow>${e.amount}x ${e.type.short}${e.tier?.let { " T${it.int}" } ?: " Any"}s <gray>in <yellow>${(e.duration / 1000.0).toDuration()}".parse().lie()
+                for (e in e1) {
+                    " <dark_gray>- <aqua>${e.name} <gray>• <$green>${e.amount}x ${e.type.short}${e.tier?.let { " T${it.int}" } ?: " Any"}s <gray>in <$green>${(e.duration / 1000.0).toDuration()}".parse().lie()
                 }
+
+                val hover = buildString {
+                    val kv = e0.groupBy { "${it.type.short}${it.tier?.let { t -> " T${t.int}" } ?: " Any"}" }
+                    for ((i, k) in kv.entries.withIndex()) {
+                        if (i > 0) append('\n')
+                        append("<$green>${k.key}<r>: <aqua>${k.value.sumOf { it.amount }} <gray>carries across <aqua>${k.value.size} <gray>entries")
+                    }
+                }
+
+                c.lie()
+                " <dark_gray>• <r>Total carries: <$green>${e0.sumOf { it.amount }} <gray>across <$green>${e0.size} <gray>entries.".parse().onHover(hover.parse(true)).lie()
+                c.lie()
             }
 
             "carry" / "history" / int("page", 1) {
                 val page = int("page")
                 val list = history.value.asReversed()
+
+                val c = ("<dark_gray>" + ("-".repeat())).parse()
+                val green = Mocha.Green.argb
 
                 val page0 = maxOf(1, (list.size + 9) / 10)
                 if (page > page0) {
@@ -182,13 +202,26 @@ object SlayerCarryTracker : Module(
                 val start = (page - 1) * 10
                 val end = minOf(start + 10, list.size)
 
-                "<aqua>Carry History <gray>($page/$page0)".parse().modMessage()
+                c.lie()
+                "Carry History <gray>($page/$page0)<r>:".parse().modMessage()
 
                 for (i in start until end) {
                     val e = list[i]
 
-                    " <dark_gray>- <aqua>${e.name} <gray>• <yellow>${e.amount}x ${e.type.short}${e.tier?.let { " T${it.int}" } ?: " Any"}s <gray>in <yellow>${(e.duration / 1000.0).toDuration()}".parse().lie()
+                    " <dark_gray>- <aqua>${e.name} <gray>• <$green>${e.amount}x ${e.type.short}${e.tier?.let { " T${it.int}" } ?: " Any"}s <gray>in <$green>${(e.duration / 1000.0).toDuration()}".parse().lie()
                 }
+
+                val hover = buildString {
+                    val kv = list.groupBy { "${it.type.short}${it.tier?.let { t -> " T${t.int}" } ?: " Any"}" }
+                    for ((i, k) in kv.entries.withIndex()) {
+                        if (i > 0) append('\n')
+                        append("<$green>${k.key}<r>: <aqua>${k.value.sumOf { it.amount }} <gray>carries across <aqua>${k.value.size} <gray>entries")
+                    }
+                }
+
+                c.lie()
+                " <dark_gray>• <r>Total carries: <$green>${list.sumOf { it.amount }} <gray>across <$green>${list.size} <gray>entries.".parse().onHover(hover.parse(true)).lie()
+                c.lie()
             }.suggests { listOf("1", "2", "3", "4", "5") }
 
             "carry" / "help" {
