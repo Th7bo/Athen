@@ -86,9 +86,12 @@ class ConfigBuilder(
     }
 
     inner class HUDElementBuilder(val element: HUDElement) {
-        val enabled get() = element.enabled
+        val enabled
+            get() = element.enabled
+
         var x by element::x
         var y by element::y
+        var scale by element::scale
 
         fun dependsOn(condition: () -> Boolean) = apply {
             replaceData { it.copy(visibilityDependency = condition) }
