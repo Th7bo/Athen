@@ -175,7 +175,7 @@ object DungeonCarryTracker : Module(
                         }
                     }
 
-                    DungeonCarryStateTracker.add(teammate.name, result.amount, carry.getType())
+                    DungeonCarryStateTracker.add(teammate.name, result.amount, carry.type)
                     tracked.remove(teammate.name)
                 }
 

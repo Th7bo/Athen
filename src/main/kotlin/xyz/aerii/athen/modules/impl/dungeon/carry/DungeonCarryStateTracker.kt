@@ -24,7 +24,7 @@ object DungeonCarryStateTracker : ICarryStateTracker<DungeonCarryStateTracker.Tr
 
     init {
         for ((p, e) in data.entrySet()) {
-            if (e.isJsonObject) d(p, e.asJsonObject)?.let { tracked[p] = it }
+            if (e.isJsonObject) load(p, e.asJsonObject)?.let { tracked[p] = it }
         }
     }
 
@@ -45,8 +45,8 @@ object DungeonCarryStateTracker : ICarryStateTracker<DungeonCarryStateTracker.Tr
             val totalTime: Double
         )
 
-        override fun getType() = floor.name
-        override fun getShortType() = floor.name
+        override val type: String = floor.name
+        override val short: String = floor.name
 
         fun onCompletion(): CompletionResult {
             val now = System.currentTimeMillis()
@@ -65,7 +65,7 @@ object DungeonCarryStateTracker : ICarryStateTracker<DungeonCarryStateTracker.Tr
         }
     }
 
-    override fun d(player: String, obj: JsonObject): TrackedCarry? {
+    override fun load(player: String, obj: JsonObject): TrackedCarry? {
         val floorName = obj.get("floor")?.asString ?: return null
         val floor = DungeonFloor.getByName(floorName) ?: return null
 
@@ -79,7 +79,7 @@ object DungeonCarryStateTracker : ICarryStateTracker<DungeonCarryStateTracker.Tr
         )
     }
 
-    override fun s(carry: TrackedCarry): JsonObject {
+    override fun save(carry: TrackedCarry): JsonObject {
         return JsonObject().apply {
             addProperty("total", carry.total)
             addProperty("floor", carry.floor.name)

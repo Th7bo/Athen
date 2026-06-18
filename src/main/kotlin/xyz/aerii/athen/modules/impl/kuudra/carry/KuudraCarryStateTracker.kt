@@ -24,7 +24,7 @@ object KuudraCarryStateTracker : ICarryStateTracker<KuudraCarryStateTracker.Trac
 
     init {
         for ((p, e) in data.entrySet()) {
-            if (e.isJsonObject) d(p, e.asJsonObject)?.let { tracked[p] = it }
+            if (e.isJsonObject) load(p, e.asJsonObject)?.let { tracked[p] = it }
         }
     }
 
@@ -45,8 +45,8 @@ object KuudraCarryStateTracker : ICarryStateTracker<KuudraCarryStateTracker.Trac
             val totalTime: Double
         )
 
-        override fun getType() = tier.str
-        override fun getShortType() = tier.str
+        override val type: String = tier.str
+        override val short: String = tier.str
 
         fun onCompletion(): CompletionResult {
             val now = System.currentTimeMillis()
@@ -65,7 +65,7 @@ object KuudraCarryStateTracker : ICarryStateTracker<KuudraCarryStateTracker.Trac
         }
     }
 
-    override fun d(player: String, obj: JsonObject): TrackedCarry? {
+    override fun load(player: String, obj: JsonObject): TrackedCarry? {
         val tierInt = obj.get("tier")?.asInt ?: return null
         val tier = KuudraTier.get(tierInt) ?: return null
 
@@ -79,7 +79,7 @@ object KuudraCarryStateTracker : ICarryStateTracker<KuudraCarryStateTracker.Trac
         )
     }
 
-    override fun s(carry: TrackedCarry): JsonObject {
+    override fun save(carry: TrackedCarry): JsonObject {
         return JsonObject().apply {
             addProperty("total", carry.total)
             addProperty("tier", carry.tier.int)

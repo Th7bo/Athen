@@ -4,13 +4,13 @@ import xyz.aerii.library.utils.toDuration
 
 interface ITrackedCarry {
     val player: String
+    val type: String
+    val short: String
+
     var total: Int
     var completed: Int
     var lastCompletionTime: Long
     var firstCompletionTime: Long
-
-    fun getType(): String
-    fun getShortType(): String
 
     fun str(): String {
         val now = System.currentTimeMillis()
@@ -25,6 +25,6 @@ interface ITrackedCarry {
             if (seconds > 0) "${completed * 3600 / seconds}/hr" else "§7N/A"
         } else "§7N/A"
 
-        return "§7> §b$player §8[§7${getShortType()}§8]§f: §b$completed§f/§b$total §7($timeSince | $rate)"
+        return "§7> §b$player §8[§7$short§8]§f: §b$completed§f/§b$total §7($timeSince | $rate)"
     }
 }

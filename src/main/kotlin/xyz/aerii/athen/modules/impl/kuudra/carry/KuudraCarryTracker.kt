@@ -170,7 +170,7 @@ object KuudraCarryTracker : Module(
                         }
                     }
 
-                    KuudraCarryStateTracker.add(teammate.name, result.amount, carry.getType())
+                    KuudraCarryStateTracker.add(teammate.name, result.amount, carry.type)
                     tracked.remove(teammate.name)
                 }
 

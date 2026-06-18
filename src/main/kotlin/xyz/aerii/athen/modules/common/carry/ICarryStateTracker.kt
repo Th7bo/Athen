@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec
 import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.library.api.repeat
+import xyz.aerii.library.handlers.parser.parse
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,21 +24,21 @@ abstract class ICarryStateTracker<T : ITrackedCarry>(storagePath: String, histor
         val timestamp: Long
     )
 
-    abstract fun d(player: String, obj: JsonObject): T?
-    abstract fun s(carry: T): JsonObject
+    abstract fun load(player: String, obj: JsonObject): T?
+    abstract fun save(carry: T): JsonObject
 
     abstract fun create(player: String, total: Int, vararg params: Any): T?
     abstract fun valid(existing: T, vararg params: Any): Boolean
 
     fun addCarry(player: String, total: Int, vararg params: Any) {
         val existing = tracked[player]
-        if (existing != null && !valid(existing, *params)) return "§b$player§f is already being tracked for §b${existing.getShortType()}§f. Remove first.".modMessage()
+        if (existing != null && !valid(existing, *params)) return "§b$player§f is already being tracked for §b${existing.short}§f. Remove first.".modMessage()
         
         val carry = existing ?: create(player, 0, *params)?.also { tracked[player] = it } ?: return "Failed to create carry tracker.".modMessage()
         carry.total += total
 
         persist()
-        "Now tracking §b$player§f for §b${carry.total}§f §b${carry.getShortType()}§f carries.".modMessage()
+        "Now tracking §b$player§f for §b${carry.total}§f §b${carry.short}§f carries.".modMessage()
     }
 
     fun removeCarry(player: String) {
@@ -47,12 +48,11 @@ abstract class ICarryStateTracker<T : ITrackedCarry>(storagePath: String, histor
     }
 
     fun listCarries() {
-        tracked.values
-            .takeIf { it.isNotEmpty() }
-            ?.run {
-                "Currently tracking:".modMessage()
-                forEach { " §7• ${it.str()}".modMessage() }
-            } ?: "No carries being tracked.".modMessage()
+        val l = tracked.values
+        if (tracked.values.isEmpty()) return "<red>No carries being tracked.".parse().modMessage()
+
+        "Currently tracking:".modMessage()
+        for (a in l) " ${a.str()}".parse().modMessage()
     }
 
     fun clearCarries() {
@@ -77,15 +77,14 @@ abstract class ICarryStateTracker<T : ITrackedCarry>(storagePath: String, histor
         divider.modMessage()
         "Carry History - Page §b$currentPage§f/§b$totalPages".modMessage()
 
-        for (e in sorted.subList(rangeStart, rangeEnd))
-            " §7• §b${e.player} §8[§7${e.type}§8] §7- §c${dateFormat.format(Date(e.timestamp))} §7- §b${e.amount}§f carries".modMessage()
+        for (e in sorted.subList(rangeStart, rangeEnd)) " <gray>• <aqua>${e.player} <dark_gray>[<gray>${e.type}<dark_gray>] <gray>- <red>${dateFormat.format(Date(e.timestamp))} <gray>- <aqua>${e.amount}<r> carries".parse().modMessage()
 
         "Total: §b${sorted.sumOf { it.amount }}§f carries".modMessage()
         divider.modMessage()
     }
 
     fun persist() {
-        data = JsonObject().apply { for ((p, c) in tracked) add(p, s(c)) }
+        data = JsonObject().apply { for ((p, c) in tracked) add(p, save(c)) }
     }
 
     fun add(player: String, amount: Int, type: String) =

@@ -201,7 +201,7 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : Scram(scre
 
             NVGRenderer.drawText(carry.player, x + 15f, y + 8f, 18f, Mocha.Text.argb, NVGRenderer.defaultFont)
 
-            val typeText = carry.getShortType()
+            val typeText = carry.short
             NVGRenderer.drawText(typeText, x + 15f, y + 32f, 14f, Mocha.Subtext0.argb, NVGRenderer.defaultFont)
 
             val progressText = "${carry.completed}/${carry.total}"
