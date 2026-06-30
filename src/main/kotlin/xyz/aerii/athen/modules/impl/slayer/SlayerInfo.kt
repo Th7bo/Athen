@@ -13,8 +13,8 @@ import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractText
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerBoss
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.ducks.entity.attachedStripped
-import xyz.aerii.athen.ducks.entity.parent
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.attachedStripped
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.parent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.events.TickEvent

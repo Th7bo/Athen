@@ -7,7 +7,7 @@ import xyz.aerii.athen.api.slayers.enums.type.base.ISlayerType
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerBoss
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerDemon
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerMini
-import xyz.aerii.athen.ducks.entity.parent
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.parent
 import xyz.aerii.athen.events.EntityEvent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.MessageEvent

@@ -6,7 +6,7 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.ducks.entity.carry
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.carry
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.events.TickEvent

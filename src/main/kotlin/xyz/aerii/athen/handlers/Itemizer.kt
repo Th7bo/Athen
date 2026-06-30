@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack
 import xyz.aerii.athen.accessors.hovered
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.config.ConfigBuilder
-import xyz.aerii.athen.ducks.item.`athen$cached$tooltip`
+import xyz.aerii.athen.ducks.item.ItemStackDuck.Companion.`athen$cached$tooltip`
 import xyz.aerii.athen.events.GuiEvent
 import xyz.aerii.athen.events.core.on
 import xyz.aerii.library.api.client

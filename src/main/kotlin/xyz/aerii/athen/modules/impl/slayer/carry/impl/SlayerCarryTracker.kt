@@ -16,7 +16,7 @@ import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.api.slayers.enums.tier.SlayerTier
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerBoss
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.ducks.entity.carry
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.carry
 import xyz.aerii.athen.events.*
 import xyz.aerii.athen.events.core.runWhen
 import xyz.aerii.athen.handlers.Beacon.request

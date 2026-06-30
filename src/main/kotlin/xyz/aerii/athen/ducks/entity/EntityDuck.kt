@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "Unused", "Deprecation")
 
 package xyz.aerii.athen.ducks.entity
 
@@ -15,20 +15,45 @@ interface EntityDuck {
 
     fun `athen$feat$carry$boss`(): SlayerCarryPlayer?
     fun `athen$feat$carry$boss`(carry: SlayerCarryPlayer?)
+
+    companion object {
+        val Entity.parent: Entity?
+            get() = (this as? EntityDuck)?.`athen$attach`()
+
+        val Entity.attached: List<Entity>
+            get() = (this as? EntityDuck)?.`athen$attachments`()?.mapNotNull { it.get() } ?: emptyList()
+
+        val Entity.attachedNames: List<Component>
+            get() = attached.mapNotNull { it.customName }
+
+        val Entity.attachedStripped: List<String>
+            get() = attached.mapNotNull { it.customName?.stripped() }
+
+        var Entity.carry: SlayerCarryPlayer?
+            get() = (this as? EntityDuck)?.`athen$feat$carry$boss`()
+            set(value) {
+                (this as? EntityDuck)?.`athen$feat$carry$boss`(value)
+            }
+    }
 }
 
+@Deprecated("Use EntityDuck.Companion.parent")
 val Entity.parent: Entity?
     get() = (this as? EntityDuck)?.`athen$attach`()
 
+@Deprecated("Use EntityDuck.Companion.attached")
 val Entity.attached: List<Entity>
     get() = (this as? EntityDuck)?.`athen$attachments`()?.mapNotNull { it.get() } ?: emptyList()
 
+@Deprecated("Use EntityDuck.Companion.attachedNames")
 val Entity.attachedNames: List<Component>
     get() = attached.mapNotNull { it.customName }
 
+@Deprecated("Use EntityDuck.Companion.attachedStripped")
 val Entity.attachedStripped: List<String>
     get() = attached.mapNotNull { it.customName?.stripped() }
 
+@Deprecated("Use EntityDuck.Companion.carry")
 var Entity.carry: SlayerCarryPlayer?
     get() = (this as? EntityDuck)?.`athen$feat$carry$boss`()
     set(value) {

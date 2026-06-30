@@ -9,8 +9,10 @@ import net.minecraft.world.item.ItemStack
 interface ItemStackDuck {
     fun `athen$cache$tooltip`(): Pair<List<Component>, List<Component>>?
     fun `athen$cache$tooltip`(pair: Pair<List<Component>, List<Component>>?)
-}
 
-var ItemStack.`athen$cached$tooltip`
-    get() = (this as ItemStackDuck).`athen$cache$tooltip`()
-    set(value) = (this as ItemStackDuck).`athen$cache$tooltip`(value)
+    companion object {
+        var ItemStack.`athen$cached$tooltip`
+            get() = (this as ItemStackDuck).`athen$cache$tooltip`()
+            set(value) = (this as ItemStackDuck).`athen$cache$tooltip`(value)
+    }
+}

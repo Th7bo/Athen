@@ -7,7 +7,7 @@ import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import xyz.aerii.athen.api.slayers.enums.type.impl.SlayerBoss
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.ducks.entity.attachedNames
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.attachedNames
 import xyz.aerii.athen.events.SlayerEvent
 import xyz.aerii.athen.handlers.Ticking
 import xyz.aerii.athen.modules.Module

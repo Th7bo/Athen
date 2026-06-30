@@ -14,7 +14,7 @@ import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import xyz.aerii.athen.config.Category
-import xyz.aerii.athen.ducks.entity.parent
+import xyz.aerii.athen.ducks.entity.EntityDuck.Companion.parent
 import xyz.aerii.athen.events.InputEvent
 import xyz.aerii.athen.events.LocationEvent
 import xyz.aerii.athen.events.TickEvent
