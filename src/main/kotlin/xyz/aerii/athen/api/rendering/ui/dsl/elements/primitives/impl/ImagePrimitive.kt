@@ -41,4 +41,10 @@ open class ImagePrimitive : IPrimitiveElement<ImagePrimitive>() {
         graphics.blit(pipeline, location, x, y, u0, v0, width, height, u1 ?: width, v1 ?: height, textureWidth, textureHeight, color)
         super.render(graphics)
     }
+
+    companion object {
+        inline fun image(block: ImagePrimitive.() -> Unit): ImagePrimitive {
+            return ImagePrimitive().apply(block)
+        }
+    }
 }

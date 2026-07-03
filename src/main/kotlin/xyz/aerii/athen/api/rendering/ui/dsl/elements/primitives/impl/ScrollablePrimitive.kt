@@ -52,4 +52,10 @@ open class ScrollablePrimitive : IPrimitiveElement<ScrollablePrimitive>(), IPrim
 
         return this
     }
+
+    companion object {
+        inline fun scrollable(block: ScrollablePrimitive.() -> Unit): ScrollablePrimitive {
+            return ScrollablePrimitive().apply(block)
+        }
+    }
 }

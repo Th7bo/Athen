@@ -96,4 +96,10 @@ open class TextPrimitive : IPrimitiveElement<TextPrimitive>() {
         pose.popMatrix()
         super.render(graphics)
     }
+
+    companion object {
+        inline fun text(block: TextPrimitive.() -> Unit): TextPrimitive {
+            return TextPrimitive().apply(block)
+        }
+    }
 }

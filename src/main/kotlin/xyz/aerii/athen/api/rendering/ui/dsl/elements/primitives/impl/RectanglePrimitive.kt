@@ -25,4 +25,10 @@ open class RectanglePrimitive : IPrimitiveElement<RectanglePrimitive>() {
 
         super.render(graphics)
     }
+
+    companion object {
+        inline fun rectangle(block: RectanglePrimitive.() -> Unit): RectanglePrimitive {
+            return RectanglePrimitive().apply(block)
+        }
+    }
 }

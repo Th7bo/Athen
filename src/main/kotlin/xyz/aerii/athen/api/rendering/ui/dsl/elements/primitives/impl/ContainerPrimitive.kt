@@ -8,4 +8,10 @@ open class ContainerPrimitive : IPrimitiveElement<ContainerPrimitive>() {
     override var width: Int = 0
     override var height: Int = 0
     override var color: Int = -1
+
+    companion object {
+        inline fun container(block: ContainerPrimitive.() -> Unit): ContainerPrimitive {
+            return ContainerPrimitive().apply(block)
+        }
+    }
 }
