@@ -47,8 +47,10 @@ object RadialMenu : Module(
     private val keybind by config.keybind("Keybind", GLFW.GLFW_KEY_R)
     private val releaseClose by config.switch("Release to close", true)
     private val generalDirection by config.switch("General direction click")
-    val subMenu by config.dropdown("Sub menu type", listOf("Full", "Mini", "Mini extended"))
+    val subMenu by config.dropdown("Sub menu type", listOf("Full", "Mini", "Mini extended", "Hover", "Rings", "Direction"))
+    private val hoverDelay by config.slider("Hover delay", 180, 0, 600, "ms").dependsOn { subMenu == 3 }
     private val _unused by config.textParagraph("Enabling \"General direction click\" will make your clicks be on the slot closest to the cursor when it's not on a slot.")
+    private val _unused2 by config.textParagraph("Sub menu styles: <red>Hover<r> opens groups after hovering, <red>Rings<r> opens them instantly as you push outward, <red>Direction<r> opens & picks by flick direction.")
 
     private val `color$normal` by config.colorPicker("Normal color", Color(Mocha.Surface0.withAlpha(0.5f), true))
     private val `color$hover` by config.colorPicker("Hover color", Color(Mocha.Mauve.withAlpha(0.5f), true))
@@ -68,6 +70,9 @@ object RadialMenu : Module(
     private var idx0 = -1
     private var idx1 = -1
 
+    private var dwellIdx = -1
+    private var dwellAt = 0L
+
     private val scribble = Scribble("features/radialMenu")
 
     val slots = mutableListOf<ISlot>()
@@ -80,6 +85,7 @@ object RadialMenu : Module(
         idx = -1
         idx0 = -1
         idx1 = -1
+        dwellIdx = -1
     }
 
     var active: String by scribble.string("active", "Default")
@@ -199,9 +205,10 @@ object RadialMenu : Module(
             val a = stack.isNotEmpty()
 
             if (dx * dx + dy * dy < 225f) {
-                if (subMenu == 2 && idx1 != -1) {
+                if (subMenu >= 2 && idx1 != -1) {
                     idx1 = -1
                     idx0 = -1
+                    dwellIdx = -1
                     return@on cancel()
                 }
 
@@ -213,6 +220,13 @@ object RadialMenu : Module(
                 stack.removeLast()
                 idx = -1
                 idx1 = -1
+                return@on cancel()
+            }
+
+            if (buttonInfo.button() == 1 && subMenu >= 2 && idx1 != -1) {
+                idx1 = -1
+                idx0 = -1
+                dwellIdx = -1
                 return@on cancel()
             }
 
@@ -232,9 +246,10 @@ object RadialMenu : Module(
             val slot = current.getOrNull(idx) ?: return@on cancel()
             val b = slot.sub.isNotEmpty()
 
-            if ((subMenu == 1 || subMenu == 2) && b) {
+            if (subMenu != 0 && b) {
                 idx1 = if (idx1 == idx) -1 else idx
                 idx0 = -1
+                dwellIdx = -1
                 return@on cancel()
             }
 
@@ -257,15 +272,18 @@ object RadialMenu : Module(
             val dx = mouseSX - cx
             val dy = mouseSY - cy
 
+            val ext = subMenu >= 2
+            val dir = subMenu == 5
+
             if (dx * dx + dy * dy < 225f) {
                 idx = -1
                 idx0 = -1
                 return@on
             }
 
-            if (subMenu == 2 && idx1 in current.indices) {
+            if (ext && idx1 in current.indices) {
                 val pairs = fn()
-                val hit = SlotsRenderState.hitSub0(mouseSX, mouseSY, cx, cy, maxOf(3, current.size), 80f, pairs.map { it.first }, generalDirection)
+                val hit = SlotsRenderState.hitSub0(mouseSX, mouseSY, cx, cy, maxOf(3, current.size), 80f, pairs.map { it.first }, generalDirection || dir)
                 if (hit != -1) {
                     idx0 = hit
                     return@on
@@ -282,7 +300,12 @@ object RadialMenu : Module(
             }
 
             idx0 = -1
-            idx = slot(cx, cy, maxOf(3, current.size), 50f, 80f, subMenu == 2 && idx1 != -1)
+            idx = slot(cx, cy, maxOf(3, current.size), 50f, 80f, ext && idx1 != -1 && !dir, generalDirection || dir)
+
+            // Rings/Direction: open the group under the cursor instantly (no click, no dwell).
+            if (subMenu == 4 || dir) {
+                idx1 = if (idx in current.indices && current[idx].sub.isNotEmpty()) idx else -1
+            }
         }.runWhen(open)
 
         on<GuiEvent.Render.Post> {
@@ -290,9 +313,26 @@ object RadialMenu : Module(
             val cy = graphics.guiHeight() / 2
             val num = maxOf(3, current.size)
 
+            // Hover style: open the group under the cursor once it's been dwelled on long enough.
+            if (subMenu == 3) {
+                val h = idx
+                if (h in current.indices && current[h].sub.isNotEmpty() && idx0 == -1 && idx1 != h) {
+                    if (dwellIdx != h) {
+                        dwellIdx = h
+                        dwellAt = System.currentTimeMillis()
+                    } else if (System.currentTimeMillis() - dwellAt >= hoverDelay) {
+                        idx1 = h
+                        idx0 = -1
+                    }
+                } else if (idx0 == -1 && h in current.indices && current[h].sub.isEmpty()) {
+                    dwellIdx = -1
+                    idx1 = -1
+                }
+            }
+
             val mini = if (subMenu == 1 && idx1 in current.indices) current[idx1].sub else emptyList()
             val ex = fn()
-            val idx2 = if (subMenu == 2 && idx0 != -1) ex.getOrNull(idx0)?.first ?: -1 else -1
+            val idx2 = if (subMenu >= 2 && idx0 != -1) ex.getOrNull(idx0)?.first ?: -1 else -1
 
             //~ if >= 26.1 'submitGuiElement' -> 'addGuiElement'
             graphics.guiRenderState.submitGuiElement(SlotsRenderState(graphics, cx, cy, num, 50f, 80f, `color$normal`.rgb, `color$hover`.rgb, idx, mini, idx0, idx1, ex, idx2))
@@ -312,7 +352,7 @@ object RadialMenu : Module(
                 }
             }
 
-            if (subMenu == 2) {
+            if (subMenu >= 2) {
                 for ((i, s) in ex) {
                     val (sx, sy) = SlotsRenderState.centerSub0(cx, cy, num, 80f, i)
                     //~ if >= 26.1 'renderItem(' -> 'item('
@@ -323,7 +363,7 @@ object RadialMenu : Module(
             val dx = mouseSX - cx
             val dy = mouseSY - cy
             val h = dx * dx + dy * dy < 144f
-            val back = stack.isNotEmpty() || (subMenu == 2 && idx1 != -1)
+            val back = stack.isNotEmpty() || (subMenu >= 2 && idx1 != -1)
             val str = if (back) "←" else "✕"
 
             graphics.rectangle(cx - 12, cy - 12, 24, 24, if (h) Mocha.Surface2.argb else Mocha.Surface1.argb)
@@ -404,7 +444,7 @@ object RadialMenu : Module(
     }
 
     private fun fn(): List<Pair<Int, ISlot>> {
-        if (subMenu != 2 || idx1 !in current.indices) return emptyList()
+        if (subMenu < 2 || idx1 !in current.indices) return emptyList()
         val sub = current[idx1].sub
         val n = sub.size
         val m = maxOf(3, current.size)
@@ -415,7 +455,7 @@ object RadialMenu : Module(
         }
     }
 
-    private fun slot(cx: Int, cy: Int, num: Int, inn: Float, out: Float, dir: Boolean = false): Int {
+    private fun slot(cx: Int, cy: Int, num: Int, inn: Float, out: Float, suppress: Boolean = false, general: Boolean = generalDirection): Int {
         if (num == 0) return -1
 
         val mx = mouseSX
@@ -448,7 +488,7 @@ object RadialMenu : Module(
             if (tri(mx, my, x0, y0, x1, y1, x2, y2) || tri(mx, my, x0, y0, x2, y2, x3, y3)) return i
         }
 
-        if (generalDirection && !dir) {
+        if (general && !suppress) {
             val dx = mx - cx
             val dy = my - cy
             if (dx == 0f && dy == 0f) return -1
