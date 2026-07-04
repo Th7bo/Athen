@@ -79,12 +79,16 @@ object RadialEditor : Scram("Radial menu editor [Athen]") {
         }
 
     override fun onScramInit() {
+        // init() is re-invoked on every resize (including the one our guiScale change
+        // triggers). Only seed `working` on a genuine open, otherwise a resize mid-edit
+        // would reset it to RadialMenu.slots and drop uncommitted adds/removes/reorders.
+        if (last != -1) return
+
         working.clear()
         working.addAll(RadialMenu.slots)
         collapsed.clear()
         reload(0, -1)
 
-        if (last != -1) return
         last = client.options.guiScale().get()
         client.options.guiScale().set(2)
     }
