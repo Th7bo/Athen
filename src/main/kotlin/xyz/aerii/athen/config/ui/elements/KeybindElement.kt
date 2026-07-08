@@ -2,10 +2,10 @@
 
 package xyz.aerii.athen.config.ui.elements
 
-import com.mojang.blaze3d.platform.InputConstants
 import org.lwjgl.glfw.GLFW
 import xyz.aerii.athen.config.ui.elements.base.IBaseUI
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.keyName
 import xyz.aerii.athen.utils.render.animations.springValue
 import xyz.aerii.library.utils.brighten
 import xyz.aerii.library.utils.hovered
@@ -30,7 +30,7 @@ class KeybindElement(
 
         drawText(name, x + 6f, y + 8f)
 
-        val keyName = getKeyName(selectedKey)
+        val keyName = selectedKey.keyName
         val buttonW = textWidth(keyName) + 12f
         val buttonX = x + width - 20f - textWidth(keyName)
         val isHovered = hovered(buttonX, y + 8f, buttonW, 20f)
@@ -53,7 +53,7 @@ class KeybindElement(
     }
 
     override fun mouseClicked(mouseX: Float, mouseY: Float, button: Int): Boolean {
-        val keyName = getKeyName(selectedKey)
+        val keyName = selectedKey.keyName
         val buttonW = textWidth(keyName) + 12f
         val buttonX = lastX + width - 20f - textWidth(keyName)
 
@@ -87,13 +87,5 @@ class KeybindElement(
         selectedKey = keyCode
         onUpdate(configKey, selectedKey)
         listening = false
-    }
-
-    private fun getKeyName(keyCode: Int) = when (keyCode) {
-        -1 -> "None"
-        in 0..7 -> "Mouse $keyCode"
-        else -> InputConstants.Type.KEYSYM.getOrCreate(keyCode).displayName.string.let {
-            if (it.length == 1) it.uppercase() else it
-        }
     }
 }
