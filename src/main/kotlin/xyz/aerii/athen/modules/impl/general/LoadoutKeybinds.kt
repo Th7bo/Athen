@@ -3,8 +3,8 @@
 package xyz.aerii.athen.modules.impl.general
 
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.item.Items
 import org.lwjgl.glfw.GLFW
+import tech.thatgravyboat.skyblockapi.utils.extentions.getLore
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
@@ -18,15 +18,15 @@ import xyz.aerii.athen.utils.guiClick
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
+import xyz.aerii.library.utils.stripped
 
 @Load
 @OnlyIn(skyblock = true)
-object WardrobeKeybinds : Module(
-    "Wardrobe keybinds",
-    "Keybinds for wardrobe slots!",
+object LoadoutKeybinds : Module(
+    "Loadout keybinds",
+    "Keybinds for loadout slots!",
     Category.GENERAL
 ) {
-    private val preventUnequip by config.switch("Prevent unequip")
     private val cancelAll by config.switch("Cancel all other clicks")
     private val override by config.keybind("Key override", GLFW.GLFW_KEY_LEFT_CONTROL).dependsOn { cancelAll }
     private val cancelRender = config.switch("Cancel gui render").custom("cancelRender")
@@ -53,46 +53,35 @@ object WardrobeKeybinds : Module(
     private val key6 by config.keybind("Slot 7", GLFW.GLFW_KEY_7).dependsOn { !useHotbar }.childOf { keybindExpandable }
     private val key7 by config.keybind("Slot 8", GLFW.GLFW_KEY_8).dependsOn { !useHotbar }.childOf { keybindExpandable }
     private val key8 by config.keybind("Slot 9", GLFW.GLFW_KEY_9).dependsOn { !useHotbar }.childOf { keybindExpandable }
+    private val key9 by config.keybind("Slot 10", GLFW.GLFW_KEY_UNKNOWN).dependsOn { !useHotbar }.childOf { keybindExpandable }
+    private val key10 by config.keybind("Slot 11", GLFW.GLFW_KEY_UNKNOWN).dependsOn { !useHotbar }.childOf { keybindExpandable }
+    private val key11 by config.keybind("Slot 12", GLFW.GLFW_KEY_UNKNOWN).dependsOn { !useHotbar }.childOf { keybindExpandable }
 
-    private var menuRegex: Regex = Regex("^\\((?<cur>\\d)/(?<max>\\d)\\) Armor Sets$")
+    private val menuRegex: Regex = Regex("^\\((?<cur>\\d)/(?<max>\\d)\\) Loadouts$")
     private var currentPage: Int = 0
     private var maxPage: Int = 0
     private var lastClick: Long = 0
-    var inMenu: Boolean = false
+    var open: Boolean = false
 
-    val wardrobeSlots = listOf(
-        WardrobeSlot(36, { acc(0) }, { key0 }),
-        WardrobeSlot(37, { acc(1) }, { key1 }),
-        WardrobeSlot(38, { acc(2) }, { key2 }),
-        WardrobeSlot(39, { acc(3) }, { key3 }),
-        WardrobeSlot(40, { acc(4) }, { key4 }),
-        WardrobeSlot(41, { acc(5) }, { key5 }),
-        WardrobeSlot(42, { acc(6) }, { key6 }),
-        WardrobeSlot(43, { acc(7) }, { key7 }),
-        WardrobeSlot(44, { acc(8) }, { key8 })
+    val slots = listOf(
+        LoadoutSlot(14, { acc(0) }, { key0 }),
+        LoadoutSlot(15, { acc(1) }, { key1 }),
+        LoadoutSlot(16, { acc(2) }, { key2 }),
+        LoadoutSlot(23, { acc(3) }, { key3 }),
+        LoadoutSlot(24, { acc(4) }, { key4 }),
+        LoadoutSlot(25, { acc(5) }, { key5 }),
+        LoadoutSlot(32, { acc(6) }, { key6 }),
+        LoadoutSlot(33, { acc(7) }, { key7 }),
+        LoadoutSlot(34, { acc(8) }, { key8 }),
+        LoadoutSlot(41, { acc(8) }, { key9 }),
+        LoadoutSlot(42, { acc(8) }, { key10 }),
+        LoadoutSlot(43, { acc(8) }, { key11 })
     )
-
-    data class WardrobeSlot(
-        val idx: Int,
-        val acc: () -> KeyMappingAccessor,
-        val keybind: () -> Int
-    ) {
-        val hotbar by lazy(acc)
-
-        val value: Int
-            get() = if (useHotbar) hotbar.boundKey.value else keybind()
-
-        val slot: Slot?
-            get() = client.player?.containerMenu?.slots?.getOrNull(idx)
-
-        val equipped: Boolean
-            get() = slot?.item?.item == Items.LIME_DYE
-    }
 
     init {
         on<GuiEvent.Open.Container> {
             menuRegex.findOrNull(stripped, "cur", "max") { (cur, max) ->
-                inMenu = true
+                open = true
                 currentPage = cur.toInt()
                 maxPage = max.toInt()
             }
@@ -103,15 +92,15 @@ object WardrobeKeybinds : Module(
         }
 
         on<GuiEvent.Input.Key.Press> {
-            if (inMenu) fn(keyEvent.key)
+            if (open) fn(keyEvent.key)
         }
 
         on<GuiEvent.Input.Mouse.Press> {
-            if (inMenu) fn(keyEvent.button())
+            if (open) fn(keyEvent.button())
         }
 
         on<GuiEvent.Render.Container.Pre> {
-            if (inMenu) cancel()
+            if (open) cancel()
         }.runWhen(cancelRender.state)
     }
 
@@ -123,19 +112,19 @@ object WardrobeKeybinds : Module(
         val container = player.containerMenu ?: return
 
         if (key == prevPage) {
-            if (currentPage > 1) guiClick(container.containerId, 45)
+            if (currentPage > 1) guiClick(container.containerId, 17)
             return
         }
 
         if (key == nextPage) {
-            if (currentPage < maxPage) guiClick(container.containerId, 53)
+            if (currentPage < maxPage) guiClick(container.containerId, 44)
             return
         }
 
         if (swapKey && key == swapKeybind) {
             if (swapKey1 == swapKey2) return
-            val slot1 = wardrobeSlots.find { it.idx == swapKey1 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
-            val slot2 = wardrobeSlots.find { it.idx == swapKey2 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val slot1 = slots.find { it.idx == swapKey1 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val slot2 = slots.find { it.idx == swapKey2 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
             val s = if (slot1.equipped) slot2.idx else slot1.idx
 
             guiClick(container.containerId, s)
@@ -144,8 +133,7 @@ object WardrobeKeybinds : Module(
             return
         }
 
-        val slot = wardrobeSlots.find { it.value == key }?.takeIf { it.slot?.item?.isEmpty == false } ?: return // slot can be empty on high ping, yay!
-        if (slot.equipped && preventUnequip) return
+        val slot = slots.find { it.value == key }?.takeIf { it.slot?.item?.isEmpty == false } ?: return // slot can be empty on high ping, yay!
 
         guiClick(container.containerId, slot.idx)
         lastClick = System.currentTimeMillis()
@@ -156,9 +144,32 @@ object WardrobeKeybinds : Module(
         client.options.keyHotbarSlots[idx] as KeyMappingAccessor
 
     private fun reset() {
-        inMenu = false
+        open = false
         currentPage = 0
         maxPage = 0
         lastClick = 0
+    }
+
+    data class LoadoutSlot(
+        val idx: Int,
+        val acc: () -> KeyMappingAccessor,
+        val keybind: () -> Int
+    ) {
+        val hotbar by lazy(acc)
+
+        val value: Int
+            get() {
+                if (useHotbar && idx >= 41) return GLFW.GLFW_KEY_UNKNOWN
+                return if (useHotbar) hotbar.boundKey.value else keybind()
+            }
+
+        val slot: Slot?
+            get() = client.player?.containerMenu?.slots?.getOrNull(idx)
+
+        val equipped: Boolean
+            get() {
+                val a = slot?.item?.getLore() ?: return false
+                return a.getOrNull(a.lastIndex - 1)?.stripped()?.isEmpty() ?: false
+            }
     }
 }
