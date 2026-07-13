@@ -61,6 +61,7 @@ abstract class IPrimitiveElement<T : IPrimitiveElement<T>> : IPrimitiveChildren<
     override var focused: IPrimitiveElement<*>? = null
     override var interact: Boolean = true
     override var hovered: Boolean = false
+    override var unfocus: Boolean = true
 
     open fun render(graphics: GuiGraphics) {
         if (!visible) return

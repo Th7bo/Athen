@@ -5,11 +5,14 @@ import xyz.aerii.athen.api.rendering.ui.dsl.events.impl.KeyEvent
 import xyz.aerii.athen.api.rendering.ui.dsl.events.impl.MouseEvent
 
 interface IPrimitiveInteractable<T> : IPrimitiveSelf<T> where T : IPrimitiveElement<T> {
-    var focused: IPrimitiveElement<*>?
     var interact: Boolean
     var hovered: Boolean
 
+    var focused: IPrimitiveElement<*>?
+    var unfocus: Boolean
+
     fun mousePress(x: Double, y: Double, button: Int): Boolean {
+        if (self.root.focused?.unfocus == false) return false
         val a = self.find(x, y).also { self.root.focused = it } ?: return false
         return a.post(MouseEvent.Press(x, y, button, a))
     }
