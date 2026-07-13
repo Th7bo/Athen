@@ -19,7 +19,9 @@ object LobbyMarker : Module(
         on<LocationEvent.Hypixel.Server> {
             if (type?.name != "SkyBlock") return@on
             if (mode != "crystal_hollows" && onlyCrystalHollows) return@on
-            if (!lobbies.add(name)) "You've been in this lobby!".modMessage()
+            if (lobbies.add(name)) return@on
+
+            "You've been in this lobby!".modMessage()
         }
     }
 }
