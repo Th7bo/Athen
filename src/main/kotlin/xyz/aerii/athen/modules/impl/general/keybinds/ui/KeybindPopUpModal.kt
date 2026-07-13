@@ -83,11 +83,13 @@ class KeybindPopUpModal(
             when {
                 key == GLFW.GLFW_KEY_ENTER && captured.isNotEmpty() -> {
                     capturing = false
+                    unfocus = true
                     binding = captured.toMutableList()
                 }
 
                 key == GLFW.GLFW_KEY_ESCAPE -> {
                     capturing = false
+                    unfocus = true
                     captured.clear()
                 }
 
@@ -186,6 +188,7 @@ class KeybindPopUpModal(
                 if (button != 0) return@on
 
                 capturing = true
+                this@KeybindPopUpModal.unfocus = false
                 captured.clear()
                 gui.scene.focused = this@KeybindPopUpModal
                 keys()
