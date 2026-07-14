@@ -121,7 +121,7 @@ object SlayerAPI {
     }
 
     private fun String.check(): Boolean {
-        if (!startsWith("☠") && !endsWith("❤") && !endsWith("❤ ✯") && !endsWith(" Hits")) return false
+        if (!startsWith("☠") && !endsWith("❤") && !endsWith("❤ \uE01A") && !endsWith(" Hits")) return false
 
         for (name in ISlayerType.Companion.Names.all) if (contains(name)) return true
         return false
