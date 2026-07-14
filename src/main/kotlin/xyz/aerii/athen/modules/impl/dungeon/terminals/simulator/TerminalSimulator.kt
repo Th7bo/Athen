@@ -13,16 +13,16 @@ import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.dungeon.terminals.simulator.base.SimulatorMenu
 import xyz.aerii.athen.modules.impl.dungeon.terminals.simulator.impl.*
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.client
 import xyz.aerii.library.handlers.Observable
-import xyz.aerii.library.kommand.ICommand
 
 @Load
 object TerminalSimulator : Module(
     "Terminal simulator",
     "Simulator terminal, terminal simulators?",
     Category.DUNGEONS
-), ICommand {
+) {
     private val ipInput by config.textInput("Simulator server IP", "hypixelp3sim.zapto.org")
     private val _unused0 by config.textParagraph("The simulator server IP is optional. You can still do <red>\"/${Athen.modId} simulate terminals\"<r> to simulate.")
     private val pingInput = config.textInput("Ping", "0", "0").custom("ping")
@@ -48,7 +48,7 @@ object TerminalSimulator : Module(
             }
         }
 
-        command(Athen.modId) {
+        command {
             "simulate" / "terminals" {
                 SimulatorMenu.a()
             }

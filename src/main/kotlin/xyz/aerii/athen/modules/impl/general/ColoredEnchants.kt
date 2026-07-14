@@ -8,7 +8,6 @@ import tech.thatgravyboat.skyblockapi.utils.extentions.parseRomanNumeral
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextUtils.substring
-import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.config.Category
@@ -19,11 +18,11 @@ import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.data
 import xyz.aerii.athen.utils.enchants
 import xyz.aerii.library.api.EMPTY_COMPONENT
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.stripped
@@ -35,7 +34,7 @@ object ColoredEnchants : Module(
     "Colored enchants",
     "Custom colors for enchants!",
     Category.GENERAL
-), ICommand {
+) {
     private val l = listOf("Bold", "Italic", "Underline", "Strike-through")
 
     private val replaceRoman by config.switch("Replace roman", true)
@@ -92,7 +91,7 @@ object ColoredEnchants : Module(
             }
         }
 
-        command(Athen.modId) {
+        command {
             "export" / "enchants" {
                 val data = mapOf(
                     $$"ultimate$color" to `ultimate$color`.rgb,
@@ -139,7 +138,7 @@ object ColoredEnchants : Module(
 
                 if (found && str.isEmpty()) break
                 if ("◆" in str) continue
-                if (l.siblings?.firstOrNull()?.color == 0) continue
+                if (l.siblings.firstOrNull()?.color == 0) continue
 
                 val final = EMPTY_COMPONENT.copy()
                 var i = 0

@@ -18,10 +18,10 @@ import xyz.aerii.athen.handlers.Ticking
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.api.client
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
 import xyz.aerii.library.utils.stripped
 import xyz.aerii.library.utils.toDuration
@@ -32,7 +32,7 @@ object SlayerStats : Module(
     "Slayer stats",
     "Displays slayer session statistics.",
     Category.SLAYER
-), ICommand {
+) {
     private var `last$type`: SlayerBoss? = null
     private var `last$tier`: SlayerTier? = null
 
@@ -131,7 +131,7 @@ object SlayerStats : Module(
             reset()
         }
 
-        command(Athen.modId) {
+        command {
             "reset" / "slayerStats" {
                 reset()
                 "Slayer stats were reset!".notify()

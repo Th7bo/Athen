@@ -21,8 +21,8 @@ import xyz.aerii.athen.modules.impl.general.messageactions.data.CategoryEntry
 import xyz.aerii.athen.modules.impl.general.messageactions.data.MatchType
 import xyz.aerii.athen.modules.impl.general.messageactions.data.ResolvedEntry
 import xyz.aerii.athen.modules.impl.general.messageactions.ui.MessageActionsGUI
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.client
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.safely
@@ -32,7 +32,7 @@ object MessageActions : Module(
     "Message actions",
     "Allows you to run actions when you receive a message.",
     Category.GENERAL
-), ICommand {
+) {
     private val _unused by config.button("Open manager") { client.setScreen(MessageActionsGUI) }
     private val _unused0 by config.textParagraph("You can use the commands <red>\"/${Athen.modId} [import|export] messageactions\"<r> to share configs!")
 
@@ -92,7 +92,7 @@ object MessageActions : Module(
             }
         }
 
-        command(Athen.modId) {
+        command {
             "messageactions" {
                 MessageActionsGUI.open()
             }

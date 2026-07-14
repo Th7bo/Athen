@@ -23,6 +23,7 @@ import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.kuudra.carry.KuudraCarryStateTracker.tracked
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.center
@@ -30,7 +31,6 @@ import xyz.aerii.library.api.command
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.Request
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
@@ -42,7 +42,7 @@ object KuudraCarryTracker : Module(
     "Kuudra carry tracker",
     "Track kuudra carries and display progress.",
     Category.KUUDRA
-), ICommand {
+) {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)
 
@@ -88,7 +88,7 @@ object KuudraCarryTracker : Module(
     }
 
     init {
-        command(Athen.modId) {
+        command {
             "kcarry" / "add" / word("player").suggests { McClient.players.map { it.profile.name } } / int("amount", 1).suggests { listOf("1", "5", "10", "20") } / word("tier") {
                 val player = string("player")
                 val amount = int("amount")

@@ -16,10 +16,10 @@ import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.minecraft.AbstractWords
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.literal
 
 @Load
@@ -27,7 +27,7 @@ object VisualWords : Module(
     "Visual words",
     "Visually modify words!",
     Category.RENDER
-), ICommand {
+) {
     private const val SKIP = "\u0000vw_bypass"
 
     private val unused by config.textParagraph("Use the command \"/athen visuals help\" to learn more about the available commands!")
@@ -63,7 +63,7 @@ object VisualWords : Module(
             save()
         }
 
-        command(Athen.modId) {
+        command {
             "visuals" {
                 help()
             }

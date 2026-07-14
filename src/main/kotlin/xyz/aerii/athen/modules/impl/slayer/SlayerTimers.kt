@@ -2,7 +2,6 @@ package xyz.aerii.athen.modules.impl.slayer
 
 import com.mojang.serialization.Codec
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
-import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.slayers.enums.tier.SlayerTier
@@ -15,10 +14,10 @@ import xyz.aerii.athen.handlers.Texter.onHover
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.stripped
 import xyz.aerii.library.utils.toDuration
 
@@ -28,7 +27,7 @@ object SlayerTimers : Module(
     "Slayer timers",
     "Kill and spawn timers for slayer bosses.",
     Category.SLAYER
-), ICommand {
+) {
     private val scribble = Scribble("features/slayerTimers")
     private val killPBs = scribble.mutableMap("kill_pbs", Codec.STRING, Codec.DOUBLE)
     private var questStartTime: Long = 0
@@ -97,7 +96,7 @@ object SlayerTimers : Module(
             "Slayer$p killed in $str<r>.".parse().onHover("<red>$time0 ticks.".parse()).modMessage()
         }
 
-        command(Athen.modId) {
+        command {
             "times" / "slayers" {
                 val b0 = "<gray>${"-".repeat()}".parse()
                 val b1 = "<dark_gray>${"-".repeat()}".parse()

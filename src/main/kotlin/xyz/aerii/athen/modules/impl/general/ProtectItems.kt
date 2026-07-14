@@ -26,13 +26,13 @@ import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.held
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.pressed
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.stripped
 
 @Load
@@ -40,7 +40,7 @@ object ProtectItems : Module(
     "Protect items",
     "Protects any item!",
     Category.GENERAL
-), ICommand {
+) {
     private val _unused by config.textParagraph("Use command <red>\"/${Athen.modId} protect [add|remove|list]\"<r> to manage items!")
     private val move by config.switch("Allowing moving items")
 
@@ -82,7 +82,7 @@ object ProtectItems : Module(
             }
         }.runWhen(render.state)
 
-        command(Athen.modId) {
+        command {
             "protect" / "add" {
                 val item = held?.takeIf { !it.isEmpty } ?: return@invoke "Not holding anything!".modMessage()
                 val uuid = item.getData(DataTypes.UUID)?.toString()

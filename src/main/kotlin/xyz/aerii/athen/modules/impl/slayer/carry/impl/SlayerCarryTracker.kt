@@ -32,6 +32,7 @@ import xyz.aerii.athen.modules.impl.ModSettings
 import xyz.aerii.athen.modules.impl.slayer.carry.data.SlayerCarryHistory
 import xyz.aerii.athen.modules.impl.slayer.carry.data.SlayerCarryPlayer
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.center
@@ -41,7 +42,6 @@ import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.client
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.Request
 import xyz.aerii.library.utils.literal
 import xyz.aerii.library.utils.toDuration
@@ -55,7 +55,7 @@ object SlayerCarryTracker : Module(
     "Slayer carry tracker",
     "Track slayer carries and display progress.",
     Category.SLAYER
-), ICommand {
+) {
     private val `announce$comp$party` by config.switch("Announce in party", true)
     private val `announce$spawn` by config.switch("Show spawn message", true)
 
@@ -107,7 +107,7 @@ object SlayerCarryTracker : Module(
     private var trader: String? = null
 
     init {
-        command(Athen.modId) {
+        command {
             "carry" / "add" / word("player").suggests { McClient.players.map { it.profile.name } } / int("amount", 1).suggests { listOf("1", "5", "10", "20") } / word("slayerType").suggests { SlayerBoss.SHORTS0 } / word("tier") {
                 val name = string("player")
                 val amount = int("amount")

@@ -3,7 +3,6 @@
 package xyz.aerii.athen.modules.impl.general
 
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
-import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
@@ -17,10 +16,10 @@ import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.Task
 import xyz.aerii.library.handlers.time.client
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.fromLongDuration
 import xyz.aerii.library.utils.showTitle
 import xyz.aerii.library.utils.toDurationFromMillis
@@ -34,7 +33,7 @@ object KatReminder : Module(
     "Kat reminder",
     "Reminds you about your pet that you gave to upgrade to Kat!",
     Category.GENERAL
-), ICommand {
+) {
     private val showTitle by config.switch("Show title", true)
     private val message by config.textInput("Alert message", "<red>#pet<white> is waiting for you at Kat!")
     private val _unused0 by config.textParagraph("Variable: <red>#pet")
@@ -55,7 +54,7 @@ object KatReminder : Module(
     init {
         fn()
 
-        command(Athen.modId) {
+        command {
             "clear" / "kat" {
                 if (!Commander.StateTracker.`warning$kat$sentOnce`) {
                     "<red>This WILL clear your Kat time info! Only use this if you know what you're doing.".parse().modMessage(Typo.PrefixType.ERROR)

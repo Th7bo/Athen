@@ -12,12 +12,12 @@ import xyz.aerii.athen.handlers.Chronos
 import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.impl.Dev
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.wsUrl
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.name
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.Task
-import xyz.aerii.library.kommand.ICommand
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -27,7 +27,7 @@ import java.util.concurrent.CompletionStage
 import kotlin.time.Duration.Companion.seconds
 
 @Priority
-object WebSocket : ICommand {
+object WebSocket {
     private val http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()
     private val url = URI(wsUrl)
     private var ws: WebSocket? = null
@@ -39,7 +39,7 @@ object WebSocket : ICommand {
         private set
 
     init {
-        command(Athen.modId) {
+        command {
             "ws" / "connect" {
                 "<gray>Connecting to WebSocket...".parse().modMessage()
                 SCOPE.launch { connect() }

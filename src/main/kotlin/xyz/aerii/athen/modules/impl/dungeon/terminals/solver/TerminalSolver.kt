@@ -22,7 +22,6 @@ import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.athen.utils.nvg.NVGSpecialRenderer
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.ctrl
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.mouseRX
 import xyz.aerii.library.utils.mouseRY
 import java.awt.Color
@@ -32,7 +31,7 @@ object TerminalSolver : Module(
     "Terminal solver",
     "Shows solutions for F7/M7 terminals in a nice custom gui!",
     Category.DUNGEONS
-), ICommand {
+) {
     private val settingsExpandable by config.expandable("Settings")
     val fcDelay by config.slider("First click delay", 350, 150, 1000, "ms").childOf { settingsExpandable }
     val resync by config.slider("Resync timeout", 800, 0, 2000, "ms").childOf { settingsExpandable }
@@ -147,7 +146,7 @@ object TerminalSolver : Module(
                     cancel()
                 }
 
-                (client.options?.keyDrop as? KeyMappingAccessor)?.boundKey?.value if (dropKey) -> {
+                (client.options.keyDrop as? KeyMappingAccessor)?.boundKey?.value if (dropKey) -> {
                     c(mouse = if (!ctrl) 0 else 1)
                     cancel()
                 }

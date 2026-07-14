@@ -12,6 +12,7 @@ import xyz.aerii.library.api.client
 import xyz.aerii.library.api.command
 import xyz.aerii.library.api.message
 import xyz.aerii.athen.modules.impl.general.keybinds.ui.KeybindsGUI
+import xyz.aerii.athen.utils.command
 
 @Load
 object Keybinds : Module(
@@ -31,6 +32,12 @@ object Keybinds : Module(
     var categories = storage.mutableList("categories", CategoryEntry.CODEC)
 
     init {
+        command {
+            "keybinds" {
+                KeybindsGUI.open()
+            }
+        }
+
         on<InputEvent.Keyboard.Press> {
             keys.add(keyEvent.key)
             check()

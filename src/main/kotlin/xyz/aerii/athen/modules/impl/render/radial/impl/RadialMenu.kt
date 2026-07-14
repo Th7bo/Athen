@@ -26,13 +26,13 @@ import xyz.aerii.athen.modules.impl.render.radial.base.toData
 import xyz.aerii.athen.modules.impl.render.radial.base.toSlot
 import xyz.aerii.athen.modules.impl.render.radial.impl.SlotsRenderState.Companion.tri
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.center
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.Observable
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.*
 import java.awt.Color
 import kotlin.math.PI
@@ -43,7 +43,7 @@ object RadialMenu : Module(
     "Radial menu",
     "Shows a cool radial menu with a ton of options for customisations!",
     Category.RENDER
-), ICommand {
+) {
     private val keybind by config.keybind("Keybind", GLFW.GLFW_KEY_R)
     private val releaseClose by config.switch("Release to close", true)
     private val generalDirection by config.switch("General direction click")
@@ -89,7 +89,7 @@ object RadialMenu : Module(
         private set
 
     init {
-        command(Athen.modId) {
+        command {
             "radial" {
                 help()
             }
