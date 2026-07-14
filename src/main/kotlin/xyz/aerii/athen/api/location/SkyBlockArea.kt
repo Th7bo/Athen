@@ -233,6 +233,11 @@ enum class SkyBlockArea(val key: String, val displayName: String) {
     // Backwater Bayou
     BACKWATER_BAYOU("backwater_bayou", "Backwater Bayou"),
 
+    // Lotus Atoll
+    LOTUS_ATOLL("lotus_atoll", "Lotus Atoll"),
+    LOTUS_EATERS_CAVE("lotus_eaters_cave", "Lotus Eater's Cave"),
+    LOTUS_HIGHLANDS("lotus_highlands", "Lotus Highlands"),
+
     // Galatea
     TANGLEBURG_PATH("tangleburg_path", "Tangleburg's Path"),
     TANGLEBURG("tangleburg", "Tangleburg"),
