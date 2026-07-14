@@ -187,7 +187,7 @@ object ProtectItems : Module(
         if (trade.matches(t)) return true
 
         val t0 = s.menu.slots.getOrNull(49)?.item
-        if (t0?.item == Items.HOPPER && t0.hoverName?.stripped() == "Sell Item") return true
+        if (t0?.item == Items.HOPPER && t0.hoverName.stripped() == "Sell Item") return true
         if (t0?.getLore()?.lastOrNull()?.stripped() == "Click to buyback!") return true
 
         return false
