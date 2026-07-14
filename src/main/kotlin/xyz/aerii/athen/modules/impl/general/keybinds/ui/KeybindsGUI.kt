@@ -44,7 +44,7 @@ object KeybindsGUI : PrimitiveScreen("Keybinds Manager [Athen]") {
     private var left: ScrollablePrimitive
     private var right: ScrollablePrimitive
     private var footer: RectanglePrimitive
-    private var popup: KeybindPopUp
+    private var popup: KeybindsPopUp
 
     private var `category$new`: RectanglePrimitive
     private var `category$toggle`: RectanglePrimitive
@@ -120,7 +120,7 @@ object KeybindsGUI : PrimitiveScreen("Keybinds Manager [Athen]") {
             attach(main)
         }
 
-        popup = KeybindPopUp(this) {
+        popup = KeybindsPopUp(this) {
             popup.visible = false
             scene.focused = null
             list()
@@ -430,14 +430,14 @@ object KeybindsGUI : PrimitiveScreen("Keybinds Manager [Athen]") {
                 attach(left)
             }
 
-            val labelText = text {
+            val label = text {
                 text = v.literal()
                 color = if (!b1) Mocha.Overlay0.argb else if (b0) Mocha.Mauve.argb else Mocha.Subtext0.argb
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
                 attach(row)
             }
 
-            rows0[k] = CategoryRow(row, labelText)
+            rows0[k] = CategoryRow(row, label)
             cy += 20
         }
     }

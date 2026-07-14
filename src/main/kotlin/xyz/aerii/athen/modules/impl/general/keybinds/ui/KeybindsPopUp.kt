@@ -40,7 +40,7 @@ import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.library.api.client
 import xyz.aerii.library.utils.literal
 
-class KeybindPopUp(
+class KeybindsPopUp(
     private val gui: PrimitiveScreen,
     private val onClose: () -> Unit
 ) : ContainerPrimitive() {
@@ -118,7 +118,7 @@ class KeybindPopUp(
                 cancel()
             }
 
-            attach(this@KeybindPopUp)
+            attach(this@KeybindsPopUp)
         }
 
         val box = rectangle {
@@ -133,7 +133,7 @@ class KeybindPopUp(
                 cancel()
             }
 
-            attach(this@KeybindPopUp)
+            attach(this@KeybindsPopUp)
         }
 
         val header = container {
@@ -188,9 +188,9 @@ class KeybindPopUp(
                 if (button != 0) return@on
 
                 capturing = true
-                this@KeybindPopUp.unfocus = false
+                this@KeybindsPopUp.unfocus = false
                 captured.clear()
-                gui.scene.focused = this@KeybindPopUp
+                gui.scene.focused = this@KeybindsPopUp
                 keys()
             }
 
@@ -389,7 +389,7 @@ class KeybindPopUp(
                 if (str.isEmpty()) return@on cancel()
                 if (binding.isEmpty()) return@on cancel()
 
-                entry?.index?.update(this@KeybindPopUp.binding, str, entry!!.binding.enabled, category, condition) ?: binding.add(str, category, condition)
+                entry?.index?.update(this@KeybindsPopUp.binding, str, entry!!.binding.enabled, category, condition) ?: binding.add(str, category, condition)
 
                 onClose()
                 cancel()
@@ -432,7 +432,7 @@ class KeybindPopUp(
     }
 
     fun open(entry: BindingEntry?, selectedCategory: String?) {
-        this@KeybindPopUp.entry = entry
+        this@KeybindsPopUp.entry = entry
         if (entry != null) {
             binding = entry.binding.keys.toMutableList()
             condition = entry.binding.condition.copy()
