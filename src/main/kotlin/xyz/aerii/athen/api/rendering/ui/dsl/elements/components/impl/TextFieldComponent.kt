@@ -251,6 +251,11 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
         val color = if (c) Catppuccin.Mocha.Subtext0.argb else Catppuccin.Mocha.Text.argb
         graphics.extractText(str, x, y + (height - f.lineHeight) / 2 + 1, false, color)
 
+        if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
+            val x0 = client.font.width(value.substring(0, cursor))
+            graphics.rectangle(x + x0, y + 2, 1, height - 4, Catppuccin.Mocha.Mauve.argb)
+        }
+
         graphics.disableScissor()
         super.render(graphics)
     }
