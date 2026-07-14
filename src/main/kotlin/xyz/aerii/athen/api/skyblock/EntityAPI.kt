@@ -125,7 +125,7 @@ object EntityAPI {
     }
 
     private fun String.damage(): Boolean =
-        all { it.isDigit() || it == ',' || it in "✧\uE01A❤⚔✷ﬗ♞☄" }
+        all { it.isDigit() || it == ',' || it in "✧✯❤⚔✷ﬗ♞☄" }
 
     private fun Entity.armor(): Boolean {
         val l = this as? LivingEntity ?: return false
