@@ -44,7 +44,7 @@ object KeybindsGUI : PrimitiveScreen("Keybinds Manager [Athen]") {
     private var left: ScrollablePrimitive
     private var right: ScrollablePrimitive
     private var footer: RectanglePrimitive
-    private var popup: KeybindPopUpModal
+    private var popup: KeybindPopUp
 
     private var `category$new`: RectanglePrimitive
     private var `category$toggle`: RectanglePrimitive
@@ -120,7 +120,7 @@ object KeybindsGUI : PrimitiveScreen("Keybinds Manager [Athen]") {
             attach(main)
         }
 
-        popup = KeybindPopUpModal(this) {
+        popup = KeybindPopUp(this) {
             popup.visible = false
             scene.focused = null
             list()
