@@ -359,7 +359,7 @@ object SlayerCarryTracker : Module(
             "Killed boss for <aqua>$name<r> in <yellow>${result.time.toDuration(secondsDecimals = 1)} <gray>| <yellow>${(result.ticks / 20.0).toDuration(secondsDecimals = 1)}".parse().onHover("<red>${result.ticks} ticks.".parse()).modMessage()
 
             if (`announce$comp$party`) {
-                "pc $name: ${result.done}/${result.max}".command()
+                "pc $name: ${result.done}/${result.max}".command(false)
             }
 
             if (`webhook$each` && webhook) {

@@ -39,7 +39,7 @@ object ManaUsedAlert : Module(
 
             if (i1 == 0 && ignore0) return@on
 
-            "pc $i0 mana used on $i1 players!".command()
+            "pc $i0 mana used on $i1 players!".command(false)
             "<red>$i0 <r>mana used on <red>$i1 <r>players!".parse(true).modMessage()
         }
     }

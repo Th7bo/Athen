@@ -101,7 +101,8 @@ object PartyFinder : Module(
     private val requiredSecretAvg by config.textInput("Required secret average", placeholder = "8.4").childOf { _autoKick }
     private val requiredMP by config.textInput("Required MP", placeholder = "800").childOf { _autoKick }
     private val sendKickMessage by config.switch("Send kick message").childOf { _autoKick }
-    private val sendKickToParty by config.switch("Send to party", false).childOf { _autoKick }.dependsOn { sendKickMessage }
+    private val sendKickToParty by config.switch("Send to party").childOf { _autoKick }.dependsOn { sendKickMessage }
+    private val messageDelay by config.slider("Message send delay", 5, 1, 10, "ticks").childOf { _autoKick }.dependsOn { sendKickMessage && sendKickToParty }
 
     private val canKick: Boolean
         get() = autoKick && (PartyAPI.leader?.name ?: name) == name
@@ -244,7 +245,6 @@ object PartyFinder : Module(
 
             for ((i, it) in items.withIndex()) {
                 if (i >= 54) break
-                if (it == null) continue
                 if (it.item != Items.PLAYER_HEAD) continue
 
                 val lore = it.getLore().takeIf { it.size >= 4 } ?: continue
@@ -379,8 +379,8 @@ object PartyFinder : Module(
         "Kicked <aqua>$username<r>: $reason".notify()
 
         if (!sendKickToParty) return
-        Chronos.schedule(2.server) {
-            "pc [Athen] Kicked $username: $reason".command()
+        Chronos.schedule(messageDelay.server) {
+            "pc [Athen] Kicked $username: $reason".command(false)
         }
     }
 

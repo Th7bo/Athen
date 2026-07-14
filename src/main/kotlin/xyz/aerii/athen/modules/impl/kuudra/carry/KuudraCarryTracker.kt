@@ -153,7 +153,7 @@ object KuudraCarryTracker : Module(
                 val result = carry.onCompletion()
 
                 "Completed run for <aqua>${teammate.name}".parse().modMessage()
-                if (announceInParty) "pc ${teammate.name}: ${result.current}/${result.total}".command()
+                if (announceInParty) "pc ${teammate.name}: ${result.current}/${result.total}".command(false)
                 if (webhookEach && webhook) {
                     webhookUrl.request(Request.POST) {
                         body(mapOf("content" to "Completed ${result.amount}/${result.total} ${tier.str} carries for ${teammate.name}"))

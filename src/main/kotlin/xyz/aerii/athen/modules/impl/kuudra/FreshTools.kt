@@ -81,6 +81,6 @@ object FreshTools : Module(
         val vector = client.player?.blockPosition() ?: return
         val int = KuudraSupply.every.minByOrNull { it.buildPos.distSqr(vector) }?.progress ?: return
         val a = `notify$message`.replace("#buildPerc", "$int%")
-        "pc $a".command()
+        "pc $a".command(false)
     }
 }
