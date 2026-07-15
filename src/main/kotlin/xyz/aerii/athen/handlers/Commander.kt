@@ -15,20 +15,19 @@ import xyz.aerii.athen.modules.impl.Dev.clickUiHelperCollapsed
 import xyz.aerii.athen.modules.impl.Dev.clickUiHelperHidden
 import xyz.aerii.athen.modules.impl.Dev.debug
 import xyz.aerii.athen.modules.impl.ModSettings
-import xyz.aerii.athen.modules.impl.general.keybinds.ui.KeybindsGUI
 import xyz.aerii.athen.ui.themes.Catppuccin.Mocha
 import xyz.aerii.athen.updater.ModUpdater
+import xyz.aerii.athen.utils.command
 import xyz.aerii.library.api.center
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.formatted
 import xyz.aerii.library.utils.literal
 
 @Load
-object Commander : ICommand {
+object Commander {
     private val r = Regex("(?<!^)([A-Z])")
 
     object StateTracker {
@@ -55,7 +54,7 @@ object Commander : ICommand {
     )
 
     init {
-        command(Athen.modId) {
+        command {
             executes {
                 if (!ModSettings.commandConfig) return@executes showHelp()
 
@@ -73,10 +72,6 @@ object Commander : ICommand {
 
             "hud" {
                 HUDEditor.open()
-            }
-
-            "keybinds" {
-                KeybindsGUI.open()
             }
 
             "calc" / greedyString("operation") {

@@ -56,7 +56,7 @@ object SlayerDropsData : Module(
     private val map = scribble.mutableMap("map", Codec.STRING, Codec.INT)
 
     private val regex0 = Regex("^ {3}RNG Meter - (?<exp>[\\d,]+) Stored XP$")
-    private val regex1 = Regex("^(?<type>RARE DROP!|VERY RARE DROP!|CRAZY RARE DROP!|INSANE DROP!) \\((?<name>.*?)\\) \\(\\+(?<mf>\\d+)% ✯ Magic Find\\)$")
+    private val regex1 = Regex("^(?<type>RARE DROP!|VERY RARE DROP!|CRAZY RARE DROP!|INSANE DROP!) \\((?<name>.*?)\\) \\(\\+(?<mf>\\d+)% \uE01A Magic Find\\)$")
     private val regex2 = Regex("^You set your (?<boss>.*) RNG Meter to drop (?<item>.*)!")
 
     private var boss: SlayerBoss? = null

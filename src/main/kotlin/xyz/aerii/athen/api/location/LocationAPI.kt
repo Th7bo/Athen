@@ -49,7 +49,7 @@ import kotlin.time.Instant
 
 @Priority
 object LocationAPI {
-    private val locationRegex = Regex(" *[⏣ф] *(?<location>(?:\\s?[^ൠ\\s]+)*)(?: ൠ x\\d)?")
+    private val locationRegex = Regex(" *[⏣ф\uE067\uE020] *(?<location>(?:\\s?[^[ൠ\uE018]\\s]+)*)(?: [ൠ\uE018] x\\d)?")
     private val guestRegex = Regex("^ *\u270C *\\((?<guests>\\d+)/(?<max>\\d+)\\) *$")
     private val playerCountRegex = Regex(" *(?:players|party) \\((?<count>\\d+)\\) *")
 

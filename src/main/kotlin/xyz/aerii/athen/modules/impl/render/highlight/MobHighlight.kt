@@ -25,6 +25,7 @@ import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.modules.impl.render.highlight.popup.MobHighlightPopup
 import xyz.aerii.athen.modules.impl.render.highlight.ui.MobHighlightGUI
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.name
 import xyz.aerii.athen.utils.render.renderBoundingBox
 import xyz.aerii.library.api.center
@@ -32,7 +33,6 @@ import xyz.aerii.library.api.client
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.api.repeat
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 
 @Load
 @OnlyIn(skyblock = true)
@@ -40,7 +40,7 @@ object MobHighlight : Module(
     "Mob highlight",
     "Highlights mobs",
     Category.RENDER
-), ICommand {
+) {
     val scribble = Scribble("features/mobHighlight")
     val e0 = scribble.mutableList("e0", EntityNamed.CODEC)
     val e1 = scribble.mutableList("e1", EntityTyped.CODEC)
@@ -55,7 +55,7 @@ object MobHighlight : Module(
     private val map: Int2IntOpenHashMap = Int2IntOpenHashMap().apply { defaultReturnValue(Int.MIN_VALUE) }
 
     init {
-        command(Athen.modId) {
+        command {
             "highlight" / "add" / "named" / string("color") / int("maxHp") / greedyString("name") {
                 val c0 = string("color")
                 val color = c0.removePrefix("#").toInt(16)

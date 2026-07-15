@@ -5,7 +5,6 @@ package xyz.aerii.athen.modules.impl.kuudra
 import com.mojang.serialization.Codec
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
-import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.kuudra.KuudraAPI
@@ -23,11 +22,11 @@ import xyz.aerii.athen.handlers.Typo
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.render.fcs
 import xyz.aerii.library.api.lie
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.client
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.toDuration
 import xyz.aerii.library.utils.toDurationFromMillis
 import kotlin.math.abs
@@ -38,7 +37,7 @@ object KuudraSplits : Module(
     "Kuudra splits",
     "Splits for kuudra, very customisable.",
     Category.KUUDRA
-), ICommand {
+) {
     private val chat by config.switch("Send to chat", true)
     private val _hud = config.hud("Splits display") {
         if (it) return@hud sizedText(fcs)
@@ -93,7 +92,7 @@ object KuudraSplits : Module(
     }
 
     init {
-        command(Athen.modId) {
+        command {
             "times" / "kuudra" / int("tier", 1, 5) {
                 val tier = int("tier")
                 val splits = KuudraPhase.entries.filter { tier in it.tiers }

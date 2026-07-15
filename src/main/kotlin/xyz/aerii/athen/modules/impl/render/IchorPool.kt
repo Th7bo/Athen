@@ -63,7 +63,7 @@ object IchorPool : Module(
 
             val str = "${n.x} ${n.y} ${n.z}"
             "Ichor pool casted at <red>$str".parse().modMessage()
-            if (notifyParty && PartyAPI.inParty) "pc Ichor pool casted at $str".command()
+            if (notifyParty && PartyAPI.inParty) "pc Ichor pool casted at $str".command(false)
         }
 
         on<WorldRenderEvent.Extract> {

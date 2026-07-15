@@ -15,7 +15,6 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.italic
-import xyz.aerii.athen.Athen
 import xyz.aerii.athen.annotations.Load
 import xyz.aerii.athen.annotations.OnlyIn
 import xyz.aerii.athen.api.location.SkyBlockIsland
@@ -33,12 +32,12 @@ import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
 import xyz.aerii.athen.utils.PlayerStats
 import xyz.aerii.athen.utils.calculateMP
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.fetchPlayerStats
 import xyz.aerii.athen.utils.parseItem
 import xyz.aerii.library.api.*
 import xyz.aerii.library.handlers.parser.parse
 import xyz.aerii.library.handlers.time.server
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.*
 import java.awt.Color
 import kotlin.time.Duration.Companion.hours
@@ -49,7 +48,7 @@ object PartyFinder : Module(
     "Party finder",
     "Shows stats in party finder, on player join, and highlights.",
     Category.DUNGEONS
-), ICommand {
+) {
     private val floorRegex = Regex("^Floor: Floor (?<floor>[IV]+)$")
     private val nameRegex = Regex("^ (?<username>\\w+): (?<className>\\w+) \\((?<classLevel>\\d+)\\)$")
     private val classRegex = Regex("^Currently Selected: (?<className>\\w+)$")
@@ -101,7 +100,8 @@ object PartyFinder : Module(
     private val requiredSecretAvg by config.textInput("Required secret average", placeholder = "8.4").childOf { _autoKick }
     private val requiredMP by config.textInput("Required MP", placeholder = "800").childOf { _autoKick }
     private val sendKickMessage by config.switch("Send kick message").childOf { _autoKick }
-    private val sendKickToParty by config.switch("Send to party", false).childOf { _autoKick }.dependsOn { sendKickMessage }
+    private val sendKickToParty by config.switch("Send to party").childOf { _autoKick }.dependsOn { sendKickMessage }
+    private val messageDelay by config.slider("Message send delay", 5, 1, 10, "ticks").childOf { _autoKick }.dependsOn { sendKickMessage && sendKickToParty }
 
     private val canKick: Boolean
         get() = autoKick && (PartyAPI.leader?.name ?: name) == name
@@ -144,7 +144,7 @@ object PartyFinder : Module(
             statsCache.entries.removeIf { (_, cached) -> now - cached.storedAt > 1.hours.inWholeMicroseconds }
         }
 
-        command(Athen.modId) {
+        command {
             "stats" / word("username") {
                 val username = string("username")
                 val cached = statsCache[username]
@@ -244,7 +244,6 @@ object PartyFinder : Module(
 
             for ((i, it) in items.withIndex()) {
                 if (i >= 54) break
-                if (it == null) continue
                 if (it.item != Items.PLAYER_HEAD) continue
 
                 val lore = it.getLore().takeIf { it.size >= 4 } ?: continue
@@ -379,8 +378,8 @@ object PartyFinder : Module(
         "Kicked <aqua>$username<r>: $reason".notify()
 
         if (!sendKickToParty) return
-        Chronos.schedule(2.server) {
-            "pc [Athen] Kicked $username: $reason".command()
+        Chronos.schedule(messageDelay.server) {
+            "pc [Athen] Kicked $username: $reason".command(false)
         }
     }
 

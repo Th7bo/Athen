@@ -201,10 +201,10 @@ object SlayerInfo : Module(
         val s = substringBefore(" ")
 
         return when (s) {
-            "ASHEN" -> "<dark_gray>"
-            "AURIC" -> "<gold>"
-            "CRYSTAL" -> "<aqua>"
-            "SPIRIT" -> "<white>"
+            "ASHEN" -> "<dark_gray>$this"
+            "AURIC" -> "<gold>$this"
+            "CRYSTAL" -> "<aqua>$this"
+            "SPIRIT" -> "<white>$this"
             else -> this
         }
     }

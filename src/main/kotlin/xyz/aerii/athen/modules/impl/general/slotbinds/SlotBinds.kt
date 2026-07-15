@@ -22,12 +22,12 @@ import xyz.aerii.athen.handlers.Scribble
 import xyz.aerii.athen.handlers.Typo.modMessage
 import xyz.aerii.athen.modules.Module
 import xyz.aerii.athen.ui.themes.Catppuccin
+import xyz.aerii.athen.utils.command
 import xyz.aerii.athen.utils.guiClick
 import xyz.aerii.library.api.bound
 import xyz.aerii.library.api.client
 import xyz.aerii.library.api.pressed
 import xyz.aerii.library.handlers.parser.parse
-import xyz.aerii.library.kommand.ICommand
 import xyz.aerii.library.utils.compress
 import xyz.aerii.library.utils.decompress
 import xyz.aerii.library.utils.safely
@@ -37,7 +37,7 @@ object SlotBinds : Module(
     "Slot binds",
     "Bindings for slots!",
     Category.GENERAL
-), ICommand {
+) {
     private val _unused0 by config.textParagraph("You can use the commands <red>\"/${Athen.modId} [import|export] slotbinds\"<r> to share configs!")
     private val bind by config.keybind("Bind keybind", GLFW.GLFW_KEY_B)
     private val swap by config.keybind("Swap keybind", GLFW.GLFW_KEY_LEFT_SHIFT)
@@ -112,7 +112,7 @@ object SlotBinds : Module(
             disk()
         }
 
-        command(Athen.modId) {
+        command {
             "slotbinds" {
                 SlotBindsGUI.open()
             }
