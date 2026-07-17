@@ -109,7 +109,7 @@ object LoadoutKeybinds : Module(
 
         if (System.currentTimeMillis() - lastClick < ping) return
         val player = client.player ?: return
-        val container = player.containerMenu ?: return
+        val container = player.containerMenu
 
         if (key == prevPage) {
             if (currentPage > 1) guiClick(container.containerId, 17)
@@ -123,8 +123,8 @@ object LoadoutKeybinds : Module(
 
         if (swapKey && key == swapKeybind) {
             if (swapKey1 == swapKey2) return
-            val slot1 = slots.find { it.idx == swapKey1 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
-            val slot2 = slots.find { it.idx == swapKey2 + 36 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val slot1 = slots.find { it.idx == swapKey1 + 14 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
+            val slot2 = slots.find { it.idx == swapKey2 + 14 }?.takeIf { it.slot?.item?.isEmpty == false } ?: return
             val s = if (slot1.equipped) slot2.idx else slot1.idx
 
             guiClick(container.containerId, s)
