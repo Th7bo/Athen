@@ -447,8 +447,9 @@ class KeybindsPopUp(
         captured.clear()
 
         title.text = (if (entry == null) "Create Keybind" else "Edit Keybind").literal()
+        field.reset(true)
         field.value = entry?.binding?.command ?: ""
-        if (field.value.isNotEmpty()) field.cursor = field.value.length
+        field.cursor = field.value.length
 
         categories = Keybinds.categories.value.map { it.name }
         `checkbox$category`.items = listOf("Uncategorized") + categories
