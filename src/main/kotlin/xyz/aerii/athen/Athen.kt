@@ -27,7 +27,7 @@ import xyz.aerii.library.utils.literal
 import kotlin.time.Duration.Companion.hours
 
 object Athen : ClientModInitializer {
-    const val modVersion: String = /*$ mod_version*/ "0.1.9"
+    const val modVersion: String = /*$ mod_version*/ "0.2.0"
     const val modId: String = /*$ mod_id*/ "athen"
     const val modName: String = /*$ mod_name*/ "Athen"
     const val discordUrl: String = "https://discord.gg/DB5S3DjQVa"
@@ -74,8 +74,6 @@ object Athen : ClientModInitializer {
         "<hover:<green>Click to open page!><click:url:https://aerii.xyz/donate>Want to help support the development for mods like Athen? Click here :3".parse().lie()
         divider.lie()
     }
-
-
 
     private fun broadcast() {
         "broadcast.txt".data.request {
