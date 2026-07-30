@@ -102,7 +102,9 @@ dependencies {
     shadow("lwjgl-nanovg".versioned)
     for (p in listOf("windows", "linux", "macos", "macos-arm64")) shadow("lwjgl-nanovg".versioned.get().toString() + ":natives-$p")
 
-    shadow("skyblock-api".global)
+    shadow("skyblock-api".global) {
+        capabilities { requireCapability("tech.thatgravyboat:skyblock-api-$ver" + if (new) "" else "-remapped") }
+    }
 
     if (new) return@dependencies
     "mappings"(loom.layered {
