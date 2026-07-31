@@ -65,10 +65,10 @@ repositories {
     strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
     strictMaven("https://maven.parchmentmc.org/", "org.parchmentmc")
     strictMaven("https://maven.teamresourceful.com/repository/maven-public/", "tech.thatgravyboat", "com.terraformersmc", "earth.terrarium", "com.teamresourceful", "me.owdding")
-    strictMaven("https://maven.deftu.dev/snapshots", "dev.deftu")
-    strictMaven("https://maven.deftu.dev/releases", "dev.deftu")
     strictMaven("https://repo.nea.moe/releases", "moe.nea")
-    strictMaven("https://jitpack.io", "com.github.skies-starred")
+
+    maven("https://maven.starred.foo/releases")
+    maven("https://maven.starred.foo/snapshots")
 }
 
 fletchingTable {
@@ -98,7 +98,7 @@ dependencies {
     shadow("okio".global)
     shadow("classgraph".global)
     shadow("autoupdate".global)
-    shadow("library".versioned)
+    shadow("snowbird".versioned)
     shadow("lwjgl-nanovg".versioned)
     for (p in listOf("windows", "linux", "macos", "macos-arm64")) shadow("lwjgl-nanovg".versioned.get().toString() + ":natives-$p")
 
