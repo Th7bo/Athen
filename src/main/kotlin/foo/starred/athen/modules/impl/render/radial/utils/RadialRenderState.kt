@@ -55,6 +55,7 @@ class RadialRenderState(
         if (num == 0) return
 
         val step = TAU / num
+        val off = offset(num)
 
         val r01 = RadialMenu.radius1
         val r02 = RadialMenu.radius2
@@ -63,8 +64,8 @@ class RadialRenderState(
         val color = RadialMenu.`color$normal`.rgb
 
         for (i in 0 until num) {
-            val angle0 = i * step + ORIGIN
-            val angle1 = (i + 1) * step + ORIGIN
+            val angle0 = i * step + off
+            val angle1 = (i + 1) * step + off
 
             val b0 = i == i0 || i == i2
             val b1 = i == i2 && sub.isNotEmpty()
@@ -92,8 +93,8 @@ class RadialRenderState(
             val bo = bi + thickness + 2f
 
             for ((i, _) in sub0) {
-                val angle2 = i * step + ORIGIN
-                val angle3 = (i + 1) * step + ORIGIN
+                val angle2 = i * step + off
+                val angle3 = (i + 1) * step + off
 
                 val b = i == i3
                 val i0 = bi - if (b) 2f else 0f
@@ -144,7 +145,7 @@ class RadialRenderState(
             if (dist <= radius0 && !direction) return -1
 
             val step = TAU / num
-            var angle = atan2(y2.toDouble(), x2.toDouble()) - ORIGIN
+            var angle = atan2(y2.toDouble(), x2.toDouble()) - offset(num)
             if (angle < 0) angle += TAU
 
             val sector = (angle / step).toInt().coerceIn(0, num - 1)
@@ -161,12 +162,13 @@ class RadialRenderState(
             val dist = hypot(x2.toDouble(), y2.toDouble())
 
             val step = TAU / num
+            val off = offset(num)
             val gap = GAP / dist
-            val angle1 = i0 * step + gap * 0.5 + ORIGIN
-            val angle2 = (i0 + 1) * step - gap * 0.5 + ORIGIN
+            val angle1 = i0 * step + gap * 0.5 + off
+            val angle2 = (i0 + 1) * step - gap * 0.5 + off
 
             var angle = atan2(y2.toDouble(), x2.toDouble())
-            if (angle < ORIGIN) angle += TAU
+            if (angle < off) angle += TAU
 
             val b0 = angle in angle1..angle2 || angle + TAU in angle1..angle2
             if (!b0) return -1
@@ -191,11 +193,12 @@ class RadialRenderState(
             val bo = bi + subThickness + 2f
 
             val step = TAU / num
+            val off = offset(num)
             val gap = GAP / dist
 
             for ((i, v) in pos.withIndex()) {
-                val angle0 = normalize(v * step + gap * 0.5 + ORIGIN)
-                val angle1 = normalize((v + 1) * step - gap * 0.5 + ORIGIN)
+                val angle0 = normalize(v * step + gap * 0.5 + off)
+                val angle1 = normalize((v + 1) * step - gap * 0.5 + off)
                 val angle2 = normalize(atan2(y2.toDouble(), x2.toDouble()))
 
                 if ((angle0 <= angle1 && angle2 in angle0..angle1 || angle0 > angle1 && (angle2 >= angle0 || angle2 <= angle1)) && dist in bi..bo) {
@@ -204,7 +207,7 @@ class RadialRenderState(
             }
 
             if (direction && pos.isNotEmpty()) {
-                var angle = atan2(y2.toDouble(), x2.toDouble()) - ORIGIN
+                var angle = atan2(y2.toDouble(), x2.toDouble()) - off
                 if (angle < 0) angle += TAU
 
                 val i0 = (angle / step).toInt()
@@ -217,7 +220,13 @@ class RadialRenderState(
 
         private fun angle(i0: Int, i1: Int): Double {
             val step = TAU / i0
-            return ORIGIN + step * 0.5 + i1 * step
+            return offset(i0) + step * 0.5 + i1 * step
+        }
+
+        // Sectors are centred on the origin rather than starting at it, so slot 0 sits
+        // at the top of the wheel instead of half a sector clockwise of it.
+        private fun offset(num: Int): Double {
+            return ORIGIN - TAU / num / 2.0
         }
 
         private fun normalize(a: Double): Double {
