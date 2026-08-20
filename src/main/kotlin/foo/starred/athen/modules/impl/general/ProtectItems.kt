@@ -1,4 +1,4 @@
-﻿@file:Suppress("Unused")
+@file:Suppress("Unused")
 
 package foo.starred.athen.modules.impl.general
 
@@ -21,7 +21,7 @@ import foo.starred.snowbird.handlers.parser.parse
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.world.inventory.ClickType
+import net.minecraft.world.inventory.ContainerInput
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.lwjgl.glfw.GLFW
@@ -36,12 +36,12 @@ object ProtectItems : Module(
     "Protects any item!",
     Category.GENERAL
 ) {
-    private val _unused by config.textParagraph("Use command <red>\"/${Athen.modId} protect [add|remove|list]\"<r> to manage items!")
+    private val _unused by config.information("Use command <red>\"/${Athen.modId} protect [add|remove|list]\"<r> to manage items!")
     private val move by config.switch("Allowing moving items")
 
-    private val render = config.switch("Render protected").custom("render")
-    private val renderKey by config.switch("Only when key pressed", true).dependsOn { render.value }
-    private val renderKeybind by config.keybind("Keybind", GLFW.GLFW_KEY_P).dependsOn { render.value }
+    private val render = config.switch("Render protected").unique("render")
+    private val renderKey by config.switch("Only when key pressed", true)
+    private val renderKeybind by config.keybind("Keybind", GLFW.GLFW_KEY_P)
 
     private val json = JsonStore("features/protectItems")
     private val uuids = json.mutableSet("uuid", Codec.STRING)
@@ -49,7 +49,7 @@ object ProtectItems : Module(
     private val types0 = json.mutableSet("type0", Codec.STRING)
 
     private val trade = Regex("^You\\s+\\w+$")
-    private val p = "<${Catppuccin.Mocha.Mauve.argb}>P".parse().apply { bold = true }.visualOrderText
+    private val p = "<${Catppuccin.Mocha.Lavender.argb}>P".parse().apply { bold = true }.visualOrderText
 
     init {
         on<PlayerEvent.Drop> {
@@ -62,7 +62,7 @@ object ProtectItems : Module(
 
         on<GuiEvent.Slots.Click> {
             if (slot?.item?.fn() != true) return@on
-            if (move && clickType != ClickType.THROW && !fn0()) return@on
+            if (move && clickType != ContainerInput.THROW && !fn0()) return@on
 
             "Prevented clicking item! <gray>[ProtectItems]".mod()
             cancel()
@@ -171,6 +171,7 @@ object ProtectItems : Module(
     }
 
     private fun fn0(): Boolean {
+        //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
         val s = client.screen as? AbstractContainerScreen<*> ?: return true
         val t = s.title.string
 

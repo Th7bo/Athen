@@ -1,4 +1,4 @@
-﻿package foo.starred.athen.hud
+package foo.starred.athen.hud
 
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
@@ -7,7 +7,7 @@ import foo.starred.athen.api.screen.MultiVersionScreen
 import foo.starred.athen.modules.impl.Dev
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.snowbird.api.client
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.lwjgl.glfw.GLFW
 import kotlin.math.roundToInt
 
@@ -28,7 +28,7 @@ object HUDEditor : MultiVersionScreen("HUD Editor [Athen]") {
     private val active: HUDElement?
         get() = dragging ?: _act.filter { it.render }.asReversed().firstOrNull { it.isHovered(mx, my) }
 
-    override fun onScramRender(graphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun onScramRender(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float) {
         mx = Resolute.mx
         my = Resolute.my
 
@@ -45,7 +45,7 @@ object HUDEditor : MultiVersionScreen("HUD Editor [Athen]") {
         }
 
         Resolute.push(graphics)
-        graphics.fill(0, 0, Resolute.width.toInt(), Resolute.height.toInt(), Mocha.Mauve.withAlpha(0.1f))
+        graphics.fill(0, 0, Resolute.width.toInt(), Resolute.height.toInt(), Mocha.Lavender.withAlpha(0.1f))
 
         if (grid) {
             val color = Mocha.Surface0.withAlpha(0.35f)
@@ -234,7 +234,7 @@ object HUDEditor : MultiVersionScreen("HUD Editor [Athen]") {
         fun hovered(mx: Float, my: Float): Boolean =
             mx >= x - 4f && mx <= x + w + 4f && my >= y - 4f && my <= y + h + 4f
 
-        fun render(graphics: GuiGraphics): Unit = with (graphics) {
+        fun render(graphics: GuiGraphicsExtractor): Unit = with (graphics) {
             if (w == 0 || h == 0) fn()
             val font = client.font ?: return@with
 
@@ -247,7 +247,7 @@ object HUDEditor : MultiVersionScreen("HUD Editor [Athen]") {
             pose().translate(x, y)
 
             fill(-4, -4, w + 4, h + 4, Mocha.Base.withAlpha(0.6f))
-            outline(-4, -4, w + 8, h + 8, 1, Mocha.Mauve.argb)
+            outline(-4, -4, w + 8, h + 8, 1, Mocha.Lavender.argb)
 
             var yOff = 0
             for (entry in lines) {

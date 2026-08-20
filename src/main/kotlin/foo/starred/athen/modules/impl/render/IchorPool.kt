@@ -1,4 +1,4 @@
-﻿package foo.starred.athen.modules.impl.render
+package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
@@ -33,7 +33,7 @@ object IchorPool : Module(
     private val prio by config.switch("Prioritize own", true)
     private val textColor by config.colorPicker("Text color", Color(Catppuccin.Mocha.Teal.argb, true))
     private val color by config.colorPicker("Circle color", Color(Catppuccin.Mocha.Sapphire.argb, true))
-    private val style by config.dropdown("Circle style", listOf("Outline", "Filled", "Both"), 2)
+    private val style by config.selector("Circle style", listOf("Outline", "Filled", "Both"), 2)
 
     private val messageRegex = Regex("^Party > (?:\\[[^]]*?] )?\\w{1,16}(?: [ቾ⚒])?: Ichor pool casted at (?<x>-?\\d+) (?<y>-?\\d+) (?<z>-?\\d+)")
     private var pos: Vec3? = null
@@ -57,6 +57,7 @@ object IchorPool : Module(
             if ("Casting Spell: Ichor Pool!" != stripped) return@on
 
             val n = client.player?.blockPosition() ?: return@on
+            //~ if >= 26.2 'n.center' -> 'Vec3.atCenterOf(n)'
             pos = n.center.add(0.0, 0.1, 0.0)
             time = System.currentTimeMillis()
 

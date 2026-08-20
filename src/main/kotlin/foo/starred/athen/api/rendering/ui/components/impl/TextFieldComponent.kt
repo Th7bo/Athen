@@ -1,17 +1,18 @@
-﻿package foo.starred.athen.api.rendering.ui.components.impl
+package foo.starred.athen.api.rendering.ui.components.impl
 
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.extensions.rectangle.outline
 import foo.starred.cascade.extensions.rectangle.rectangle
+import foo.starred.cascade.extensions.scissor.scissor
 import foo.starred.cascade.extensions.text.extractText
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.snowbird.api.ZERO_PAIR
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.ctrl
 import foo.starred.snowbird.api.shift
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.lwjgl.glfw.GLFW
 import kotlin.math.abs
 import kotlin.math.max
@@ -220,7 +221,7 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
         }
     }
 
-    override fun render(graphics: GuiGraphics) {
+    override fun render(graphics: GuiGraphicsExtractor) {
         if (!visible) return
         val f = client.font ?: return
         val b = root.focused == this
@@ -231,37 +232,36 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
         val height = height.toInt()
 
         graphics.rectangle(x, y, width, height, if (b) Catppuccin.Mocha.Surface2.argb else if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb)
-        graphics.outline(x, y, width, height, 1, if (b) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Overlay0.argb)
+        graphics.outline(x, y, width, height, 1, if (b) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Overlay0.argb)
 
-        graphics.enableScissor(x + 2, y, x + width - 2, y + height)
+        graphics.scissor(x + 2, y, width - 2, height) {
+            run {
+                if (!b) return@run ::scroll.set(0)
+                val i0 = width - 6
+                while (f.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
+                while (f.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
+            }
 
-        run {
-            if (!b) return@run ::scroll.set(0)
-            val i0 = width - 6
-            while (f.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
-            while (f.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
+            val x0 = x + 3 - scroll
+
+            if (selected && b) {
+                val (s, e) = range
+                val s1 = f.width(value.substring(0, s))
+                val s2 = f.width(value.substring(0, e))
+                graphics.rectangle(x0 + s1, y + 2, s2 - s1, height - 4, Catppuccin.Mocha.Lavender.withAlpha(0.5f))
+            }
+
+            val c = value.isEmpty() && !b
+            val str = if (c) placeholder else value
+            val color = if (c) Catppuccin.Mocha.Subtext0.argb else Catppuccin.Mocha.Text.argb
+            graphics.extractText(str, x0, y + (height - f.lineHeight) / 2 + 1, false, color)
+
+            if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
+                val x1 = client.font.width(value.substring(0, cursor))
+                graphics.rectangle(x0 + x1, y + 2, 1, height - 4, Catppuccin.Mocha.Lavender.argb)
+            }
         }
 
-        val x0 = x + 3 - scroll
-
-        if (selected && b) {
-            val (s, e) = range
-            val s1 = f.width(value.substring(0, s))
-            val s2 = f.width(value.substring(0, e))
-            graphics.rectangle(x0 + s1, y + 2, s2 - s1, height - 4, Catppuccin.Mocha.Mauve.withAlpha(0.5f))
-        }
-
-        val c = value.isEmpty() && !b
-        val str = if (c) placeholder else value
-        val color = if (c) Catppuccin.Mocha.Subtext0.argb else Catppuccin.Mocha.Text.argb
-        graphics.extractText(str, x0, y + (height - f.lineHeight) / 2 + 1, false, color)
-
-        if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
-            val x1 = client.font.width(value.substring(0, cursor))
-            graphics.rectangle(x0 + x1, y + 2, 1, height - 4, Catppuccin.Mocha.Mauve.argb)
-        }
-
-        graphics.disableScissor()
         super.render(graphics)
     }
 

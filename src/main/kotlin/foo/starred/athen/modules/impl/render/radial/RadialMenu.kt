@@ -41,22 +41,22 @@ object RadialMenu : Module(
     private val keybind by config.keybind("Keybind", GLFW.GLFW_KEY_R)
     private val releaseClose by config.switch("Release to close", true)
     val direction by config.switch("General direction click")
-    val type by config.dropdown("Sub menu type", listOf("Full", "Mini", "Mini extended", "Hover", "Rings", "Direction"))
-    private val hoverDelay by config.slider("Hover delay", 180, 0, 600, "ms").dependsOn { type == 3 }
+    private val _unused by config.information("Enabling \"General direction click\" will make your clicks be on the slot closest to the cursor when it's not on a slot.")
+    val type by config.selector("Sub menu type", listOf("Full", "Mini", "Mini extended", "Hover", "Rings", "Direction"))
+    private val hoverDelay by config.slider("Hover delay", 180, 0, 600, "ms")
+    private val _unused2 by config.information("Sub menu styles: <red>Hover<r> opens groups after hovering, <red>Rings<r> opens them instantly as you push outward, <red>Direction<r> opens & picks by flick direction.")
     val radius1 by config.slider("Inner radius", 50f, 20f, 120f, "pixels")
     val radius2 by config.slider("Outer radius", 80f, 40f, 180f, "pixels")
     val thickness by config.slider("Sub thickness", 18f, 8f, 40f, "pixels")
-    private val _unused by config.textParagraph("Enabling \"General direction click\" will make your clicks be on the slot closest to the cursor when it's not on a slot.")
-    private val _unused2 by config.textParagraph("Sub menu styles: <red>Hover<r> opens groups after hovering, <red>Rings<r> opens them instantly as you push outward, <red>Direction<r> opens & picks by flick direction.")
 
     val `color$normal` by config.colorPicker("Normal color", Color(Catppuccin.Mocha.Surface0.withAlpha(0.5f), true))
-    val `color$hover` by config.colorPicker("Hover color", Color(Catppuccin.Mocha.Mauve.withAlpha(0.5f), true))
+    val `color$hover` by config.colorPicker("Hover color", Color(Catppuccin.Mocha.Lavender.withAlpha(0.5f), true))
 
     private val _unused0 by config.button("Open editor") {
         RadialEditor.open()
     }
 
-    private val _unused1 by config.textParagraph("The configs can be exported/imported using the command <red>\"/athen radial [export|import]\"<r>. View all commands using <red>\"/athen radial help\"<r>!")
+    private val _unused1 by config.information("The configs can be exported/imported using the command <red>\"/athen radial [export|import]\"<r>. View all commands using <red>\"/athen radial help\"<r>!")
 
     private val json = JsonStore("features/radialMenu")
     private val stack = ArrayDeque<List<RadialSlot>>()
@@ -153,6 +153,7 @@ object RadialMenu : Module(
         }
 
         on<InputEvent.Keyboard.Press> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (keyEvent.key != keybind) return@on
 
@@ -160,6 +161,7 @@ object RadialMenu : Module(
         }
 
         on<InputEvent.Keyboard.Release> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (keyEvent.key != keybind) return@on
             if (!open.value) return@on
@@ -170,6 +172,7 @@ object RadialMenu : Module(
         }
 
         on<InputEvent.Mouse.Press> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (buttonInfo.button() != keybind) return@on
             if (open.value) return@on
@@ -178,6 +181,7 @@ object RadialMenu : Module(
         }
 
         on<InputEvent.Mouse.Release> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (buttonInfo.button() != keybind) return@on
             if (!open.value) return@on
@@ -314,36 +318,32 @@ object RadialMenu : Module(
             val ring = layout()
             val ringI = if (type >= 2 && i1 != -1) ring.getOrNull(i1)?.first ?: -1 else -1
 
-            //~ if >= 26.1 'submitGuiElement' -> 'addGuiElement'
-            graphics.guiRenderState.submitGuiElement(RadialRenderState(graphics, x, y, num, mini, ring, i3 = ringI))
+            graphics.guiRenderState.addGuiElement(RadialRenderState(graphics, x, y, num, mini, ring, i3 = ringI))
             graphics.guiRenderState.nextStratum()
 
             for (i in current.indices) {
                 val (x, y) = RadialRenderState.anchor(x, y, num, radius1, radius2, i)
-                //~ if >= 26.1 'renderItem(' -> 'item('
-                graphics.renderItem(current[i].item, x - 8, y - 8)
+                graphics.item(current[i].item, x - 8, y - 8)
             }
 
             if (type == 1 && i2 in current.indices) {
                 for (j in current[i2].sub.indices) {
                     val (x, y) = RadialRenderState.nested(x, y, num, radius2, i2, j, thickness)
-                    //~ if >= 26.1 'renderItem(' -> 'item('
-                    graphics.renderItem(current[i2].sub[j].item, x - 8, y - 8)
+                    graphics.item(current[i2].sub[j].item, x - 8, y - 8)
                 }
             }
 
             if (type >= 2) {
                 for ((i, s) in ring) {
                     val (x, y) = RadialRenderState.ring(x, y, num, radius2, i, thickness)
-                    //~ if >= 26.1 'renderItem(' -> 'item('
-                    graphics.renderItem(s.item, x - 8, y - 8)
+                    graphics.item(s.item, x - 8, y - 8)
                 }
             }
 
             val bool0 = dist(x, y) < 15f
             val bool1 = stack.isNotEmpty() || (type >= 2 && i2 != -1)
 
-            graphics.extractText(if (bool1) "←" else "✕", x - client.font.width(if (bool1) "←" else "✕") / 2, y - client.font.lineHeight / 2, false, if (bool0) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Subtext0.argb)
+            graphics.extractText(if (bool1) "←" else "✕", x - client.font.width(if (bool1) "←" else "✕") / 2, y - client.font.lineHeight / 2, false, if (bool0) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Subtext0.argb)
 
             val hovered = when {
                 i1 != -1 && i2 in current.indices -> current[i2].sub.getOrNull(i1)
@@ -433,7 +433,7 @@ object RadialMenu : Module(
         " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} import radial <gray>- Imports config from clipboard".parse().lie()
         " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} export radial <gray>- Exports current config to clipboard".parse().lie()
         divider.lie()
-        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${Athen.discordUrl}><${Catppuccin.Mocha.Mauve.argb}>discord!".parse().lie()
+        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${Athen.discordUrl}><${Catppuccin.Mocha.Lavender.argb}>discord!".parse().lie()
         divider.lie()
     }
 

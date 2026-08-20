@@ -1,4 +1,4 @@
-﻿package foo.starred.athen.modules.impl.dungeon.terminals
+package foo.starred.athen.modules.impl.dungeon.terminals
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.DungeonAPI
@@ -15,6 +15,9 @@ import foo.starred.snowbird.handlers.Observable
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.AABB
 import java.awt.Color
+
+//? if >= 26.2
+//import net.minecraft.world.phys.Vec3
 
 @Load
 object TerminalWaypoints : Module(
@@ -67,14 +70,14 @@ object TerminalWaypoints : Module(
     private val checkClass by config.switch("Check dungeon class")
     private val showText by config.switch("Render text", true)
     private val depthTest by config.switch("Depth test", false)
-    private val highlightStyle by config.dropdown("Highlight style", listOf("Outline", "Filled", "Both"))
+    private val highlightStyle by config.selector("Highlight style", listOf("Outline", "Filled", "Both"))
     private val terminalColor by config.colorPicker("Terminal color", Color(0, 255, 255, 200))
     private val leverColor by config.colorPicker("Lever color", Color(255, 255, 0, 200))
 
-    private val section1 by config.expandable("Section 1")
-    private val section2 by config.expandable("Section 2")
-    private val section3 by config.expandable("Section 3")
-    private val section4 by config.expandable("Section 4")
+    private val section1 by config.group("Section 1")
+    private val section2 by config.group("Section 2")
+    private val section3 by config.group("Section 3")
+    private val section4 by config.group("Section 4")
 
     // God forgive me for whatever the fuck this is, the dsl is a love-hate relationship
     private val configValues = terminals.associate { node ->
@@ -102,11 +105,7 @@ object TerminalWaypoints : Module(
             else -> section4
         }
 
-        val value by config
-            .dropdown("$label class", classOptions, defaultClass)
-            .unique("terminal_${node.configIndex}")
-            .childOf { section }
-
+        val value by section.selector("$label class", classOptions, defaultClass).unique("terminal_${node.configIndex}")
         node.configIndex to { value }
     }
     // </editor-fold>
@@ -130,6 +129,7 @@ object TerminalWaypoints : Module(
                 val aabb = t.aabb1
 
                 extractStyledBox(aabb, color.rgb, highlightStyle, 2f, depthTest)
+                //~ if >= 26.2 't.positions.last().center' -> 'Vec3.atCenterOf(t.positions.last())'
                 if (showText) extractText(t.defaultClass.str(), t.positions.last().center, depth = depthTest)
             }
         }.runWhen(r)

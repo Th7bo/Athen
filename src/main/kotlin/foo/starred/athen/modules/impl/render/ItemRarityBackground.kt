@@ -13,7 +13,7 @@ import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.handlers.Observable.Companion.and
 import foo.starred.snowbird.utils.withAlpha
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
 import net.minecraft.util.ARGB
@@ -30,20 +30,20 @@ object ItemRarityBackground : Module(
     "Displays a background for the item that's rendering!",
     Category.RENDER
 ) {
-    private val renderStyle by config.dropdown("Render style", listOf("Filled", "Outline",  "Filled outline", "Circle"), 2)
-    private val mode = config.dropdown("Render mode", listOf("Everywhere", "Slots"), 1).custom("mode")
-    private val hotbar = config.switch("Hotbar", true).dependsOn { mode.value == 1 }.custom("hotbar")
-    private val fill by config.slider("Fill alpha", 0.5f, 0f, 1f, showDouble = true).dependsOn { renderStyle != 1 }
+    private val render by config.selector("Render style", listOf("Filled", "Outline",  "Filled outline", "Circle"), 2)
+    private val mode = config.selector("Render mode", listOf("Everywhere", "Slots"), 1).unique("mode")
+    private val hotbar = config.switch("Hotbar", true).unique("hotbar")
+    private val fill by config.slider("Fill alpha", 0.5f, 0f, 1f, double = true)
 
-    private val colorExpandable by config.expandable("Colors")
-    private val `color$common` by config.colorPicker("Common color", Color(SkyBlockRarity.COMMON.color)).childOf { colorExpandable }
-    private val `color$uncommon` by config.colorPicker("Uncommon color", Color(SkyBlockRarity.UNCOMMON.color)).childOf { colorExpandable }
-    private val `color$rare` by config.colorPicker("Rare color", Color(SkyBlockRarity.RARE.color)).childOf { colorExpandable }
-    private val `color$epic` by config.colorPicker("Epic color", Color(SkyBlockRarity.EPIC.color)).childOf { colorExpandable }
-    private val `color$leg` by config.colorPicker("Legendary color", Color(SkyBlockRarity.LEGENDARY.color)).childOf { colorExpandable }
-    private val `color$mythic` by config.colorPicker("Mythic color", Color(SkyBlockRarity.MYTHIC.color)).childOf { colorExpandable }
-    private val `color$divine` by config.colorPicker("Divine color", Color(SkyBlockRarity.DIVINE.color)).childOf { colorExpandable }
-    private val `color$special` by config.colorPicker("Special color", Color(SkyBlockRarity.SPECIAL.color)).childOf { colorExpandable }
+    private val colors by config.group("Colors")
+    private val `color$common` by colors.colorPicker("Common color", Color(SkyBlockRarity.COMMON.color))
+    private val `color$uncommon` by colors.colorPicker("Uncommon color", Color(SkyBlockRarity.UNCOMMON.color))
+    private val `color$rare` by colors.colorPicker("Rare color", Color(SkyBlockRarity.RARE.color))
+    private val `color$epic` by colors.colorPicker("Epic color", Color(SkyBlockRarity.EPIC.color))
+    private val `color$leg` by colors.colorPicker("Legendary color", Color(SkyBlockRarity.LEGENDARY.color))
+    private val `color$mythic` by colors.colorPicker("Mythic color", Color(SkyBlockRarity.MYTHIC.color))
+    private val `color$divine` by colors.colorPicker("Divine color", Color(SkyBlockRarity.DIVINE.color))
+    private val `color$special` by colors.colorPicker("Special color", Color(SkyBlockRarity.SPECIAL.color))
 
     private val common = ResourceAPI.identify("rarity/common")
     private val uncommon = ResourceAPI.identify("rarity/uncommon")
@@ -68,12 +68,12 @@ object ItemRarityBackground : Module(
         }.runWhen(mode.state.map { it == 1 } and hotbar.state)
     }
 
-    private fun GuiGraphics.fn(item: ItemStack, x: Int, y: Int) {
+    private fun GuiGraphicsExtractor.fn(item: ItemStack, x: Int, y: Int) {
         if (item.isEmpty) return
         val a = item.getData(DataTypes.RARITY) ?: return
         val color = a.get()
 
-        when (renderStyle) {
+        when (render) {
             0 -> {
                 rectangle(x, y, 16, 16, color.withAlpha(fill))
             }

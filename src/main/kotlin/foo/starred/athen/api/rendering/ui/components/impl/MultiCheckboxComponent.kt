@@ -1,13 +1,14 @@
-﻿package foo.starred.athen.api.rendering.ui.components.impl
+package foo.starred.athen.api.rendering.ui.components.impl
 
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.extensions.rectangle.outline
 import foo.starred.cascade.extensions.rectangle.rectangle
+import foo.starred.cascade.extensions.scissor.scissor
 import foo.starred.cascade.extensions.text.extractText
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.snowbird.api.client
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -76,7 +77,7 @@ open class MultiCheckboxComponent : IPrimitiveElement<MultiCheckboxComponent>() 
         }
     }
 
-    override fun render(graphics: GuiGraphics) {
+    override fun render(graphics: GuiGraphicsExtractor) {
         if (!visible) return
         if (root.focused != this) open = false
         val font = client.font ?: return
@@ -88,7 +89,7 @@ open class MultiCheckboxComponent : IPrimitiveElement<MultiCheckboxComponent>() 
 
         if (label.isNotEmpty()) graphics.extractText(label, x, y - font.lineHeight - 2, false, Catppuccin.Mocha.Subtext0.argb)
         graphics.rectangle(x, y, width, height, Catppuccin.Mocha.Surface1.argb)
-        graphics.outline(x, y, width, height, 1, if (open) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Surface2.argb)
+        graphics.outline(x, y, width, height, 1, if (open) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Surface2.argb)
 
         graphics.extractText(text, x + 4, y + (height - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Text.argb)
         graphics.extractText(if (open) "▾" else "▸", x + width - 12, y + (height - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Overlay0.argb)
@@ -97,27 +98,25 @@ open class MultiCheckboxComponent : IPrimitiveElement<MultiCheckboxComponent>() 
             val height1 = height1
 
             graphics.rectangle(x, y + height, width, height1, Catppuccin.Mocha.Base.argb)
-            graphics.outline(x, y + height, width, height1, 1, Catppuccin.Mocha.Mauve.argb)
+            graphics.outline(x, y + height, width, height1, 1, Catppuccin.Mocha.Lavender.argb)
 
-            graphics.enableScissor(x, y + height + 1, x + width, y + height + height1 - 1)
+            graphics.scissor(x, y + height + 1, width, height + height1 - 1) {
+                var y0 = y + height - scroll
+                for ((idx, item) in items.withIndex()) {
+                    if (y0 + 14 <= y + height || y0 >= y + height + height1) {
+                        y0 += 14
+                        continue
+                    }
 
-            var y0 = y + height - scroll
-            for ((idx, item) in items.withIndex()) {
-                if (y0 + 14 <= y + height || y0 >= y + height + height1) {
+                    graphics.rectangle(x, y0, width, 14, Catppuccin.Mocha.Base.argb)
+
+                    val b = selected(idx)
+                    graphics.extractText(item, x + 4, y0 + (14 - font.lineHeight) / 2 + 1, false, if (b) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Text.argb)
+                    if (b) graphics.extractText("✔", x + width - 14, y0 + (14 - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Lavender.argb)
+
                     y0 += 14
-                    continue
                 }
-
-                graphics.rectangle(x, y0, width, 14, Catppuccin.Mocha.Base.argb)
-
-                val b = selected(idx)
-                graphics.extractText(item, x + 4, y0 + (14 - font.lineHeight) / 2 + 1, false, if (b) Catppuccin.Mocha.Mauve.argb else Catppuccin.Mocha.Text.argb)
-                if (b) graphics.extractText("✔", x + width - 14, y0 + (14 - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Mauve.argb)
-
-                y0 += 14
             }
-
-            graphics.disableScissor()
         }
 
         super.render(graphics)

@@ -1,4 +1,4 @@
-﻿@file:Suppress("ObjectPrivatePropertyName")
+@file:Suppress("ObjectPrivatePropertyName")
 
 package foo.starred.athen.modules.impl.general.slotbinds
 
@@ -26,7 +26,7 @@ import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.joml.Matrix3x2f
 import org.lwjgl.glfw.GLFW
 
@@ -250,7 +250,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         }
 
         preview = object : RectanglePrimitive() {
-            override fun render(graphics: GuiGraphics) {
+            override fun render(graphics: GuiGraphicsExtractor) {
                 super.render(graphics)
 
                 val x0 = x.toInt() + 16
@@ -384,7 +384,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
             val label = text {
                 text = name.literal()
-                color = if (b0) Mocha.Mauve.argb else Mocha.Subtext0.argb
+                color = if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
                 attach(row)
             }

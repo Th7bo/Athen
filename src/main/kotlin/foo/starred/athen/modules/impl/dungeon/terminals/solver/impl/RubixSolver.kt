@@ -1,4 +1,4 @@
-﻿@file:Suppress("EmptyRange")
+@file:Suppress("EmptyRange")
 
 package foo.starred.athen.modules.impl.dungeon.terminals.solver.impl
 
@@ -7,31 +7,41 @@ import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.Click
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.ITerminal
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.athen.utils.nvg.NVGRenderer
+import foo.starred.cascade.font.CascadeFonts
+import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import org.joml.Matrix3x2f
 import kotlin.math.abs
 
 object RubixSolver : ITerminal(TerminalType.RUBIX) {
     private val ints = intArrayOf(12, 13, 14, 21, 22, 23, 30, 31, 32)
+    //? if <= 26.1 {
     private val colors = listOf(Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE)
+    //? } else {
+    //private val colors = listOf(Items.STAINED_GLASS_PANE.red(), Items.STAINED_GLASS_PANE.orange(), Items.STAINED_GLASS_PANE.yellow(), Items.STAINED_GLASS_PANE.green(), Items.STAINED_GLASS_PANE.blue())
+    //? }
 
     override val int0 = 3
     override val int1 = 3
 
     private var last: Int? = null
 
-    override fun render(ox: Float, oy: Float, headerH: Float, uiScale: Float) {
+    override fun render(graphics: GuiGraphicsExtractor, x0: Float, y0: Float, height: Float, scale: Float, pose: Matrix3x2f, scissor: ScreenRectangle?) {
+        val font = CascadeFonts.arial
+
         for (c in list) {
-            val sx = (c.slot % 9 * float + ox + 1f) * uiScale
-            val sy = ((c.slot / 9) * float + oy + headerH + 1f) * uiScale
+            val x1 = (c.slot % 9 * float + x0 + 1f) * scale
+            val y1 = ((c.slot / 9) * float + y0 + height + 1f) * scale
 
             val color = if (c.button > 0) TerminalSolver.`rubix$positive`.rgb else TerminalSolver.`rubix$negative`.rgb
-            drawSlot(sx, sy, 16f * uiScale, 16f * uiScale, color, uiScale)
+            slot(graphics, x1, y1, 16f * scale, 16f * scale, color, scale, pose, scissor)
 
-            val btnStr = c.button.toString()
-            val btnWidth = NVGRenderer.getTextWidth(btnStr, 11f * uiScale, NVGRenderer.defaultFont)
-            NVGRenderer.drawText(btnStr, sx + 8f * uiScale - btnWidth / 2, sy + 3f * uiScale, 11f * uiScale, Mocha.Text.rgba)
+            val string = c.button.toString()
+            val size = 11f * scale
+            val width = font.width(string, size)
+            font.extract(graphics, string, x1 + 8f * scale - width / 2, y1 + 3f * scale, Mocha.Text.rgba, false, size)
         }
     }
 

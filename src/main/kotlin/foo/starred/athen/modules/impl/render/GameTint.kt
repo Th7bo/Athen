@@ -8,7 +8,7 @@ import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.handlers.Observable
 import foo.starred.snowbird.handlers.Observable.Companion.and
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import java.awt.Color
 
 @Load
@@ -18,8 +18,8 @@ object GameTint : Module(
     Category.RENDER
 ) {
     private val color by config.colorPicker("Tint color", Color(0, 0, 0, 25))
-    private val last = config.switch("Tint HUDs", true).custom("hudTint")
-    private val gui = config.switch("Tint GUIs", true).custom("screenTint")
+    private val last = config.switch("Tint HUDs", true).unique("hudTint")
+    private val gui = config.switch("Tint GUIs", true).unique("screenTint")
 
     private val _state = Observable(false)
     private val state = _state.and(gui.state).map { !(it) }
@@ -46,7 +46,7 @@ object GameTint : Module(
         }.runWhen(_state and gui.state)
     }
 
-    private fun GuiGraphics.tint() {
+    private fun GuiGraphicsExtractor.tint() {
         rectangle(0, 0, guiWidth(), guiHeight(), color)
     }
 }

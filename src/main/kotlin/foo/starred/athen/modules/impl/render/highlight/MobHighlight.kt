@@ -1,4 +1,4 @@
-﻿@file:Suppress("unused")
+@file:Suppress("unused")
 
 package foo.starred.athen.modules.impl.render.highlight
 
@@ -17,7 +17,6 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.modules.impl.render.highlight.popup.MobHighlightPopup
 import foo.starred.athen.modules.impl.render.highlight.ui.MobHighlightGUI
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
@@ -35,6 +34,11 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.phys.AABB
 import tech.thatgravyboat.skyblockapi.utils.extentions.serverMaxHealth
 
+//? if >= 26.2 {
+/*import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.Identifier
+*///? }
+
 @Load
 @OnlyIn(skyblock = true)
 object MobHighlight : Module(
@@ -49,7 +53,7 @@ object MobHighlight : Module(
     private val key by config.switch("Highlight key", true)
     private val keybind by config.keybind("Key to add entity")
     private val _unused by config.button("Open manager") { MobHighlightGUI.open() }
-    private val _unused0 by config.textParagraph("You can use the command <red>\"/${Athen.modId} highlight help\"<r> to view all commands!")
+    private val _unused0 by config.information("You can use the command <red>\"/${Athen.modId} highlight help\"<r> to view all commands!")
 
     private var wow: Long = -1
     private val int: MutableList<Int> = mutableListOf()
@@ -78,6 +82,7 @@ object MobHighlight : Module(
 
             "highlight" / "add" / "typed" / string("color") / int("maxHp") / string("type") {
                 val t0 = string("type")
+                //~ if >= 26.2 'EntityType.byString(t0)' -> 'BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(t0))'
                 val type = EntityType.byString(t0).orElse(null) ?: return@string
                 val c0 = string("color")
                 val color = c0.removePrefix("#").toInt(16)
@@ -89,6 +94,7 @@ object MobHighlight : Module(
 
             "highlight" / "add" / "typed" / string("color") / string("type") {
                 val t0 = string("type")
+                //~ if >= 26.2 'EntityType.byString(t0)' -> 'BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(t0))'
                 val type = EntityType.byString(t0).orElse(null) ?: return@string
                 val c0 = string("color")
                 val color = c0.removePrefix("#").toInt(16)
@@ -106,6 +112,7 @@ object MobHighlight : Module(
 
             "highlight" / "remove" / "typed" / string("type") {
                 val t0 = string("type")
+                //~ if >= 26.2 'EntityType.byString(t0)' -> ' BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(t0))'
                 val type = EntityType.byString(t0).orElse(null) ?: return@string
 
                 e1.update { removeIf { it.type == type } }
@@ -229,12 +236,14 @@ object MobHighlight : Module(
         }
 
         on<InputEvent.Keyboard.Press> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (keyEvent.key() != keybind) return@on
             fn()
         }
 
         on<InputEvent.Mouse.Press> {
+            //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             if (client.screen != null) return@on
             if (buttonInfo.button() != keybind) return@on
             fn()
@@ -252,7 +261,7 @@ object MobHighlight : Module(
         val max = a.serverMaxHealth
         val type = a.type
 
-        MobHighlightPopup.open(name, type, max.toInt())
+        MobHighlightGUI.pop(name, type, max.toInt())
     }
 
     private fun fn1(aabb: AABB, color: Int) {
@@ -263,9 +272,9 @@ object MobHighlight : Module(
 
     data class EntityNamed(
         val name: String,
-        val color: Int = -1,
-        val max: Int = -1
-    ) {
+        override val color: Int = -1,
+        override val max: Int = -1
+    ) : EntityHighlight {
         companion object {
             val CODEC: Codec<EntityNamed> = RecordCodecBuilder.create { i ->
                 i.group(
@@ -279,9 +288,9 @@ object MobHighlight : Module(
 
     data class EntityTyped(
         val type: EntityType<*>,
-        val color: Int = -1,
-        val max: Int = -1
-    ) {
+        override val color: Int = -1,
+        override val max: Int = -1
+    ) : EntityHighlight {
         companion object {
             val CODEC: Codec<EntityTyped> = RecordCodecBuilder.create { i ->
                 i.group(
@@ -291,5 +300,10 @@ object MobHighlight : Module(
                 ).apply(i, ::EntityTyped)
             }
         }
+    }
+
+    interface EntityHighlight {
+        val color: Int
+        val max: Int
     }
 }
