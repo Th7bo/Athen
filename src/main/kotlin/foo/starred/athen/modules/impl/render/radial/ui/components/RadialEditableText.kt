@@ -1,45 +1,66 @@
-package foo.starred.athen.api.rendering.ui.components.impl
+@file:Suppress("ObjectPrivatePropertyName", "Unused")
+
+package foo.starred.athen.modules.impl.render.radial.ui.components
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.ui.themes.Catppuccin.Mocha
+import foo.starred.cascade.events.impl.FocusEvent
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.cascade.graphics.extensions.scissor.scissor
+import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.snowbird.api.ZERO_PAIR
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.ctrl
 import foo.starred.snowbird.api.shift
+import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
+open class RadialEditableText : IPrimitiveElement<RadialEditableText>() {
+    private var initial: String = ""
+    private var _cursor: Float = 0f
+    private var _selection0: Float = 0f
+    private var _selection1: Float = 0f
+
+    private var commit: ((String) -> Unit)? = null
+
     override var x: Float = 0f
     override var y: Float = 0f
     override var width: Float = 0f
     override var height: Float = 0f
     override var color: Int = -1
 
-    var placeholder: String = ""
+    var textSize: Float = 8.5f
+    var color0: Int = Mocha.Text.argb
+    var color1: Int = Mocha.Lavender.argb
+    var placeholder: String = "..."
+
+    var editing: Boolean = false
+        private set
+
     var value: String = ""
-    var scroll: Int = 0
+        set(v) {
+            if (field == v) return
+            field = v
+            fn0()
+        }
 
     var cursor: Int = 0
-        set(value) {
-            if (field == value) return
-            field = value
+        set(v) {
+            if (field == v) return
+            field = v
             fn()
         }
 
     var anchor: Int = -1
-        set(value) {
-            if (field == value) return
-            field = value
+        set(v) {
+            if (field == v) return
+            field = v
             fn()
         }
 
@@ -50,19 +71,40 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
         private set
 
     init {
-        on<MouseEvent.Press> {
-            val font = client.font ?: return@on
+        on<FocusEvent.Lose> {
+            if (!editing) return@on
+            commit()
+        }
 
-            root.focused = self
+        on<MouseEvent.Press> {
+            if (button != 0) return@on
             cancel()
 
-            val x = x.toInt() - (self.x + 3) + scroll
+            val bool = editing
+            if (!editing) {
+                initial = value
+                editing = true
+                root.focused = self
+            }
+
+            if (!bool) {
+                cursor = value.length
+                anchor = -1
+                return@on
+            }
+
+            val font = CascadeFonts.arial
+            val width1 = font.width(value, textSize)
+            val x1 = this@RadialEditableText.x + (width - width1) / 2f
+            val x2 = x.toFloat() - x1
+
             var i0 = 0
-            var i1 = Int.MAX_VALUE
+            var i1 = Float.MAX_VALUE
 
             for (i in 0..value.length) {
-                val a = font.width(value.substring(0, i))
-                val b = abs(a - x).takeIf { it < i1 }?.toInt() ?: continue
+                val a = font.width(value.substring(0, i), textSize)
+                val b = abs(a - x2)
+                if (b >= i1) continue
 
                 i1 = b
                 i0 = i
@@ -73,10 +115,28 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
         }
 
         on<KeyEvent.Press> {
+            if (!editing) return@on
+
             val shift = shift
             val ctrl = ctrl
 
             when (key) {
+                InputConstants.KEY_RETURN, InputConstants.KEY_NUMPADENTER -> {
+                    commit()
+                    cancel()
+                    return@on
+                }
+
+                InputConstants.KEY_ESCAPE -> {
+                    editing = false
+                    root.focused = null
+                    anchor = -1
+                    value = initial
+
+                    cancel()
+                    return@on
+                }
+
                 InputConstants.KEY_LEFT -> {
                     if (shift && anchor == -1) {
                         anchor = cursor
@@ -112,8 +172,13 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                 }
 
                 InputConstants.KEY_HOME -> {
-                    if (shift && anchor == -1) anchor = cursor
-                    if (!shift) anchor = -1
+                    if (shift && anchor == -1) {
+                        anchor = cursor
+                    }
+
+                    if (!shift) {
+                        anchor = -1
+                    }
 
                     cursor = 0
                     cancel()
@@ -121,12 +186,16 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                 }
 
                 InputConstants.KEY_END -> {
-                    if (shift && anchor == -1) anchor = cursor
-                    if (!shift) anchor = -1
+                    if (shift && anchor == -1) {
+                        anchor = cursor
+                    }
+
+                    if (!shift) {
+                        anchor = -1
+                    }
 
                     cursor = value.length
                     cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_BACKSPACE -> {
@@ -142,7 +211,6 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                     }
 
                     cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_DELETE -> {
@@ -157,13 +225,6 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                     }
 
                     cancel()
-                    return@on
-                }
-
-                InputConstants.KEY_ESCAPE -> {
-                    root.focused = null
-                    cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_A -> {
@@ -172,28 +233,23 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                     anchor = 0
                     cursor = value.length
                     cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_C -> {
                     if (!ctrl) return@on
                     if (!selected) return@on
 
-                    val (s, e) = range
-                    client.keyboardHandler.clipboard = value.substring(s, e)
+                    client.keyboardHandler.clipboard = value.substring(range.first, range.second)
                     cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_X -> {
                     if (!ctrl) return@on
                     if (!selected) return@on
 
-                    val (s, e) = range
-                    client.keyboardHandler.clipboard = value.substring(s, e)
+                    client.keyboardHandler.clipboard = value.substring(range.first, range.second)
                     delete()
                     cancel()
-                    return@on
                 }
 
                 InputConstants.KEY_V -> {
@@ -203,90 +259,84 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                     val clip = client.keyboardHandler.clipboard
                     value = value.substring(0, cursor) + clip + value.substring(cursor)
                     cursor += clip.length
+
                     cancel()
-                    return@on
                 }
             }
         }
 
         on<KeyEvent.Type> {
+            if (!editing) return@on
             if (char.code < 32) return@on
             if (char.code == 127) return@on
 
             delete()
             value = value.substring(0, cursor) + char + value.substring(cursor)
             cursor++
-
             cancel()
         }
     }
 
     override fun draw(graphics: GuiGraphicsExtractor) {
-        val f = client.font ?: return
-        val b = root.focused == this
+        val font = CascadeFonts.arial
+        graphics.scissor(x, y, width, height) {
+            val text = if (value.isEmpty() && !editing) placeholder else value
+            val width1 = font.width(text, textSize)
+            val height1 = font.regular.height * textSize
+            val x1 = x + (width - width1) / 2f
+            val y1 = y + (height - textSize) / 2f
 
-        val x = x.toInt()
-        val y = y.toInt()
-        val width = width.toInt()
-        val height = height.toInt()
-
-        graphics.rectangle(x, y, width, height, if (b) Catppuccin.Mocha.Surface2.argb else if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb)
-        graphics.outline(x, y, width, height, 1, if (b) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Overlay0.argb)
-
-        graphics.scissor(x + 2, y, width - 2, height) {
-            run {
-                if (!b) return@run ::scroll.set(0)
-                val i0 = width - 6
-                while (f.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
-                while (f.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
+            if (editing && selected) {
+                val i0 = min(_selection0, _selection1)
+                val i1 = max(_selection0, _selection1)
+                graphics.rectangle(x1 + i0, y1, i1 - i0, height1, Mocha.Lavender.argb.withAlpha(0.35f))
             }
 
-            val x0 = x + 3 - scroll
+            val color = if (editing) color1 else if (hovered) color1 else color0
+            font.extract(graphics, text, x1, y1, color, false, textSize)
 
-            if (selected && b) {
-                val (s, e) = range
-                val s1 = f.width(value.substring(0, s))
-                val s2 = f.width(value.substring(0, e))
-                graphics.rectangle(x0 + s1, y + 2, s2 - s1, height - 4, Catppuccin.Mocha.Lavender.withAlpha(0.5f))
-            }
-
-            val c = value.isEmpty() && !b
-            val str = if (c) placeholder else value
-            val color = if (c) Catppuccin.Mocha.Subtext0.argb else Catppuccin.Mocha.Text.argb
-            graphics.extractText(str, x0, y + (height - f.lineHeight) / 2 + 1, false, color)
-
-            if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                val x1 = client.font.width(value.substring(0, cursor))
-                graphics.rectangle(x0 + x1, y + 2, 1, height - 4, Catppuccin.Mocha.Lavender.argb)
+            if (editing && (System.currentTimeMillis() / 500) % 2 == 0L) {
+                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, Mocha.Lavender.argb, false, textSize)
             }
         }
     }
 
-    fun reset(v: Boolean = false) {
-        if (v) value = ""
-        cursor = 0
-        anchor = -1
-        scroll = 0
-        root.focused = null
+    fun commit(block: ((String) -> Unit)?) {
+        commit = block
     }
 
     private fun fn() {
         selected = anchor != -1 && anchor != cursor
         range = if (anchor == -1) cursor to cursor else min(anchor, cursor) to max(anchor, cursor)
+        fn0()
+    }
+
+    private fun fn0() {
+        val font = CascadeFonts.arial
+        _cursor = font.width(value.substring(0, min(cursor, value.length)), textSize)
+        if (!selected) return
+        _selection0 = font.width(value.substring(0, min(range.first, value.length)), textSize)
+        _selection1 = font.width(value.substring(0, min(range.second, value.length)), textSize)
+    }
+
+    private fun commit() {
+        editing = false
+        root.focused = null
+        anchor = -1
+        commit?.invoke(value)
     }
 
     private fun delete(): Boolean {
         if (!selected) return false
-        val (s, e) = range
-        value = value.substring(0, s) + value.substring(e)
-        cursor = s
+        value = value.substring(0, range.first) + value.substring(range.second)
+        cursor = range.first
         anchor = -1
         return true
     }
 
     companion object {
-        inline fun textField(block: TextFieldComponent.() -> Unit): TextFieldComponent {
-            return TextFieldComponent().apply(block)
+        inline fun radialEditableText(block: RadialEditableText.() -> Unit): RadialEditableText {
+            return RadialEditableText().apply(block)
         }
     }
 }
