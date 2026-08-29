@@ -2,6 +2,8 @@
 
 package foo.starred.athen.modules.impl.render.radial.ui.editor
 
+import foo.starred.athen.events.GuiEvent
+import foo.starred.athen.events.core.on
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.actions.IAction
 import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
@@ -21,12 +23,14 @@ import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.containe
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
 import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrollable
 import foo.starred.cascade.screen.CascadeScreen
+import foo.starred.snowbird.api.client
 
 object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
     private var head: RadialHeader
     private var tree: RadialTree
     private var form: RadialForm
     private var view: RadialPreview
+    private var last = -1
 
     val working = mutableListOf<RadialSlot>()
     val collapsed = mutableSetOf<Int>()
@@ -57,6 +61,14 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
         }
 
     init {
+        on<GuiEvent.Close.Any> {
+            if (screen !== this@RadialEditor) return@on
+            if (last == -1) return@on
+
+            client.options.guiScale().set(last)
+            last = -1
+        }
+
         container {
             size = FillSizeConstraint()
             position = FixedPositionConstraint(0, 0)
@@ -85,8 +97,8 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
         head = RadialHeader(side)
 
         tree = RadialTree(scrollable {
-            size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 296))
-            position = FixedPositionConstraint(0, 24)
+            size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 298))
+            position = FixedPositionConstraint(0, 20)
             attach(side)
         })
 
@@ -101,19 +113,20 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
 
     override fun init() {
         super.init()
+
         working.clear()
         working.addAll(RadialMenu.slots)
         collapsed.clear()
         reload(0, -1)
+
+        if (last != -1) return
+        last = client.options.guiScale().get()
+        client.options.guiScale().set(2)
     }
 
-    override fun onClose() {
-        commit()
-        RadialMenu.slots.clear()
-        RadialMenu.slots.addAll(working)
-        RadialMenu.save()
-        RadialMenu.disk()
-        super.onClose()
+    override fun removed() {
+        save()
+        super.removed()
     }
 
     fun extra(): List<Pair<Int, RadialSlot>> {
@@ -136,6 +149,10 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
         unfocus()
 
         val s = slot ?: run {
+            form.name.value = ""
+            form.item.value = ""
+            form.value.value = ""
+            form.texture.value = ""
             head.fn()
             tree.fn()
             form.fn()
@@ -143,17 +160,10 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
         }
 
         form.name.value = s.name
-        form.name.cursor = s.name.length
         form.item.value = s.itemId
-        form.item.cursor = s.itemId.length
-
         type = s.action.id
         form.value.value = s.action.serializable
-        form.value.cursor = s.action.serializable.length
-
-        val tex = s.text ?: ""
-        form.texture.value = tex
-        form.texture.cursor = tex.length
+        form.texture.value = s.text ?: ""
 
         head.fn()
         tree.fn()
@@ -168,13 +178,18 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]") {
         s.action = IAction.create(type, form.value.value)
     }
 
+    fun sync() {
+        commit()
+        tree.fn()
+    }
+
     fun unfocus() {
         scene.focused = null
         editing = false
     }
 
     fun rename() {
-        val n = head.field0.value.trim()
+        val n = head.title.value.trim()
         if (n.isBlank() || n == RadialMenu.active || n in names) {
             editing = false
             head.fn()

@@ -7,6 +7,8 @@ import foo.starred.athen.config.ui.pages.main.ConfigCategories
 import foo.starred.athen.config.ui.pages.module.ConfigModules
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement.Companion.configInputElement
+import foo.starred.athen.events.GuiEvent
+import foo.starred.athen.events.core.on
 import foo.starred.athen.hud.HUDEditor
 import foo.starred.athen.modules.impl.ModSettings
 import foo.starred.athen.ui.themes.Catppuccin
@@ -54,11 +56,9 @@ object ConfigUI : CascadeScreen("Config UI [Athen]") {
     }
 
     private val tooltip = object : RoundedRectanglePrimitive() {
-        override fun render(graphics: GuiGraphicsExtractor) {
-            if (!visible) return
-
+        override fun draw(graphics: GuiGraphicsExtractor) {
             graphics.nextStratum()
-            super.render(graphics)
+            super.draw(graphics)
         }
     }.apply {
         color = Catppuccin.Mocha.Base.argb
@@ -113,6 +113,14 @@ object ConfigUI : CascadeScreen("Config UI [Athen]") {
             "hud" {
                 HUDEditor.open()
             }
+        }
+
+        on<GuiEvent.Close.Any> {
+            if (screen !== this@ConfigUI) return@on
+            if (last == -1) return@on
+
+            client.options.guiScale().set(last)
+            last = -1
         }
 
         val panel = container {
@@ -213,6 +221,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]") {
 
     override fun init() {
         super.init()
+
         if (last != -1) return
         last = client.options.guiScale().get()
         client.options.guiScale().set(2)
@@ -225,11 +234,8 @@ object ConfigUI : CascadeScreen("Config UI [Athen]") {
             return
         }
 
-        super.onClose()
         hide()
-        if (last == -1) return
-        client.options.guiScale().set(last)
-        last = -1
+        super.onClose()
     }
 
     private fun help() {
