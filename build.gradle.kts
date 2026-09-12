@@ -1,12 +1,8 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.loom)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.fletchingTable)
     `maven-publish`
 }
 
@@ -19,31 +15,21 @@ version = "$modVer+$ver"
 base.archivesName = modId
 
 repositories {
-    fun strictMaven(url: String, vararg groups: String) = maven(url) { content { groups.forEach(::includeGroupAndSubgroups) } }
-
-    strictMaven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1", "me.djtheredstoner")
-    strictMaven("https://repo.hypixel.net/repository/Hypixel", "net.hypixel")
-    strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
-    strictMaven("https://maven.parchmentmc.org/", "org.parchmentmc")
-    strictMaven("https://maven.teamresourceful.com/repository/maven-public/", "tech.thatgravyboat", "com.terraformersmc", "earth.terrarium", "com.teamresourceful", "me.owdding")
-    strictMaven("https://repo.nea.moe/releases", "moe.nea")
+    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    maven("https://repo.hypixel.net/repository/Hypixel")
+    maven("https://api.modrinth.com/maven")
+    maven("https://maven.teamresourceful.com/repository/maven-public/")
 
     maven("https://maven.starred.foo/releases")
     maven("https://maven.starred.foo/snapshots")
-}
-
-fletchingTable {
-    mixins.create("main", Action {
-        mixin("default", "$modId.mixins.json") {
-            env("CLIENT")
-        }
-    })
 }
 
 dependencies {
     minecraft("com.mojang:minecraft:$ver")
 
     localRuntime("devauth".global)
+
+    compileOnly("caxton".versioned)
     compileOnly("entityculling".versioned)
     compileOnly("exordium".versioned)
     compileOnly("iris".versioned)
@@ -56,10 +42,10 @@ dependencies {
     implementation("hypixel-modapi-fabric".global)
 
     shadow("classgraph".global)
-    shadow("autoupdate".global)
     shadow("kommand".global)
     shadow("snowbird".versioned)
     shadow("cascade".versioned)
+    shadow("updater".versioned)
 
     shadow("skyblock-api".global) {
         capabilities { requireCapability("tech.thatgravyboat:skyblock-api-$ver") }

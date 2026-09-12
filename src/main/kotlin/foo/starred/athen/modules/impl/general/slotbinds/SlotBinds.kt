@@ -30,7 +30,6 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.world.inventory.ContainerInput
 import org.joml.Matrix3x2f
-import tech.thatgravyboat.skyblockapi.helpers.McClient
 
 @Load
 object SlotBinds : Module(
@@ -131,7 +130,7 @@ object SlotBinds : Module(
             }
 
             "export" / "slotbinds" {
-                val clipboard = McClient.clipboard
+                val clipboard = client.keyboardHandler.clipboard
                 if (clipboard.isEmpty()) return@invoke "No data found in clipboard!".mod()
 
                 val data = GSON.fromJson(clipboard.decompress(), object : TypeToken<Map<String, Any>>() {}.type) as Map<String, Any>
@@ -172,12 +171,12 @@ object SlotBinds : Module(
                 val c = map1[active]
                 if (c != null) for (e in c.int2IntEntrySet()) colors[e.intKey.toString()] = e.intValue
 
-                McClient.clipboard = GSON.toJson(mapOf("name" to active, "binds" to binds, "colors" to colors)).compress()
+                client.keyboardHandler.clipboard = GSON.toJson(mapOf("name" to active, "binds" to binds, "colors" to colors)).compress()
                 "Exported profile '$active' to clipboard!".mod()
             }
         }
 
-        on<GuiEvent.Slots.Click> {
+        on<GuiEvent.Slots.Input.Click> {
             //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
             val s = client.screen as? InventoryScreen ?: return@on
             val h = slot?.index ?: return@on
@@ -245,28 +244,27 @@ object SlotBinds : Module(
             cancel()
         }
 
-        on<GuiEvent.Slots.Render.Post> {
+        on<GuiEvent.Slots.Render.Menu.End> {
             //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
-            val s = client.screen as? InventoryScreen ?: return@on
-            val m = s.menu.slots
-            if (slot != m.last()) return@on
+            val screen = client.screen as? InventoryScreen ?: return@on
+            val slots = screen.menu.slots
 
             val pose = Matrix3x2f(graphics.pose())
-            val screen = graphics.scissorStack.peek()
+            val scissor = graphics.scissorStack.peek()
 
             for (e in m0.int2IntEntrySet()) {
-                val a = m.getOrNull(e.intKey) ?: continue
-                val b = m.getOrNull(e.intValue) ?: continue
+                val a = slots.getOrNull(e.intKey) ?: continue
+                val b = slots.getOrNull(e.intValue) ?: continue
                 val c = m2.get(e.intKey)
 
-                graphics.stroke(a.x + 8f, a.y + 8f, b.x + 8f, b.y + 8f, c, 1f, pose, screen)
+                graphics.stroke(a.x + 8f, a.y + 8f, b.x + 8f, b.y + 8f, c, 1f, pose, scissor)
 
                 graphics.outline(a.x, a.y, 16, 16, 1, c, true)
                 graphics.outline(b.x, b.y, 16, 16, 1, c, true)
             }
 
             val l = last0 ?: return@on
-            val a = m.getOrNull(l) ?: return@on
+            val a = slots.getOrNull(l) ?: return@on
 
             graphics.outline(a.x, a.y, 16, 16, 1, inset = true)
         }

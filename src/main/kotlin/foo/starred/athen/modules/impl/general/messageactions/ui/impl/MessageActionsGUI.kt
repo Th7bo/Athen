@@ -1,6 +1,6 @@
 @file:Suppress("ObjectPrivatePropertyName")
 
-package foo.starred.athen.modules.impl.general.messageactions.ui
+package foo.starred.athen.modules.impl.general.messageactions.ui.impl
 
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
@@ -17,6 +17,7 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -29,7 +30,7 @@ import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 
-object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
+object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeometricResolution.FHD.of(2f)) {
     private var category: String? = null
     private var deleting: String? = null
     private var entry: Int? = null
@@ -79,12 +80,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -98,12 +99,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -117,12 +118,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -482,10 +483,10 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
         }
 
         var cy = 0
-        for ((index, actionEntry) in filtered) {
-            val b0 = actionEntry.enabled && (actionEntry.category.isEmpty() || MessageActions.categories.find { it.name == actionEntry.category }?.enabled != false)
-            val b1 = entry == index
+        for ((index, action) in filtered) {
             lateinit var outline: OutlineEffect
+            val b0 = action.enabled && (action.category.isEmpty() || MessageActions.categories.find { it.name == action.category }?.enabled != false)
+            val b1 = entry == index
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 28))
@@ -539,22 +540,21 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
                     position = CenterPositionConstraint()
                     color = Mocha.Green.argb
                     interact = false
-                    visible = actionEntry.enabled
+                    visible = action.enabled
                 }.also { a = it })
             }
 
             val b = rectangle {
-                val str = actionEntry.match.displayName
+                val str = action.match.displayName
 
                 size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
                 color = Mocha.Surface2.argb
+                interact = false
 
                 effect(OutlineEffect {
                     color = Mocha.Crust.argb
                 })
-
-                interact = false
 
                 attach(row)
                 adopt(text {
@@ -565,18 +565,16 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
             }
 
             var next: RectanglePrimitive = b
-            if (actionEntry.cancel) {
-                val cancelBadge = rectangle {
-                    val cw = client.font?.width("✕")?.plus(6) ?: 12
-                    size = FixedSizeConstraint(cw, 16)
+            if (action.cancel) {
+                next = rectangle {
+                    size = FixedSizeConstraint(client.font?.width("✕")?.plus(6) ?: 12, 16)
                     position = AnchorPositionConstraint({ b }, PositionAnchor.RIGHT, 4)
                     color = Mocha.Red.withAlpha(0.2f)
+                    interact = false
 
                     effect(OutlineEffect {
                         color = Mocha.Red.withAlpha(0.6f)
                     })
-
-                    interact = false
 
                     attach(row)
                     adopt(text {
@@ -585,12 +583,10 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]") {
                         position = CenterPositionConstraint()
                     })
                 }
-
-                next = cancelBadge
             }
 
             text {
-                text = actionEntry.pattern.literal()
+                text = action.pattern.literal()
                 color = if (b0) Mocha.Text.argb else Mocha.Red.argb
                 position = MixedPositionConstraint(AnchorPositionConstraint({ next }, PositionAnchor.RIGHT, 8), CenterPositionConstraint())
                 attach(row)

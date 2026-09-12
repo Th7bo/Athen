@@ -21,6 +21,7 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -33,7 +34,7 @@ import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 
-object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]") {
+object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricResolution.FHD.of(2f)) {
     private var category: String? = null
     private var deleting: String? = null
     private var entry: Int? = null
@@ -83,12 +84,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]") {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -102,12 +103,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]") {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -121,12 +122,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]") {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -553,12 +554,11 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]") {
                 size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
                 color = Mocha.Surface2.argb
+                interact = false
 
                 effect(OutlineEffect {
                     color = Mocha.Crust.argb
                 })
-
-                interact = false
 
                 attach(row)
                 adopt(text {

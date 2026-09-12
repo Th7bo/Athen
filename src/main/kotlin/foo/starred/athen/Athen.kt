@@ -20,6 +20,7 @@ import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.scheduling.scheduler.extensions.clientTicks
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.literal
+import foo.starred.updater.logic.source.impl.ModrinthUpdateSource
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ import org.apache.logging.log4j.Logger
 import kotlin.time.Duration.Companion.hours
 
 object Athen : ClientModInitializer {
-    const val modVersion: String = /*$ mod_version*/"0.3.1"
+    const val modVersion: String = /*$ mod_version*/"0.3.2"
     const val modId: String = /*$ mod_id*/"athen"
     const val modName: String = /*$ mod_name*/"Athen"
     const val discordUrl: String = "https://discord.gg/DB5S3DjQVa"
@@ -45,6 +46,7 @@ object Athen : ClientModInitializer {
 
     override fun onInitializeClient() {
         AnnotationLoader.load()
+        ModrinthUpdateSource("athen").init(modVersion)
 
         on<LocationEvent.Server.Connect> {
             Scheduler.schedule(20.clientTicks) { li() }

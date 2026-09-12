@@ -28,7 +28,6 @@ import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.*
-import java.awt.Color
 import kotlin.math.hypot
 
 @Load
@@ -48,14 +47,14 @@ object RadialMenu : Module(
     val radius2 by config.slider("Outer radius", 80f, 40f, 180f, "pixels")
     val thickness by config.slider("Sub thickness", 18f, 8f, 40f, "pixels")
 
-    val `color$normal` by config.colorPicker("Normal color", Color(Catppuccin.Mocha.Surface0.withAlpha(0.5f), true))
-    val `color$hover` by config.colorPicker("Hover color", Color(Catppuccin.Mocha.Lavender.withAlpha(0.5f), true))
+    val `color$normal` by config.colorPicker("Normal color", Catppuccin.Mocha.Surface0.withAlpha(0.5f))
+    val `color$hover` by config.colorPicker("Hover color", Catppuccin.Mocha.Lavender.withAlpha(0.5f))
 
     private val _unused0 by config.button("Open editor") {
         RadialEditor.open()
     }
 
-    private val _unused1 by config.information("The configs can be exported/imported using the command <red>\"/athen radial [export|import]\"<r>. View all commands using <red>\"/athen radial help\"<r>!")
+    private val _unused1 by config.information("View all commands using <red>\"/athen radial help\"<r>!")
 
     private val json = JsonStore("features/radialMenu")
     private val stack = ArrayDeque<List<RadialSlot>>()
@@ -156,7 +155,7 @@ object RadialMenu : Module(
             if (client.screen != null) return@on
             if (keyEvent.key != keybind) return@on
 
-            react(if (releaseClose) true else !open.value, true)
+            react(releaseClose || !open.value, true)
         }
 
         on<InputEvent.Keyboard.Release> {
@@ -176,7 +175,7 @@ object RadialMenu : Module(
             if (buttonInfo.button() != keybind) return@on
             if (open.value) return@on
 
-            react(if (releaseClose) true else !open.value, true)
+            react(releaseClose || !open.value, true)
         }
 
         on<InputEvent.Mouse.Release> {
@@ -240,7 +239,7 @@ object RadialMenu : Module(
 
             if (type == 0 && slot.sub.isNotEmpty()) {
                 stack.addLast(slot.sub)
-                i0 = RadialRenderState.hit(mouseSX, mouseSY, x1, y1, maxOf(3, stack.last().size), radius1, radius2)
+                i0 = RadialRenderState.hit(mouseSX, mouseSY, x1, y1, maxOf(1, stack.last().size), radius1, radius2)
                 return@on cancel()
             }
 
@@ -266,7 +265,7 @@ object RadialMenu : Module(
 
             if (ext && i2 in current.indices) {
                 val ring = layout()
-                val hit = RadialRenderState.hitRing(mouseSX, mouseSY, x1, y1, maxOf(3, current.size), radius2, ring.map { it.first }, direction || dir, thickness)
+                val hit = RadialRenderState.hitRing(mouseSX, mouseSY, x1, y1, maxOf(1, current.size), radius2, ring.map { it.first }, direction || dir, thickness)
                 if (hit != -1) {
                     i1 = hit
                     return@on
@@ -274,7 +273,7 @@ object RadialMenu : Module(
             }
 
             if (type == 1 && i2 in current.indices) {
-                val hit = RadialRenderState.hitNested(mouseSX, mouseSY, x1, y1, maxOf(3, current.size), radius2, i2, current[i2].sub.size, direction, thickness)
+                val hit = RadialRenderState.hitNested(mouseSX, mouseSY, x1, y1, maxOf(1, current.size), radius2, i2, current[i2].sub.size, direction, thickness)
                 if (hit != -1) {
                     i0 = i2
                     i1 = hit
@@ -283,7 +282,7 @@ object RadialMenu : Module(
             }
 
             i1 = -1
-            i0 = RadialRenderState.hit(mouseSX, mouseSY, x1, y1, maxOf(3, current.size), radius1, radius2, direction || dir || (ext && i2 != -1))
+            i0 = RadialRenderState.hit(mouseSX, mouseSY, x1, y1, maxOf(1, current.size), radius1, radius2, direction || dir || (ext && i2 != -1))
 
             // Rings/Direction: the group under the cursor opens on its own, no click and no dwell.
             if (type == 4 || dir) {
@@ -291,10 +290,10 @@ object RadialMenu : Module(
             }
         }.runWhen(open)
 
-        on<GuiEvent.Render.Post> {
+        on<GuiEvent.Render.Any.Post> {
             val x = graphics.guiWidth() / 2
             val y = graphics.guiHeight() / 2
-            val num = maxOf(3, current.size)
+            val size = maxOf(1, current.size)
 
             // Hover: the dwell timer has to tick here, mouse move events stop once the cursor sits still.
             if (type == 3) {
@@ -317,24 +316,24 @@ object RadialMenu : Module(
             val ring = layout()
             val ringI = if (type >= 2 && i1 != -1) ring.getOrNull(i1)?.first ?: -1 else -1
 
-            graphics.guiRenderState.addGuiElement(RadialRenderState(graphics, x, y, num, mini, ring, i3 = ringI))
+            graphics.guiRenderState.addGuiElement(RadialRenderState(graphics, x, y, size, mini, ring, i3 = ringI))
             graphics.guiRenderState.nextStratum()
 
             for (i in current.indices) {
-                val (x, y) = RadialRenderState.anchor(x, y, num, radius1, radius2, i)
+                val (x, y) = RadialRenderState.anchor(x, y, size, radius1, radius2, i)
                 graphics.item(current[i].item, x - 8, y - 8)
             }
 
             if (type == 1 && i2 in current.indices) {
                 for (j in current[i2].sub.indices) {
-                    val (x, y) = RadialRenderState.nested(x, y, num, radius2, i2, j, thickness)
+                    val (x, y) = RadialRenderState.nested(x, y, size, radius2, i2, j, thickness)
                     graphics.item(current[i2].sub[j].item, x - 8, y - 8)
                 }
             }
 
             if (type >= 2) {
                 for ((i, s) in ring) {
-                    val (x, y) = RadialRenderState.ring(x, y, num, radius2, i, thickness)
+                    val (x, y) = RadialRenderState.ring(x, y, size, radius2, i, thickness)
                     graphics.item(s.item, x - 8, y - 8)
                 }
             }
@@ -442,7 +441,7 @@ object RadialMenu : Module(
 
         val sub = current[i2].sub
         val n = sub.size
-        val m = maxOf(3, current.size)
+        val m = maxOf(1, current.size)
         val p = i2
 
         return List(n) { i ->

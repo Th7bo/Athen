@@ -13,6 +13,7 @@ import foo.starred.cascade.constraints.impl.size.MixedSizeConstraint
 import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -22,12 +23,13 @@ import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
 import foo.starred.snowbird.api.client
+import foo.starred.snowbird.api.nextTick
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.entity.EntityType
 
-object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
+object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometricResolution.FHD.of(2f)) {
     private var category = false
     private var deleting: Int? = null
     private var entry: Int? = null
@@ -69,12 +71,12 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -88,12 +90,12 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -107,12 +109,12 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
             color = Mocha.Base.argb
+            interact = false
 
             effect(OutlineEffect {
                 color = Mocha.Surface0.argb
             })
 
-            interact = false
             attach(main)
         }
 
@@ -244,7 +246,9 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
 
     fun pop(name: String?, type: EntityType<*>?, max: Int = -1) {
         open()
-        popup.open(name, type, max)
+        nextTick {
+            popup.open(name, type, max)
+        }
     }
 
     override fun init() {
@@ -390,12 +394,12 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
                 size = FixedSizeConstraint(14, 14)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
                 color = color0 or 0xFF000000.toInt()
+                interact = false
 
                 effect(OutlineEffect {
                     color = Mocha.Surface2.argb
                 })
 
-                interact = false
                 attach(row)
             }
 
@@ -413,12 +417,11 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]") {
                 size = FixedSizeConstraint(width, 14)
                 position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8)
                 color = Mocha.Surface2.argb
+                interact = false
 
                 effect(OutlineEffect {
                     color = Mocha.Crust.argb
                 })
-
-                interact = false
 
                 attach(row)
                 adopt(text {

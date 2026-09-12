@@ -3,11 +3,11 @@ package foo.starred.athen.config.ui.pages.module.elements.color
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigColorPickerElementData
 import foo.starred.athen.config.ui.ConfigUI
+import foo.starred.athen.api.rendering.ui.components.impl.EditableTextComponent.Companion.editableText
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
-import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
@@ -21,10 +21,11 @@ import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
-import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
-import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
+import foo.starred.snowbird.utils.alpha
+import foo.starred.snowbird.utils.blue
 import foo.starred.snowbird.utils.brighten
-import foo.starred.snowbird.utils.literal
+import foo.starred.snowbird.utils.green
+import foo.starred.snowbird.utils.red
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.joml.Matrix3x2f
 import java.awt.Color
@@ -32,7 +33,7 @@ import java.awt.Color
 class ConfigColorPickerElement(
     private val config: ConfigColorPickerElementData
 ) : RoundedRectanglePrimitive() {
-    private var value: Color = ConfigManager.get(config.key) as? Color ?: config.default
+    private var value: Int = (ConfigManager.get(config.key) as? Number)?.toInt() ?: config.default
     private var expanded = false
 
     private var drag: Int = 0
@@ -47,16 +48,33 @@ class ConfigColorPickerElement(
         position = FixedPositionConstraint(0f, 0f)
         size = FixedSizeConstraint(28f, 14f)
         radius = CascadeGeometricRadius(4f, 0f, 4f, 0f)
-        color = value.rgb
+        color = value
         interact = false
     }
 
-    private val hex = text {
-        wrapper = CascadeTextWrapper
-        text = value.hex().literal()
+    private val hex = editableText {
+        position = FixedPositionConstraint(29f, 0f)
+        size = FixedSizeConstraint(55f, 14f)
         textSize = 8f
-        color = Catppuccin.Mocha.Text.argb
-        position = CenterPositionConstraint()
+        color0 = Catppuccin.Mocha.Text.argb
+        color1 = Catppuccin.Mocha.Lavender.argb
+        value = this@ConfigColorPickerElement.value.hex()
+
+        on<MouseEvent.Press> {
+            if (button != 0) return@on
+            if (!expanded) fn()
+        }
+
+        commit {
+            parse(it)?.let { c ->
+                this@ConfigColorPickerElement.value = c
+                color(c)
+                swatch.color = c
+                ConfigManager.update(config.key, c)
+            }
+
+            value = this@ConfigColorPickerElement.value.hex()
+        }
     }
 
     private val box = object : RoundedRectanglePrimitive() {
@@ -157,7 +175,7 @@ class ConfigColorPickerElement(
                     position = FixedPositionConstraint(k * 31f, 0f)
                     size = FixedSizeConstraint(31f, 16f)
                     radius = if (k == 0) CascadeGeometricRadius(4f, 0f, 4f, 0f) else if (k == 3) CascadeGeometricRadius(0f, 4f, 0f, 4f) else CascadeGeometricRadius.ZERO
-                    color = color0.rgb
+                    color = color0
 
                     on<MouseEvent.Press> {
                         if (button != 0) return@on
@@ -165,17 +183,17 @@ class ConfigColorPickerElement(
                         cancel()
                         value = color0
                         color(color0)
-                        swatch.color = value.rgb
-                        hex.text = value.hex().literal()
+                        swatch.color = value
+                        hex.value = value.hex()
                         ConfigManager.update(config.key, value)
                     }
 
                     on<MouseEvent.Move.Enter> {
-                        animateColor(color0.rgb.brighten(1.2f), 0.15f)
+                        animateColor(color0.brighten(1.2f), 0.15f)
                     }
 
                     on<MouseEvent.Move.Exit> {
-                        animateColor(color0.rgb, 0.15f)
+                        animateColor(color0, 0.15f)
                     }
                 })
 
@@ -227,12 +245,7 @@ class ConfigColorPickerElement(
             interact = false
         })
 
-        adopt(container {
-            position = FixedPositionConstraint(29f, 0f)
-            size = FixedSizeConstraint(55f, 14f)
-            interact = false
-            adopt(hex)
-        })
+        adopt(hex)
     }
 
     fun close() {
@@ -260,7 +273,8 @@ class ConfigColorPickerElement(
             animateColor(Catppuccin.Mocha.Surface1.argb, 0.15f)
             outline.color = Catppuccin.Mocha.Lavender.argb
 
-            box.position = FixedPositionConstraint(x + width - 140f, if (y + 146f > ConfigUI.scene.height) y - 132f else y + 18f)
+            val y0 = y - ConfigUI.right.scroll
+            box.position = FixedPositionConstraint(x + width - 140f, if (y0 + 146f > ConfigUI.scene.height) y0 - 132f else y0 + 18f)
             return
         }
 
@@ -283,24 +297,21 @@ class ConfigColorPickerElement(
         commit()
     }
 
-    private fun color(color: Color) {
-        val hsb = Color.RGBtoHSB(color.red, color.green, color.blue, null)
+    private fun color(argb: Int) {
+        val hsb = Color.RGBtoHSB(argb.red, argb.green, argb.blue, null)
         hue = hsb[0]
         saturation = hsb[1]
         brightness = hsb[2]
-        alpha = color.alpha / 255f
+        alpha = argb.alpha / 255f
     }
 
     private fun commit() {
-        val rgb = Color.HSBtoRGB(hue, saturation, brightness)
-        val r = (rgb ushr 16) and 0xFF
-        val g = (rgb ushr 8) and 0xFF
-        val b = rgb and 0xFF
+        val rgb = Color.HSBtoRGB(hue, saturation, brightness) and 0x00FFFFFF
         val a = (alpha * 255f).toInt().coerceIn(0, 255)
-        value = Color(r, g, b, a)
+        value = (a shl 24) or rgb
 
-        swatch.color = value.rgb
-        hex.text = value.hex().literal()
+        swatch.color = value
+        hex.value = value.hex()
         ConfigManager.update(config.key, value)
     }
 
@@ -333,8 +344,8 @@ class ConfigColorPickerElement(
 
         val x5 = x1 + 8f
         val y5 = y1 + 88f
-        val rgba = (value.rgb and 0x00FFFFFF) or (0xFF shl 24)
-        val rgb = value.rgb and 0x00FFFFFF
+        val rgb = value and 0x00FFFFFF
+        val rgba = rgb or (0xFF shl 24)
 
         graphics.rectangle(x5, y5, 124f, 8f, Catppuccin.Mocha.Surface0.argb, pose, scissor)
         graphics.gradientRectangle(x5, y5, 124f, 8f, rgb, rgba, rgb, rgba, pose, scissor)
@@ -346,10 +357,10 @@ class ConfigColorPickerElement(
 
     companion object {
         private val PRESETS = listOf(
-            Color(Catppuccin.Mocha.Red.argb, true),
-            Color(Catppuccin.Mocha.Green.argb, true),
-            Color(Catppuccin.Mocha.Lavender.argb, true),
-            Color(Catppuccin.Mocha.Peach.argb, true)
+            Catppuccin.Mocha.Red.argb,
+            Catppuccin.Mocha.Green.argb,
+            Catppuccin.Mocha.Lavender.argb,
+            Catppuccin.Mocha.Peach.argb
         )
 
         var active: ConfigColorPickerElement? = null
@@ -361,8 +372,37 @@ class ConfigColorPickerElement(
             }
         }
 
-        private fun Color.hex(): String {
+        private fun Int.hex(): String {
             return if (alpha == 255) String.format("#%02X%02X%02X", red, green, blue) else String.format("#%02X%02X%02X%02X", red, green, blue, alpha)
+        }
+
+        private fun parse(hex: String): Int? {
+            val s = hex.trim().removePrefix("#")
+            return try {
+                when (s.length) {
+                    3 -> {
+                        val r = s.substring(0, 1).toInt(16) * 17
+                        val g = s.substring(1, 2).toInt(16) * 17
+                        val b = s.substring(2, 3).toInt(16) * 17
+                        (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+                    }
+                    6 -> {
+                        val rgb = s.toLong(16).toInt()
+                        (0xFF shl 24) or (rgb and 0xFFFFFF)
+                    }
+                    8 -> {
+                        val rgba = s.toLong(16).toInt()
+                        val r = (rgba ushr 24) and 0xFF
+                        val g = (rgba ushr 16) and 0xFF
+                        val b = (rgba ushr 8) and 0xFF
+                        val a = rgba and 0xFF
+                        (a shl 24) or (r shl 16) or (g shl 8) or b
+                    }
+                    else -> null
+                }
+            } catch (_: Exception) {
+                null
+            }
         }
     }
 }

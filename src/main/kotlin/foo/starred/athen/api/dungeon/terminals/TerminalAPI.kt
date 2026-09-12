@@ -3,7 +3,7 @@
 package foo.starred.athen.api.dungeon.terminals
 
 import foo.starred.athen.annotations.Priority
-import foo.starred.athen.api.dungeon.DungeonAPI
+import foo.starred.athen.api.location.LocationAPI
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.events.DungeonEvent
@@ -11,7 +11,7 @@ import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.core.on
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.TerminalSimulator
-import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolver
+import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.data.Observable.Companion.and
@@ -40,8 +40,8 @@ object TerminalAPI {
         private set
 
     init {
-        val state = (DungeonAPI.F7Phase.map { it == 3 } or TerminalSimulator.s) or TerminalSimulator.s0
-        val state0 = state and TerminalSolver.observable
+        val state = (LocationAPI.isOnSkyBlock or TerminalSimulator.s) or TerminalSimulator.s0
+        val state0 = state and TerminalSolvers.observable
         val state1 = state and opened
 
         opened.onChange {
@@ -52,7 +52,7 @@ object TerminalAPI {
             val title = title.stripped()
             val type = TerminalType.get(title)?.takeIf { it.solver } ?: return@on reset()
 
-            if (!opened.value) open = System.currentTimeMillis()
+            open = System.currentTimeMillis()
             opened.value = true
             terminal = type
             TerminalAPI.title = title
@@ -64,8 +64,6 @@ object TerminalAPI {
             val a = terminal ?: return@on
             val b = a.slots
             val b0 = a != TerminalType.MELODY
-
-            if (containerId != id) return@on
             if (slot !in 0 until b) return@on
 
             //~ if >= 26.2 'client.screen' -> 'client.gui.screen()'
@@ -75,12 +73,12 @@ object TerminalAPI {
 
             val d = c.subList(0, b)
             if (i < b && b0) return@on
+            if (a == TerminalType.RUBIX && i > b) return@on
 
             DungeonEvent.Terminal.Update(d).post()
         }.runWhen(state1)
 
         on<PacketEvent.Process.Pre, ClientboundContainerSetContentPacket> {
-            if (containerId != id) return@on
             i = items.size
         }.runWhen(state1)
 
@@ -90,8 +88,7 @@ object TerminalAPI {
 
         on<PacketEvent.Send, ServerboundContainerClickPacket> {
             if (terminal == TerminalType.MELODY) return@on
-            if (containerId != id) return@on it.cancel()
-            if (System.currentTimeMillis() - open >= TerminalSolver.fcDelay) return@on
+            if (System.currentTimeMillis() - open >= TerminalSolvers.firstClick) return@on
 
             it.cancel()
         }.runWhen(state0 and opened)

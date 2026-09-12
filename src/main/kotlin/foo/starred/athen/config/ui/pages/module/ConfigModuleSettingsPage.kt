@@ -37,6 +37,7 @@ import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
+import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive.Companion.roundedRectangle
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
@@ -52,7 +53,12 @@ object ConfigModuleSettingsPage {
         ConfigUI.hide()
         ConfigUI.headerText.text = "<bold><#FDCCDA>A<#FCDDD3>t<#FAEDCB>h<#F0E2D7>e<#E5D8E4>n<#DBCDF0></bold> <gray>I ${feature.name}".parse()
 
-        roundedRectangle {
+        object : RoundedRectanglePrimitive() {
+            override fun draw(graphics: GuiGraphicsExtractor) {
+                graphics.nextStratum()
+                super.draw(graphics)
+            }
+        }.apply {
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.END, -12f, -12f)
             size = FixedSizeConstraint(24f, 24f)
             color = Catppuccin.Mocha.Mantle.argb
@@ -136,12 +142,13 @@ object ConfigModuleSettingsPage {
             attach(ConfigUI.right)
 
             if (first !is ConfigGroupElementData) {
-                rows(this, block)
+                rows(this, split(block))
                 return@roundedRectangle
             }
 
-            val full = (block.size / 2) * 26f
-            val start = if (ConfigManager.get(first.key) as? Boolean ?: false) full else 0f
+            val inner = split(block.subList(1, block.size))
+            val full = inner.sumOf { if (it.size == 1 && it[0] is ConfigInformationElementData && it == inner.last()) 30 else 26 }.toFloat()
+            val start = if (ConfigManager.get(first.key) as? Boolean ?: !first.collapsed) full else 0f
 
             val header = container {
                 position = FixedPositionConstraint(0f, 0f)
@@ -195,18 +202,16 @@ object ConfigModuleSettingsPage {
                 if (!it) content.forEach { a -> (a as? ConfigColorPickerElement)?.close() }
             }
 
-            rows(content, block.subList(1, block.size))
+            rows(content, inner)
         }
     }
 
-    private fun rows(parent: IPrimitiveElement<*>, list: List<IConfigElementData>): IPrimitiveElement<*>? {
-        var prev: IPrimitiveElement<*>? = null
-
-        val list = buildList {
+    private fun split(list: List<IConfigElementData>): List<List<IConfigElementData>> {
+        return buildList {
             val pair = mutableListOf<IConfigElementData>()
 
             for (item in list) {
-                if (item !is ConfigInformationElementData && item !is ConfigVariablesElementData) {
+                if (item !is ConfigInformationElementData) {
                     pair += item
                     if (pair.size < 2) continue
 
@@ -225,6 +230,10 @@ object ConfigModuleSettingsPage {
 
             if (pair.isNotEmpty()) add(pair)
         }
+    }
+
+    private fun rows(parent: IPrimitiveElement<*>, list: List<List<IConfigElementData>>): IPrimitiveElement<*>? {
+        var prev: IPrimitiveElement<*>? = null
 
         for (i in list) {
             val above = prev
@@ -243,18 +252,9 @@ object ConfigModuleSettingsPage {
     }
 
     private fun cell(parent: IPrimitiveElement<*>, config: IConfigElementData, x0: Float) {
-        when (config) {
-            is ConfigInformationElementData -> {
-                ConfigInformationElement.of(parent, config)
-                return
-            }
-
-            is ConfigVariablesElementData -> {
-                ConfigVariablesElement.of(parent, config)
-                return
-            }
-
-            else -> {}
+        if (config is ConfigInformationElementData) {
+            ConfigInformationElement.of(parent, config)
+            return
         }
 
         container {
@@ -283,6 +283,7 @@ object ConfigModuleSettingsPage {
                 is ConfigKeybindElementData -> ConfigKeybindElement.of(content, config)
                 is ConfigSelectorElementData -> ConfigSelectorElement.of(content, config)
                 is ConfigMultiSelectorElementData -> ConfigMultiSelectorElement.of(content, config)
+                is ConfigVariablesElementData -> ConfigVariablesElement.of(content, config)
                 is ConfigColorPickerElementData -> ConfigColorPickerElement.of(content, config)
                 is ConfigHudElementData -> ConfigHUDElement.of(content, config)
                 else -> {}

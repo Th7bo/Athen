@@ -1,7 +1,5 @@
 [versions]
 loom = "1.17-SNAPSHOT"
-fletchingTable = "0.1.0-alpha.22"
-ksp = "2.3.11"
 kotlin = "2.4.10"
 
 devauth = "1.2.1"
@@ -15,6 +13,9 @@ fabric-api-26-2 = "0.158.0+26.2"
 modmenu-26-1 = "3rsoV1bk"
 modmenu-26-2 = "njXb639R"
 
+caxton-26-1 = "paJOxYlD"
+caxton-26-2 = "wVI9Rvrv"
+
 entityculling-26-1 = "DhN0G638"
 entityculling-26-2 = "iiF6U3Ne"
 
@@ -24,16 +25,18 @@ exordium-26-2 = "IK5p5vrB"
 iris-26-1 = "YEGDGnJM"
 iris-26-2 = "oaD6KQls"
 
-skyblock-api = "4.2.19"
+skyblock-api = "4.2.23"
 classgraph = "4.8.184"
-autoupdate = "1.3.1"
-kommand = "1.0.1"
+kommand = "1.0.2"
 
-snowbird-26-1 = "016+26.1"
-snowbird-26-2 = "016+26.2"
+snowbird-26-1 = "021+26.1"
+snowbird-26-2 = "021+26.2"
 
-cascade-26-1 = "035+26.1"
-cascade-26-2 = "035+26.2"
+cascade-26-1 = "036+26.1"
+cascade-26-2 = "036+26.2"
+
+updater-26-1 = "1.0.6+26.1"
+updater-26-2 = "1.0.6+26.2"
 
 hypixel-modapi = "1.0.1"
 hypixel-modapi-fabric = "1.0.1+build.1+mc1.21"
@@ -53,8 +56,14 @@ snowbird-26-2 = { module = "foo.starred:snowbird", version.ref = "snowbird-26-2"
 cascade-26-1 = { module = "foo.starred:cascade", version.ref = "cascade-26-1" }
 cascade-26-2 = { module = "foo.starred:cascade", version.ref = "cascade-26-2" }
 
+updater-26-1 = { module = "foo.starred:updater", version.ref = "updater-26-1" }
+updater-26-2 = { module = "foo.starred:updater", version.ref = "updater-26-2" }
+
 modmenu-26-1 = { module = "maven.modrinth:modmenu", version.ref = "modmenu-26-1" }
 modmenu-26-2 = { module = "maven.modrinth:modmenu", version.ref = "modmenu-26-2" }
+
+caxton-26-1 = { module = "maven.modrinth:caxton", version.ref = "caxton-26-1" }
+caxton-26-2 = { module = "maven.modrinth:caxton", version.ref = "caxton-26-2" }
 
 entityculling-26-1 = { module = "maven.modrinth:entityculling", version.ref = "entityculling-26-1" }
 entityculling-26-2 = { module = "maven.modrinth:entityculling", version.ref = "entityculling-26-2" }
@@ -67,7 +76,6 @@ iris-26-2 = { module = "maven.modrinth:iris", version.ref = "iris-26-2" }
 
 skyblock-api = { module = "tech.thatgravyboat:skyblock-api", version.ref = "skyblock-api" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
-autoupdate = { module = "moe.nea:libautoupdate", version.ref = "autoupdate" }
 kommand = { module = "foo.starred:kommand", version.ref = "kommand" }
 hypixel-modapi = { module = "net.hypixel:mod-api", version.ref = "hypixel-modapi" }
 hypixel-modapi-fabric = { module = "maven.modrinth:hypixel-mod-api", version.ref = "hypixel-modapi-fabric" }
@@ -75,5 +83,3 @@ hypixel-modapi-fabric = { module = "maven.modrinth:hypixel-mod-api", version.ref
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
-fletchingTable = { id = "dev.kikugie.fletching-table.fabric", version.ref = "fletchingTable" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

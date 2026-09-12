@@ -8,9 +8,6 @@ import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.snowbird.api.client
-import foo.starred.snowbird.utils.hovered
-import foo.starred.snowbird.utils.mouseSX
-import foo.starred.snowbird.utils.mouseSY
 import net.minecraft.client.gui.GuiGraphicsExtractor
 
 class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement<RadialOverlay>() {
@@ -29,12 +26,12 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
         val x0 = panel.x.toInt() + 160
         val y0 = panel.y.toInt() + 160
 
-        val mx = mouseSX
-        val my = mouseSY
+        val mx = mouseX
+        val my = mouseY
 
         val bool = RadialMenu.type == 0 && i1 >= 0 && i0 in working.indices
         val current = if (bool) working[i0].sub else working
-        val num = maxOf(3, current.size)
+        val size = maxOf(1, current.size)
 
         val x1 = mx - x0
         val y1 = my - y0
@@ -46,12 +43,12 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
 
         if (!hc && x1 * x1 + y1 * y1 >= 225f) {
             if (!bool && RadialMenu.type >= 2 && i0 in working.indices) {
-                val hit = RadialRenderState.hitRing(mx, my, x0, y0, num, RadialMenu.radius2, ex.map { it.first }, false, RadialMenu.thickness)
+                val hit = RadialRenderState.hitRing(mx, my, x0, y0, size, RadialMenu.radius2, ex.map { it.first }, false, RadialMenu.thickness)
                 if (hit != -1) sub = hit
             }
 
             if (!bool && sub == -1 && RadialMenu.type == 1 && i0 in working.indices) {
-                val hit = RadialRenderState.hitNested(mx, my, x0, y0, num, RadialMenu.radius2, i0, working[i0].sub.size, false, RadialMenu.thickness)
+                val hit = RadialRenderState.hitNested(mx, my, x0, y0, size, RadialMenu.radius2, i0, working[i0].sub.size, false, RadialMenu.thickness)
                 if (hit != -1) {
                     main = i0
                     sub = hit
@@ -59,25 +56,25 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
             }
 
             if (main == -1 && sub == -1) {
-                main = RadialRenderState.hit(mx, my, x0, y0, num, RadialMenu.radius1, RadialMenu.radius2)
+                main = RadialRenderState.hit(mx, my, x0, y0, size, RadialMenu.radius1, RadialMenu.radius2)
             }
         }
 
         for (i in current.indices) {
-            val (sx, sy) = RadialRenderState.anchor(x0, y0, num, RadialMenu.radius1, RadialMenu.radius2, i)
+            val (sx, sy) = RadialRenderState.anchor(x0, y0, size, RadialMenu.radius1, RadialMenu.radius2, i)
             graphics.item(current[i].item, sx - 8, sy - 8)
         }
 
         if (!bool && RadialMenu.type == 1 && i0 in working.indices) {
             for (j in working[i0].sub.indices) {
-                val (sx, sy) = RadialRenderState.nested(x0, y0, num, RadialMenu.radius2, i0, j, RadialMenu.thickness)
+                val (sx, sy) = RadialRenderState.nested(x0, y0, size, RadialMenu.radius2, i0, j, RadialMenu.thickness)
                 graphics.item(working[i0].sub[j].item, sx - 8, sy - 8)
             }
         }
 
         if (!bool && RadialMenu.type >= 2) {
             for ((i, s) in ex) {
-                val (sx, sy) = RadialRenderState.ring(x0, y0, num, RadialMenu.radius2, i, RadialMenu.thickness)
+                val (sx, sy) = RadialRenderState.ring(x0, y0, size, RadialMenu.radius2, i, RadialMenu.thickness)
                 graphics.item(s.item, sx - 8, sy - 8)
             }
         }
@@ -92,7 +89,7 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
             else current.getOrNull(main)?.name
         }
 
-        if (label != null && hovered(panel.x, panel.y, 320, 320, true)) {
+        if (label != null && panel.hovered) {
             val tw = client.font.width(label)
             val lmx = mx.toInt() + 12
             val lmy = my.toInt() - 4

@@ -31,23 +31,33 @@ public class AbstractContainerScreenMixin {
     @Nullable
     private Slot athen$previousHoveredSlot = null;
 
+    @Inject(method = "extractSlots", at = @At("HEAD"), cancellable = true)
+    private void athen$extractSlots$pre(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+        if (new GuiEvent.Slots.Render.Menu.Start(graphics).post()) ci.cancel();
+    }
+
+    @Inject(method = "extractSlots", at = @At("HEAD"))
+    private void athen$extractSlots$post(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+        new GuiEvent.Slots.Render.Menu.End(graphics).post();
+    }
+
     @Inject(method = "extractSlot", at = @At("HEAD"), cancellable = true)
-    private void athen$onRenderSlot$pre(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
-        if (new GuiEvent.Slots.Render.Pre(graphics, slot).post()) ci.cancel();
+    private void athen$extractSlot$pre(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+        if (new GuiEvent.Slots.Render.Any.Pre(graphics, slot).post()) ci.cancel();
     }
 
     @Inject(method = "extractSlot", at = @At("RETURN"))
-    private void athen$onRenderSlot$post(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
-        new GuiEvent.Slots.Render.Post(graphics, slot).post();
+    private void athen$extractSlot$post(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+        new GuiEvent.Slots.Render.Any.Post(graphics, slot).post();
     }
 
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
-    private void athen$slotClick(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+    private void athen$slotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
         if (slotId == -999 && containerInput == ContainerInput.PICKUP) {
             if (new PlayerEvent.Drop(this.menu.getCarried(), true).post()) ci.cancel();
         }
 
-        if (new GuiEvent.Slots.Click(slot, slotId, buttonNum, containerInput).post()) ci.cancel();
+        if (new GuiEvent.Slots.Input.Click(slot, slotId, buttonNum, containerInput).post()) ci.cancel();
     }
 
     @Inject(method = "extractContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;getHoveredSlot(DD)Lnet/minecraft/world/inventory/Slot;"))
@@ -59,8 +69,8 @@ public class AbstractContainerScreenMixin {
     private void athen$renderContents$1(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (hoveredSlot == athen$previousHoveredSlot) return;
 
-        if (hoveredSlot != null) new GuiEvent.Slots.Hover(hoveredSlot).post();
-        else new GuiEvent.Slots.Unhover(athen$previousHoveredSlot).post();
+        if (hoveredSlot != null) new GuiEvent.Slots.Input.Hover(hoveredSlot).post();
+        else new GuiEvent.Slots.Input.Unhover(athen$previousHoveredSlot).post();
 
         athen$previousHoveredSlot = hoveredSlot;
     }
