@@ -1,5 +1,6 @@
 package foo.starred.athen.config.ui.pages.module.elements.selector
 
+import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigMultiSelectorElementData
@@ -90,8 +91,7 @@ class ConfigMultiSelectorElement(
                 }.also { labels.add(it) })
 
                 on<MouseEvent.Press> {
-                    if (button != 0) return@on
-                    cancel()
+                    if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
 
                     val index = page * 3 + i
                     if (index >= config.options.size) return@on
@@ -99,6 +99,7 @@ class ConfigMultiSelectorElement(
                     if (selected.contains(index)) selected.remove(index) else selected.add(index)
                     ConfigManager.update(config.key, selected.toList())
                     update()
+                    cancel()
                 }
 
                 on<MouseEvent.Move.Enter> {
@@ -108,7 +109,7 @@ class ConfigMultiSelectorElement(
                     val width0 = 114f / (config.options.size - page * 3).coerceIn(1, 3)
 
                     val text = config.options[index]
-                    val width1 = CascadeFonts.arial.width(text, 8f)
+                    val width1 = CascadeFonts.sans.width(text, 8f)
                     if (width1 <= width0 - 6f) return@on
 
                     text0.text = text.literal()
@@ -157,7 +158,7 @@ class ConfigMultiSelectorElement(
                 }.also { chevron0 = it })
 
                 on<MouseEvent.Press> {
-                    if (button != 0) return@on
+                    if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                     if (page <= 0) return@on
 
                     page--
@@ -197,7 +198,7 @@ class ConfigMultiSelectorElement(
                 }.also { chevron1 = it })
 
                 on<MouseEvent.Press> {
-                    if (button != 0) return@on
+                    if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                     if (page >= total - 1) return@on
 
                     page++
@@ -231,7 +232,7 @@ class ConfigMultiSelectorElement(
             slot0[i].visible = visible
             slot0[i].position = FixedPositionConstraint(i * width1, 0f)
             slot0[i].size = FixedSizeConstraint(width1, 14f)
-            labels[i].text = if (visible) CascadeFonts.arial.truncate(config.options[index], 8f, width1 - 6f, "…").literal() else "".literal()
+            labels[i].text = if (visible) CascadeFonts.sans.truncate(config.options[index], 8f, width1 - 6f, "…").literal() else "".literal()
             labels[i].color = CascadeGeometricColor(if (selected.contains(index)) Catppuccin.Mocha.Green.argb else Catppuccin.Mocha.Subtext0.argb)
 
             if (i >= 2) continue

@@ -1,5 +1,6 @@
 package foo.starred.athen.config.ui.pages.module.elements.slider
 
+import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSliderElementData
 import foo.starred.athen.ui.themes.Catppuccin
@@ -77,14 +78,14 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         }
 
         on<MouseEvent.Press> {
-            if (button != 0) return@on
+            if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
             root.focused = self
             value(x)
             cancel()
         }
 
         on<MouseEvent.Release> {
-            if (button != 0) return@on
+            if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
             if (root.focused != self) return@on
             root.focused = null
             cancel()
@@ -118,7 +119,7 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
             graphics.roundedRectangle(x, y, width * value0, height, Catppuccin.Mocha.Lavender.argb.brighten(0.6f), radius, pose, scissor)
         }
 
-        val font = CascadeFonts.arial
+        val font = CascadeFonts.sans
         val height0 = font.regular.height * 10f
 
         val x1 = x + (width / 2f) - (_width / 2f)
@@ -141,7 +142,7 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         val suffix = if (unit.isNotEmpty()) " $unit" else ""
 
         _component = (display + suffix).literal()
-        _width = CascadeFonts.arial.width(_component, 10f)
+        _width = CascadeFonts.sans.width(_component, 10f)
     }
 
     companion object {

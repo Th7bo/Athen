@@ -1,5 +1,6 @@
 package foo.starred.athen.modules.impl.dungeon.terminals.solver.base
 
+import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.dungeon.terminals.TerminalType
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.TerminalSimulator
@@ -73,14 +74,14 @@ abstract class ITerminalSolver(val type: TerminalType) {
             val screen = client.screen as? ITerminalSim ?: return
             val slot0 = screen.menu.slots.getOrNull(slot) ?: return
 
-            screen.slotClicked(slot0, slot, button, if (button == 0) ContainerInput.CLONE else ContainerInput.PICKUP)
+            screen.slotClicked(slot0, slot, button, if (button == InputConstants.MOUSE_BUTTON_LEFT) ContainerInput.CLONE else ContainerInput.PICKUP)
             TerminalSolvers.last = System.currentTimeMillis()
             pending = true
 
             return
         }
 
-        ServerboundContainerClickPacket(TerminalAPI.id, client.player?.containerMenu?.stateId ?: return, slot.toShort(), (if (button == 0) 2 else button).toByte(), if (button == 0) ContainerInput.CLONE else ContainerInput.PICKUP, Int2ObjectOpenHashMap(), HashedStack.create(ItemStack.EMPTY, client.connection?.decoratedHashOpsGenenerator() ?: return)).send()
+        ServerboundContainerClickPacket(TerminalAPI.id, client.player?.containerMenu?.stateId ?: return, slot.toShort(), (if (button == InputConstants.MOUSE_BUTTON_LEFT) 2 else button).toByte(), if (button == InputConstants.MOUSE_BUTTON_LEFT) ContainerInput.CLONE else ContainerInput.PICKUP, Int2ObjectOpenHashMap(), HashedStack.create(ItemStack.EMPTY, client.connection?.decoratedHashOpsGenenerator() ?: return)).send()
         TerminalSolvers.last = System.currentTimeMillis()
         pending = true
     }
@@ -110,7 +111,7 @@ abstract class ITerminalSolver(val type: TerminalType) {
         }
 
         graphics.roundedRectangle(x0, y0, width0, height0, TerminalSolvers.`ui$bg`, radius, pose, scissor)
-        graphics.hollowRectangle(x0, y0, width0, height0, bw, TerminalSolvers.`ui$border`, radius, pose, scissor)
+        graphics.hollowRectangle(x0, y0, width0, height0, bw, TerminalSolvers.`ui$border`, radius, true, pose, scissor)
 
         graphics.header(x, y, grid.width, grid.head, scale, pose, scissor)
         graphics.render(x - int1 * grid.spacing + grid.padding + inset - 1f, y + grid.head + grid.top - grid.spacing + grid.padding + inset - 1f, 0f, scale, pose, scissor)
@@ -149,14 +150,14 @@ abstract class ITerminalSolver(val type: TerminalType) {
 
     fun GuiGraphicsExtractor.slot(x: Float, y: Float, width: Float, height: Float, color: Int, scale: Float, pose: Matrix3x2f, scissor: ScreenRectangle?, radius: CascadeGeometricRadius = CascadeGeometricRadius(TerminalSolvers.`ui$slots$roundness` * scale)) {
         if (TerminalSolvers.`ui$slots$fill`) roundedRectangle(x, y, width, height, color, radius, pose, scissor)
-        else hollowRectangle(x, y, width, height, scale, color, radius, pose, scissor)
+        else hollowRectangle(x, y, width, height, scale, color, radius, true, pose, scissor)
     }
 
     private fun GuiGraphicsExtractor.header( x: Float, y: Float, width: Float, height: Float, scale: Float, pose: Matrix3x2f, scissor: ScreenRectangle?) {
         if (TerminalSolvers.`ui$hideHeader`) return
 
         val title = type.name.lowercase().replaceFirstChar { it.uppercase() }
-        val font = CascadeFonts.arial
+        val font = CascadeFonts.sans
 
         val radius = CascadeGeometricRadius(TerminalSolvers.`ui$roundness` * scale)
         val x1 = x * scale
@@ -170,7 +171,7 @@ abstract class ITerminalSolver(val type: TerminalType) {
         }
 
         roundedRectangle(x1, y1, width1, height1, TerminalSolvers.`ui$header`, radius, pose, scissor)
-        hollowRectangle(x1, y1, width1, height1, thickness, TerminalSolvers.`ui$border`, radius, pose, scissor)
+        hollowRectangle(x1, y1, width1, height1, thickness, TerminalSolvers.`ui$border`, radius, true, pose, scissor)
 
         val size = 11f * scale
         font.extract(this, title, (x + width / 2) * scale - font.width(title, size) / 2, (y + height / 2) * scale - (font.regular.height * size) / 2, Mocha.Text.rgba, false, size)

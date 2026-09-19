@@ -23,8 +23,7 @@ import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
 import foo.starred.snowbird.api.ZERO_PAIR
 import foo.starred.snowbird.api.client
-import foo.starred.snowbird.api.ctrl
-import foo.starred.snowbird.api.shift
+import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -100,7 +99,7 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
         }
 
         on<MouseEvent.Press> {
-            val font = CascadeFonts.arial
+            val font = CascadeFonts.sans
 
             root.focused = self
             cancel()
@@ -117,13 +116,13 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
                 i0 = i
             }
 
-            anchor = if (shift) anchor.takeIf { it != -1 } ?: cursor else -1
+            anchor = if (KeyboardInputState.States.shift()) anchor.takeIf { it != -1 } ?: cursor else -1
             cursor = i0
         }
 
         on<KeyEvent.Press> {
-            val shift = shift
-            val ctrl = ctrl
+            val shift = KeyboardInputState.States.shift()
+            val ctrl = KeyboardInputState.States.control()
 
             when (key) {
                 InputConstants.KEY_LEFT -> {
@@ -283,7 +282,7 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
 
         super.draw(graphics)
 
-        val font = CascadeFonts.arial
+        val font = CascadeFonts.sans
         val x0 = x.toInt()
         val y0 = y.toInt()
 
@@ -320,7 +319,7 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
     }
 
     private fun fn0() {
-        val font = CascadeFonts.arial
+        val font = CascadeFonts.sans
         _cursor = font.width(value.substring(0, min(cursor, value.length)), 12f)
 
         val width = width.toInt()

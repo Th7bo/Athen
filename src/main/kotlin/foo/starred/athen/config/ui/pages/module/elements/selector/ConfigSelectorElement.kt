@@ -1,5 +1,6 @@
 package foo.starred.athen.config.ui.pages.module.elements.selector
 
+import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSelectorElementData
@@ -29,7 +30,7 @@ class ConfigSelectorElement(
     private var value: Int = ConfigManager.get(config.key) as? Int ?: config.default
     private val text = text {
         wrapper = CascadeTextWrapper
-        text = CascadeFonts.arial.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
+        text = CascadeFonts.sans.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
         textSize = 8f
         color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
         position = CenterPositionConstraint()
@@ -81,14 +82,14 @@ class ConfigSelectorElement(
         })
 
         on<MouseEvent.Press> {
-            if (button != 0 && button != 1) return@on
+            if (button != InputConstants.MOUSE_BUTTON_LEFT && button != InputConstants.MOUSE_BUTTON_RIGHT) return@on
             cancel()
 
             val x1 = x - this@ConfigSelectorElement.x
-            val direction = if (x1 < 16f) -1 else if (x1 > width - 16f) 1 else if (button == 0) 1 else -1
+            val direction = if (x1 < 16f) -1 else if (x1 > width - 16f) 1 else if (button == InputConstants.MOUSE_BUTTON_LEFT) 1 else -1
             val value1 = (value + direction + config.options.size) % config.options.size
             value = value1
-            text.text = CascadeFonts.arial.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
+            text.text = CascadeFonts.sans.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
 
             ConfigManager.update(config.key, value1)
             animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb.brighten(0.9f)), 0.15f) {
