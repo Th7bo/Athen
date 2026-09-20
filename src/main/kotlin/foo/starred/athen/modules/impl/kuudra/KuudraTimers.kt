@@ -5,7 +5,8 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.Category
 import foo.starred.athen.events.KuudraEvent
@@ -23,7 +24,6 @@ object KuudraTimers : Module(
     Category.KUUDRA
 ) {
     //<editor-fold desc="Supply timer">
-    private val ex0 = "Supply in: <red>4.5s".parse().visualOrderText
     private var t0 = 0L
 
     private val d0 = Ticking(2) {
@@ -32,17 +32,27 @@ object KuudraTimers : Module(
         s0(t.toDurationFromMillis(secondsDecimals = 1))
     }
 
-    private val spawn = config.hud("Supply spawn timer") {
-        if (it) return@hud sizedText(ex0)
-        if (t0 == 0L) return@hud null
-        sizedText(d0.value ?: return@hud null)
+    private val spawn by config.hud("Supply spawn timer") {
+        val example = "Supply in: <red>4.5s".parse().visualOrderText
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (t0 == 0L) return@render
+            VanillaFontRenderer.extract(graphics, d0.value ?: return@render, 0, 0)
+        }
     }
 
     private val spawnStyle by config.input("Supply text style", "Supply in: <red>#time")
     //</editor-fold>
 
     //<editor-fold desc="Build timer">
-    private val ex1 = "Build in: <red>4.5s".parse().visualOrderText
     private var t1 = 0L
 
     private val d1 = Ticking(2) {
@@ -51,10 +61,21 @@ object KuudraTimers : Module(
         s1(t.toDurationFromMillis(secondsDecimals = 1))
     }
 
-    private val build = config.hud("Build start timer") {
-        if (it) return@hud sizedText(ex1)
-        if (t1 == 0L) return@hud null
-        sizedText(d1.value ?: return@hud null)
+    private val build by config.hud("Build start timer") {
+        val example = "Build in: <red>4.5s".parse().visualOrderText
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (t1 == 0L) return@render
+            VanillaFontRenderer.extract(graphics, d1.value ?: return@render, 0, 0)
+        }
     }
 
     private val buildStyle by config.input("Build text style", "Build in: <red>#time")
@@ -62,11 +83,11 @@ object KuudraTimers : Module(
 
     init {
         on<KuudraEvent.Phase.Supply> {
-            if (spawn.enabled) t0 = System.currentTimeMillis() + 8900
+            if (spawn.state.value) t0 = System.currentTimeMillis() + 8900
         }
 
         on<KuudraEvent.Phase.Build> {
-            if (build.enabled) t1 = System.currentTimeMillis() + 5100
+            if (build.state.value) t1 = System.currentTimeMillis() + 5100
         }
 
         on<LocationEvent.Server.Connect> {

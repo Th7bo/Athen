@@ -3,7 +3,8 @@ package foo.starred.athen.modules.impl.general
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.Category
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
@@ -25,20 +26,30 @@ object LagDetector : Module(
     private val party by config.switch("Notify party")
     private val text by config.input("Message", "Lag detected!")
 
-    private val ex0 = "§c67ms".fcs
     private var last = 0L
     private var bool = false
 
     init {
         config.hud("Lag display") {
-            if (it) return@hud sizedText(ex0)
-            if (last == 0L) return@hud null
-            if (player == null) return@hud null
+            val example = "§c67ms".fcs
 
-            val t = System.currentTimeMillis() - last
-            if (t <= threshold) return@hud null
+            constrain {
+                VanillaFontMeasurer.constrain(example)
+            }
 
-            sizedText("§c${t}ms")
+            preview {
+                VanillaFontRenderer.extract(graphics, example, 0, 0)
+            }
+
+            render {
+                if (last == 0L) return@render
+                if (player == null) return@render
+
+                val t = System.currentTimeMillis() - last
+                if (t <= threshold) return@render
+
+                VanillaFontRenderer.extract(graphics, "§c${t}ms", 0, 0)
+            }
         }
 
         on<TickEvent.Client.End> {

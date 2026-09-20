@@ -9,7 +9,8 @@ import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.kuudra.enums.KuudraSupply
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.Category
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
@@ -41,15 +42,25 @@ object FreshTools : Module(
     private val `notify$unused` by notify0.variables("#buildPerc")
     private val `notify$checkParty` by notify0.switch("Check party", true)
 
-    private val ex0 = "Fresh: §c6.7s".fcs
-    private val timer = config.hud("Fresh timer") {
-        if (it) return@hud sizedText(ex0)
-        if (time == -1L) return@hud null
+    private val timer by config.hud("Fresh timer") {
+        val example = "Fresh: §c6.7s".fcs
 
-        val r = 10_000 - (System.currentTimeMillis() - time)
-        if (r <= 0) return@hud fn()
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
 
-        sizedText("Fresh: §c${r.toDurationFromMillis(secondsDecimals = 1)}")
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (time == -1L) return@render
+
+            val r = 10_000 - (System.currentTimeMillis() - time)
+            if (r <= 0) return@render fn()
+
+            VanillaFontRenderer.extract(graphics, "Fresh: §c${r.toDurationFromMillis(secondsDecimals = 1)}", 0, 0)
+        }
     }
 
     private var time: Long = -1
@@ -60,7 +71,7 @@ object FreshTools : Module(
         }
 
         on<MessageEvent.Chat.Receive> {
-            if (!timer.enabled && !alert) return@on
+            if (!timer.state.value && !alert) return@on
             if (KuudraAPI.phase != KuudraPhase.Build) return@on
             if (stripped != "Your Fresh Tools Perk bonus doubles your building speed for the next 10 seconds!") return@on
 
@@ -73,9 +84,8 @@ object FreshTools : Module(
         }
     }
 
-    private fun fn(): Pair<Int, Int>? {
+    private fun fn() {
         time = -1
-        return null
     }
 
     private fun fn0() {

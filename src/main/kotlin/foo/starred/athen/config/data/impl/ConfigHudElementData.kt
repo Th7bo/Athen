@@ -2,13 +2,15 @@ package foo.starred.athen.config.data.impl
 
 import foo.starred.athen.config.data.base.IConfigElementData
 import foo.starred.athen.config.dsl.impl.builders.config.ConfigMainBuilder
-import foo.starred.athen.hud.HUDElement
+import foo.starred.athen.config.dsl.impl.builders.hud.ConfigHudBuilder
+import foo.starred.athen.config.hud.data.element.HudElementCoordinateData
 
 data class ConfigHudElementData(
     override val name: String,
     override val key: String,
     val default: Boolean,
-    val hud: HUDElement,
+    val coordinate: HudElementCoordinateData,
+    val hud: ConfigHudBuilder,
     val config: ConfigMainBuilder,
     override val parent: String? = null,
     override val description: String? = null

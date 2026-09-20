@@ -5,9 +5,10 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraTier
 import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import foo.starred.athen.config.Category
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.LocationEvent
@@ -15,6 +16,7 @@ import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.athen.utils.render.renderPos
 import foo.starred.snowbird.api.client
@@ -34,15 +36,25 @@ object KuudraInfo : Module(
     private val color by config.colorPicker("Color", Catppuccin.Mocha.Peach.argb)
     private val hpOnKuudra by config.switch("Draw hp on boss", true)
 
-    private val hud = config.hud("Kuudra HP") {
-        if (it) return@hud sizedText("§a46.5m§7/§4240m §c❤")
-        if (!KuudraAPI.inRun) return@hud null
-
-        sizedText(display ?: return@hud null)
-    }
-
     private var display: String? = null
     private var health: Float = 0f
+
+    private val hud by config.hud("Kuudra HP") {
+        val example = "§a46.5m§7/§4240m §c❤".fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (!KuudraAPI.inRun) return@render
+            VanillaFontRenderer.extract(graphics, display ?: return@render, 0, 0)
+        }
+    }
 
     init {
         on<LocationEvent.Server.Connect> {
@@ -51,7 +63,7 @@ object KuudraInfo : Module(
         }
 
         on<EntityEvent.Update.Health> {
-            if (!hud.enabled && !hpOnKuudra) return@on
+            if (!hud.state.value && !hpOnKuudra) return@on
             if (!KuudraAPI.inRun) return@on
             if (health == new) return@on
             val e = KuudraAPI.kuudra?.takeIf { it == entity } ?: return@on
@@ -62,7 +74,7 @@ object KuudraInfo : Module(
 
         on<TickEvent.Client.End> {
             if (ticks % 10 != 0) return@on
-            if (!hud.enabled && !hpOnKuudra) return@on
+            if (!hud.state.value && !hpOnKuudra) return@on
             if (!KuudraAPI.inRun) return@on
             val kuudra = KuudraAPI.kuudra?.takeIf { it.health != health } ?: return@on
 

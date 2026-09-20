@@ -7,11 +7,11 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.Category
-import foo.starred.athen.config.dsl.impl.builders.hud.ConfigHudBuilder
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.PacketEvent
@@ -42,33 +42,42 @@ object WatcherHelper : Module(
     private val speak by config.switch("Show alert on speak", true)
     private val move by config.switch("Show alert on move", true)
 
-    private val ex0 = listOf("Speak: §c23.4s §7(23.2s)", "Move: §c25.6s §7(24.6s)", "Total: §c57.3s §7(54.2s)").fcs
-    private val ex1 = listOf("Speak: §c23.4s", "Move: §c25.6s", "Total: §c57.3s").fcs
-
     private val display = Ticking(2) {
         if (!DungeonAPI.bloodOpened.value) return@Ticking null
         if (DungeonAPI.inBoss.value) return@Ticking null
 
         buildString {
             append("Speak: §c$`display$speak`")
-            if (showTicks) append(" §7($`display$speak$t`)")
+            if (showTicks.value) append(" §7($`display$speak$t`)")
             append('\n')
 
             append("Move: §c$`display$move`")
-            if (showTicks) append(" §7($`display$move$t`)")
+            if (showTicks.value) append(" §7($`display$move$t`)")
             append('\n')
 
             append("Total: §c$`display$total`")
-            if (showTicks) append(" §7($`display$total$t`)")
+            if (showTicks.value) append(" §7($`display$total$t`)")
         }.split("\n").fcs
     }
 
-    private val hud: ConfigHudBuilder = config.hud("Blood timers") {
-        if (it) return@hud if (showTicks) sizedText(ex0) else sizedText(ex1)
-        sizedText(display.value ?: return@hud null)
+    private val hud by config.hud("Blood timers") {
+        val example0 = listOf("Speak: §c23.4s §7(23.2s)", "Move: §c25.6s §7(24.6s)", "Total: §c57.3s §7(54.2s)").fcs
+        val example1 = listOf("Speak: §c23.4s", "Move: §c25.6s", "Total: §c57.3s").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(if (showTicks.value) example0 else example1)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, if (showTicks.value) example0 else example1, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
-    private val showTicks by config.switch("Show ticks", true)
+    private val showTicks = config.switch("Show ticks", true).unique("showTicks")
 
     private val alerts by config.group("Alert texts")
     private val `text$fast` by alerts.input("Fast", "<red>Vroom!")
@@ -113,6 +122,10 @@ object WatcherHelper : Module(
     }
 
     init {
+        showTicks.state.onChange {
+            hud.constrain()
+        }
+
         DungeonAPI.inBoss.onChange {
             if (!it) return@onChange
             resetStr()

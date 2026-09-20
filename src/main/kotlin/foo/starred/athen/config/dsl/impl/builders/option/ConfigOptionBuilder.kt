@@ -35,6 +35,7 @@ class ConfigOptionBuilder<T>(
     fun resolve(block: (ConfigOptionBuilder<T>) -> Unit) = apply {
         calls += block
     }
+
     operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, T> {
         if (!::key.isInitialized) key = "${builder.configKey}.${property.name}"
         fn()

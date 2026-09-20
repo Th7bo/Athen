@@ -2,7 +2,8 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
@@ -20,8 +21,6 @@ object SlayerDisplay : Module(
     "Displays the slayer boss's nametags on your screen.",
     Category.SLAYER
 ) {
-    private val ex0 = listOf("§c02:46", "§c☠ §bRevenant Horror I §a500§c❤").fcs
-
     private val display = Ticking(2) {
         val entity = SlayerAPI.slayer?.entity ?: return@Ticking null
 
@@ -44,8 +43,19 @@ object SlayerDisplay : Module(
 
     init {
         config.hud("Display HUD") {
-            if (it) return@hud sizedText(ex0, center = listOf(0))
-            sizedText(display.value ?: return@hud null, center = listOf(0))
+            val example = listOf("§c02:46", "§c☠ §bRevenant Horror I §a500§c❤").fcs
+
+            constrain {
+                VanillaFontMeasurer.constrain(example)
+            }
+
+            preview {
+                VanillaFontRenderer.extract(graphics, example, 0, 0, center = listOf(0))
+            }
+
+            render {
+                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0, center = listOf(0))
+            }
         }
     }
 }

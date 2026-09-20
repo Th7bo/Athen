@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.general.slotbinds
 
 import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.Athen
 import foo.starred.athen.Athen.GSON
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
@@ -36,12 +35,12 @@ object SlotBinds : Module(
     "Bindings for slots!",
     Category.GENERAL
 ) {
-    private val _unused0 by config.information("You can use the commands <red>\"/${Athen.modId} [import|export] slotbinds\"<r> to share configs!")
+    private val _unused0 by config.information("You can use the commands <red>\"/athen [import|export] slotbinds\"<r> to share configs!")
     private val bind by config.keybind("Bind keybind", InputConstants.KEY_B)
     private val swap by config.keybind("Swap keybind", InputConstants.KEY_LSHIFT)
     private val lock = config.switch("Lock bound slots").unique("lock")
     private val _unused1 by config.button("Open editor") { SlotBindsGUI.open() }
-    private val _unused2 by config.information("You can use the command <red>\"/${Athen.modId} slotbinds profile swap [profile]\"<r> to swap profiles!")
+    private val _unused2 by config.information("You can use the command <red>\"/athen slotbinds profile swap [profile]\"<r> to swap profiles!")
 
     private var last0: Int? = null
     private var last1: Int = 0

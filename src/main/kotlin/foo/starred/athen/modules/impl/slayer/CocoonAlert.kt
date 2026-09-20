@@ -4,7 +4,8 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.Category
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
@@ -24,18 +25,28 @@ object CocoonAlert : Module(
     private val `alert$message` by config.input("Alert message", "<red>Boss cocooned!")
     private val `alert$sound` by config.sound("Alert sound")
 
-    private val ex0 = "Cocoon: §c4.6s".fcs
-    private val timer = config.hud("Cocoon timer") {
-        if (it) return@hud sizedText(ex0)
-        if (time == 0L) return@hud null
+    private val timer by config.hud("Cocoon timer") {
+        val example = "Cocoon: §c4.6s".fcs
 
-        val t = time - System.currentTimeMillis()
-        if (t <= 0L) {
-            time = 0
-            return@hud null
+        constrain {
+            VanillaFontMeasurer.constrain(example)
         }
 
-        sizedText("Cocoon: §c${t.toDurationFromMillis(secondsDecimals = 1)}")
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (time == 0L) return@render
+
+            val t = time - System.currentTimeMillis()
+            if (t <= 0L) {
+                time = 0
+                return@render
+            }
+
+            VanillaFontRenderer.extract(graphics, "Cocoon: §c${t.toDurationFromMillis(secondsDecimals = 1)}", 0, 0)
+        }
     }
 
     private var time: Long = 0
@@ -45,7 +56,7 @@ object CocoonAlert : Module(
             if (stripped.trim() != "YOU COCOONED YOUR SLAYER BOSS") return@on
 
             if (alert) `alert$message`.parse().alert(soundType = `alert$sound`.sound)
-            if (timer.enabled) time = System.currentTimeMillis() + 6000
+            if (timer.state.value) time = System.currentTimeMillis() + 6000
         }
     }
 }

@@ -22,7 +22,12 @@ data class ConfigFeatureData(
             is ConfigColorPickerElementData -> default(data.key, data.default)
             is ConfigKeybindElementData -> default(data.key, data.default)
             is ConfigMultiSelectorElementData -> default(data.key, data.default)
-            is ConfigHudElementData -> default(data.key, data.default)
+            is ConfigHudElementData -> {
+                default(data.key, data.default)
+                default("${data.key}.x", data.coordinate.x)
+                default("${data.key}.y", data.coordinate.y)
+                default("${data.key}.scale", data.coordinate.scale)
+            }
             is ConfigGroupElementData -> default(data.key, !data.collapsed)
             else -> {}
         }
@@ -31,6 +36,7 @@ data class ConfigFeatureData(
     fun all(): List<String> = listOf(configKey) + options.flatMap {
         when (it) {
             is ConfigButtonElementData, is ConfigGroupElementData, is ConfigVariablesElementData, is ConfigInformationElementData -> emptyList()
+            is ConfigHudElementData -> listOf(it.key, "${it.key}.x", "${it.key}.y", "${it.key}.scale")
             else -> listOf(it.key)
         }
     }

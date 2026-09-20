@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.storage.JsonStore
@@ -390,11 +391,11 @@ object RadialMenu : Module(
         divider.lie()
         "§bRadial Menu §7[Athen]".center().lie()
         divider.lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} radial edit <gray>- Opens editor".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} import radial <gray>- Imports config from clipboard".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} export radial <gray>- Exports current config to clipboard".parse().lie()
+        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen radial edit <gray>- Opens editor".parse().lie()
+        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen import radial <gray>- Imports config from clipboard".parse().lie()
+        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen export radial <gray>- Exports current config to clipboard".parse().lie()
         divider.lie()
-        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${Athen.discordUrl}><${Catppuccin.Mocha.Lavender.argb}>discord!".parse().lie()
+        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${ModWrapper.discord}><${Catppuccin.Mocha.Lavender.argb}>discord!".parse().lie()
         divider.lie()
     }
 

@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.render.highlight
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
@@ -53,7 +52,7 @@ object MobHighlight : Module(
     private val key by config.switch("Highlight key", true)
     private val keybind by config.keybind("Key to add entity")
     private val _unused by config.button("Open manager") { MobHighlightGUI.open() }
-    private val _unused0 by config.information("You can use the command <red>\"/${Athen.modId} highlight help\"<r> to view all commands!")
+    private val _unused0 by config.information("You can use the command <red>\"/athen highlight help\"<r> to view all commands!")
 
     private var wow: Long = -1
     private val int: MutableList<Int> = mutableListOf()
@@ -149,17 +148,16 @@ object MobHighlight : Module(
 
             "highlight" / "help" {
                 val a = ("<dark_gray>" + ("-".repeat())).parse()
-                val b = Athen.modId
                 val c = Catppuccin.Mocha.Green.argb
 
                 a.lie()
                 ("<red>" + ("Athen Higlights".center())).parse().lie()
                 a.lie()
 
-                " <dark_gray>- <$c>/$b highlight add [named | typed] <color> <maxHp - optional> <name | type>".parse().lie()
-                " <dark_gray>- <$c>/$b highlight remove [named | typed] <name | type>".parse().lie()
-                " <dark_gray>- <$c>/$b highlight list [named | typed]".parse().lie()
-                " <dark_gray>- <$c>/$b highlight [gui - optional]".parse().lie()
+                " <dark_gray>- <$c>/athen highlight add [named | typed] <color> <maxHp - optional> <name | type>".parse().lie()
+                " <dark_gray>- <$c>/athen highlight remove [named | typed] <name | type>".parse().lie()
+                " <dark_gray>- <$c>/athen highlight list [named | typed]".parse().lie()
+                " <dark_gray>- <$c>/athen highlight [gui - optional]".parse().lie()
 
                 a.lie()
             }

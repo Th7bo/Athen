@@ -2,18 +2,17 @@
 
 package foo.starred.athen.modules.impl.dungeon.carry
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.Category
-import foo.starred.athen.config.dsl.impl.builders.hud.ConfigHudBuilder
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -56,10 +55,20 @@ object DungeonCarryTracker : Module(
     private val playerColor by highlights.colorPicker("Player color", Catppuccin.Macchiato.Blue.argb)
     private val playerLineWidth by highlights.slider("Player line width", 2f, 0f, 10f)
 
-    private val ex0 = listOf("§f§lDungeon Carries:", "§7> §bExample §8[§7M7§8]§f: §b3§f/§b10 §7(5m 30s | 12/hr)").fcs
-    private val hud: ConfigHudBuilder = config.hud("Dungeon carry display") {
-        if (it) return@hud sizedText(ex0)
-        sizedText(display.value ?: return@hud null)
+    private val hud by config.hud("Dungeon carry display") {
+        val example = listOf("§f§lDungeon Carries:", "§7> §bExample §8[§7M7§8]§f: §b3§f/§b10 §7(5m 30s | 12/hr)").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
     private val `hud$dungeon` by config.switch("Only in dungeons", true)
@@ -197,12 +206,12 @@ object DungeonCarryTracker : Module(
 
     private fun showHelp() {
         val commands = listOf(
-            "/${Athen.modId} dcarry" to "Open the dungeon carry tracker GUI",
-            "/${Athen.modId} dcarry add <player> <amount> <floor>" to "Add dungeon carries to track",
-            "/${Athen.modId} dcarry remove <player>" to "Remove a tracked player",
-            "/${Athen.modId} dcarry list" to "List players being tracked",
-            "/${Athen.modId} dcarry list clear" to "Clear the active list",
-            "/${Athen.modId} dcarry history [page=1]" to "Show tracked history"
+            "/athen dcarry" to "Open the dungeon carry tracker GUI",
+            "/athen dcarry add <player> <amount> <floor>" to "Add dungeon carries to track",
+            "/athen dcarry remove <player>" to "Remove a tracked player",
+            "/athen dcarry list" to "List players being tracked",
+            "/athen dcarry list clear" to "Clear the active list",
+            "/athen dcarry history [page=1]" to "Show tracked history"
         )
 
         val divider = ("§8§m" + ("-".repeat())).literal()

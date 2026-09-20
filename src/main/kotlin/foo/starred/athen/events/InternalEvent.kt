@@ -11,4 +11,12 @@ sealed class InternalEvent {
             val name: String?
         ) : Event()
     }
+
+    sealed class Mod {
+        sealed class Loading {
+            data object Start : Event()
+
+            data object End : Event()
+        }
+    }
 }
