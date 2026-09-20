@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.general.messageactions
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import foo.starred.athen.Athen
 import foo.starred.athen.Athen.GSON
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
@@ -37,7 +36,7 @@ object MessageActions : Module(
     Category.GENERAL
 ) {
     private val _unused by config.button("Open manager") { MessageActionsGUI.open() }
-    private val _unused0 by config.information("You can use the commands <red>\"/${Athen.modId} [import|export] messageactions\"<r> to share configs!")
+    private val _unused0 by config.information("You can use the commands <red>\"/athen [import|export] messageactions\"<r> to share configs!")
 
     private val json = JsonStore("features/MessageActions")
     private var _actions: String by json.string("actions")

@@ -2,7 +2,6 @@
 
 package foo.starred.athen.modules.impl.dungeon.terminals.simulator
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.config.Category
@@ -24,7 +23,7 @@ object TerminalSimulator : Module(
     Category.DUNGEONS
 ) {
     private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org")
-    private val _unused0 by config.information("The simulator server IP is optional. You can still do <red>\"/${Athen.modId} simulate terminals\"<r> to simulate.")
+    private val _unused0 by config.information("The simulator server IP is optional. You can still do <red>\"/athen simulate terminals\"<r> to simulate.")
     private val pingInput = config.input("Ping", "0", "0").unique("ping")
 
     var ping = 0
@@ -43,7 +42,7 @@ object TerminalSimulator : Module(
         observable.onChange {
             SimulatorMenu.a()
             if (it) {
-                "Run \"/${Athen.modId} simulate terminals ping <ping>\" to change ping!".mod()
+                "Run \"/athen simulate terminals ping <ping>\" to change ping!".mod()
                 ConfigManager.update(configKey ?: return@onChange, false)
             }
         }

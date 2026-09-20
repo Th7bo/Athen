@@ -1,13 +1,12 @@
 package foo.starred.athen.config.ui
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.config.ui.pages.main.ConfigCategories
 import foo.starred.athen.config.ui.pages.module.ConfigModules
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement.Companion.configInputElement
-import foo.starred.athen.hud.HUDEditor
+import foo.starred.athen.config.hud.ui.HudElementEditorUI
 import foo.starred.athen.modules.impl.ModSettings
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
@@ -108,7 +107,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
             }
 
             "hud" {
-                HUDEditor.open()
+                HudElementEditorUI.open()
             }
         }
 
@@ -227,20 +226,20 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         divider.lie()
 
         val commands = listOf(
-            "/${Athen.modId} config" to "Open the configuration menu",
-            "/${Athen.modId} hud" to "Open the HUD editor",
-            "/${Athen.modId} simulate terminals" to "Terminal simulator",
-            "/${Athen.modId} radial help" to "Info about radial menu",
-            "/${Athen.modId} visuals help" to "Info about visual words replacement",
-            "/${Athen.modId} carry help" to "Info about slayer carry commands",
-            "/${Athen.modId} dcarry help" to "Info about dungeon carry commands",
-            "/${Athen.modId} kcarry help" to "Info about kuudra carry commands",
-            "/${Athen.modId} clear chat" to "Clear the chat history",
-            "/${Athen.modId} stats <name>" to "View stats for any player",
-            "/${Athen.modId} times slayers" to "Shows the slayer kill times",
-            "/${Athen.modId} times kuudra <tier>" to "Shows the kuudra pbs",
-            "/${Athen.modId} toggle feature <featureKey>" to "Toggles the specified feature!",
-            "/${Athen.modId} irc help" to "View all IRC commands"
+            "/athen config" to "Open the configuration menu",
+            "/athen hud" to "Open the HUD editor",
+            "/athen simulate terminals" to "Terminal simulator",
+            "/athen radial help" to "Info about radial menu",
+            "/athen visuals help" to "Info about visual words replacement",
+            "/athen carry help" to "Info about slayer carry commands",
+            "/athen dcarry help" to "Info about dungeon carry commands",
+            "/athen kcarry help" to "Info about kuudra carry commands",
+            "/athen clear chat" to "Clear the chat history",
+            "/athen stats <name>" to "View stats for any player",
+            "/athen times slayers" to "Shows the slayer kill times",
+            "/athen times kuudra <tier>" to "Shows the kuudra pbs",
+            "/athen toggle feature <featureKey>" to "Toggles the specified feature!",
+            "/athen irc help" to "View all IRC commands"
         )
 
         for ((c, d) in commands) "  <${Catppuccin.Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()

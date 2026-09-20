@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.general
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.serialization.Codec
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
@@ -36,7 +35,7 @@ object ProtectItems : Module(
     "Protects any item!",
     Category.GENERAL
 ) {
-    private val _unused by config.information("Use command <red>\"/${Athen.modId} protect [add|remove|list]\"<r> to manage items!")
+    private val _unused by config.information("Use command <red>\"/athen protect [add|remove|list]\"<r> to manage items!")
     private val move by config.switch("Allowing moving items")
 
     private val render = config.switch("Render protected").unique("render")

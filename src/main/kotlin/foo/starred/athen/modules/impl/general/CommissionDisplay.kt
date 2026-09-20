@@ -5,7 +5,8 @@ package foo.starred.athen.modules.impl.general
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.Category
 import foo.starred.athen.modules.Module
@@ -31,8 +32,6 @@ object CommissionDisplay : Module(
     private val `commissionStyle$perc` by config.switch("Colored percent", true)
     private val unused by config.variables("#name", "#progress")
 
-    private val ex0 = listOf("§cCommissions:", "§7- §fExample: §640%", "§7- §fExample: §e70%", "§7- §fExample: §c7%").fcs
-
     private var fcs0 = noneStyle.value.parse().visualOrderText
     private var fcs1 = titleStyle.value.parse().visualOrderText
     private val display = Ticking(20) {
@@ -50,8 +49,19 @@ object CommissionDisplay : Module(
         titleStyle.state.onChange { fcs1 = it.parse().visualOrderText }
 
         config.hud("Commission display") {
-            if (it) return@hud sizedText(ex0)
-            sizedText(display.value ?: return@hud null)
+            val example = listOf("§cCommissions:", "§7- §fExample: §640%", "§7- §fExample: §e70%", "§7- §fExample: §c7%").fcs
+
+            constrain {
+                VanillaFontMeasurer.constrain(example)
+            }
+
+            preview {
+                VanillaFontRenderer.extract(graphics,example, 0, 0)
+            }
+
+            render {
+                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+            }
         }
     }
 

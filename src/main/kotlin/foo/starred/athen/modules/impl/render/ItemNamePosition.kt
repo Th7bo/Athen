@@ -3,12 +3,12 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.Category
-import foo.starred.athen.hud.HUDManager
+import foo.starred.athen.config.hud.impl.HudRenderer
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
-import foo.starred.snowbird.api.client
 
 @Load
 object ItemNamePosition : Module(
@@ -16,16 +16,28 @@ object ItemNamePosition : Module(
     "Changes the positions of item display names",
     Category.RENDER
 ) {
-    private val ex0 = "§cEpic item".fcs
-    private val int by lazy { client.font?.width(ex0) ?: 0 }
+    private val example = "§cEpic item".fcs
+    private val int by lazy {
+        VanillaFontMeasurer.width(example)
+    }
 
-    val hud = config.hud("Item name", outsidePreview = false) {
-        if (it) sizedText(ex0) else null
+    val hud by config.hud("Item name") {
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
     }
 
     @JvmStatic
-    fun x(): Int = ((hud.x + int / 2) * HUDManager.scale).toInt()
+    fun x(): Int {
+        return ((hud.coordinate.x + int / 2) * HudRenderer.scale).toInt()
+    }
 
     @JvmStatic
-    fun y(): Int = (hud.y * HUDManager.scale).toInt()
+    fun y(): Int {
+        return (hud.coordinate.y * HudRenderer.scale).toInt()
+    }
 }

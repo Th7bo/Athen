@@ -5,7 +5,7 @@ import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigHudElementData
 import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
-import foo.starred.athen.hud.HUDEditor
+import foo.starred.athen.config.hud.ui.HudElementEditorUI
 import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
@@ -45,7 +45,7 @@ class ConfigHUDElement(
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                 cancel()
-                HUDEditor.open()
+                HudElementEditorUI.open()
             }
 
             on<MouseEvent.Move.Enter> {
@@ -69,11 +69,11 @@ class ConfigHUDElement(
             position = FixedPositionConstraint(18f, 0f)
 
             val bool = ConfigManager.get(config.key) as? Boolean ?: config.default
-            config.hud.enabled = bool
+            config.hud.state.value = bool
             set(bool, false)
 
             update {
-                config.hud.enabled = it
+                config.hud.state.value = it
                 ConfigManager.update(config.key, it)
             }
         })

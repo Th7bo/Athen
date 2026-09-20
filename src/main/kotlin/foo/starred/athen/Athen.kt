@@ -6,8 +6,11 @@ import com.google.gson.Gson
 import foo.starred.athen.annotations.AnnotationLoader
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.scheduling.Scheduler
+import foo.starred.athen.events.GameEvent
+import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.core.on
 import foo.starred.athen.modules.impl.Dev
@@ -29,11 +32,6 @@ import org.apache.logging.log4j.Logger
 import kotlin.time.Duration.Companion.hours
 
 object Athen : ClientModInitializer {
-    const val modVersion: String = /*$ mod_version*/"0.3.4"
-    const val modId: String = /*$ mod_id*/"athen"
-    const val modName: String = /*$ mod_name*/"Athen"
-    const val discordUrl: String = "https://discord.gg/DB5S3DjQVa"
-
     @JvmField
     val LOGGER: Logger = LogManager.getLogger(Athen::class.java)
 
@@ -41,36 +39,45 @@ object Athen : ClientModInitializer {
     val GSON: Gson = Gson()
 
     @JvmField
-    val SCOPE: CoroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName(modName))
+    val SCOPE: CoroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName(ModWrapper.name))
 
     override fun onInitializeClient() {
         AnnotationLoader.load()
-        ModrinthUpdateSource("athen").init(modVersion)
+        InternalEvent.Mod.Loading.Start.post()
+
+        ModrinthUpdateSource("athen").init(ModWrapper.version)
 
         on<LocationEvent.Server.Connect> {
-            Scheduler.schedule(20.clientTicks, ::li)
+            Scheduler.schedule(20.clientTicks, ::install)
             Scheduler.schedule(60.clientTicks, ::broadcast)
             Scheduler.repeat(1.hours, action = ::broadcast)
         }.once()
+
+        on<GameEvent.Start> {
+            println("loaded game")
+        }
+
+        InternalEvent.Mod.Loading.End.post()
+        println("Mod load finished")
     }
 
-    private fun li() {
-        if (Dev.lastVersion == modVersion) return
-        Dev.lastVersion = modVersion
+    private fun install() {
+        if (Dev.lastVersion == ModWrapper.version) return
+        Dev.lastVersion = ModWrapper.version
 
         val divider = ("<dark_gray><strikethrough>" + "-".repeat()).parse()
         divider.lie()
         ("<${Mocha.Lavender.argb}>" + "Athen".center()).parse().lie()
         divider.lie()
-        "<gray>Thank you for installing $modName <dark_gray>(v$modVersion)<gray>.".parse().lie()
+        "<gray>Thank you for installing Athen <dark_gray>(v${ModWrapper.version})<gray>.".parse().lie()
         EMPTY_COMPONENT.lie()
         "<gray>Quick Start:".parse().lie()
-        "  <aqua>/$modId config <gray>- Open configuration menu".parse().lie()
-        "  <aqua>/$modId hud <gray>- Position HUD elements".parse().lie()
-        "  <aqua>/$modId help <gray>- View all commands".parse().lie()
+        "  <aqua>/athen config <gray>- Open configuration menu".parse().lie()
+        "  <aqua>/athen hud <gray>- Position HUD elements".parse().lie()
+        "  <aqua>/athen help <gray>- View all commands".parse().lie()
         EMPTY_COMPONENT.lie()
 
-        "<hover:<${Mocha.Lavender.argb}>Click to join!><click:url:$discordUrl><gray>Need help? Click to join our Discord!".parse().lie()
+        "<hover:<${Mocha.Lavender.argb}>Click to join!><click:url:${ModWrapper.discord}><gray>Need help? Click to join our Discord!".parse().lie()
 
         divider.lie()
         "<gray><hover:<green>Click to open page!><click:url:https://patreon.com/starredskies>Want to help support the development for mods like Athen? Click here to open the Patreon :3".parse().lie()

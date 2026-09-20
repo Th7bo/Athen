@@ -3,7 +3,8 @@ package foo.starred.athen.modules.impl.slayer
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.config.Category
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
@@ -22,17 +23,25 @@ object AttunementDisplay : Module(
     "Displays the current attunement for blaze slayer, does not work with demons.",
     Category.SLAYER
 ) {
-    private val regex = Regex("^(?<attunement>[A-Z]+) ♨(?<count>\\d) \\d\\d:\\d\\d$")
-
     private val count by config.switch("Display count")
-
-    private val ex0 = "§l§eAURIC ♨5".fcs
+    private val regex = Regex("^(?<attunement>[A-Z]+) ♨(?<count>\\d) \\d\\d:\\d\\d$")
     private var last: FormattedCharSequence? = null
 
     init {
         config.hud("Attunement display") {
-            if (it) return@hud sizedText(ex0)
-            return@hud sizedText(last ?: return@hud null)
+            val example = "§l§eAURIC ♨5".fcs
+
+            constrain {
+                VanillaFontMeasurer.constrain(example)
+            }
+
+            preview {
+                VanillaFontRenderer.extract(graphics, example, 0, 0)
+            }
+
+            render {
+                VanillaFontRenderer.extract(graphics, last ?: return@render, 0, 0)
+            }
         }
 
         on<EntityEvent.Update.Named> {

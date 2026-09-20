@@ -2,13 +2,13 @@
 
 package foo.starred.athen.modules.impl.slayer.carry.impl
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
@@ -82,7 +82,6 @@ object SlayerCarryTracker : Module(
     val tracked = json.mutableList("tracked", SlayerCarryPlayer.CODEC)
     private val history = json.mutableList("history", SlayerCarryHistory.CODEC)
 
-    private val ex0 = listOf("§f§lSlayer Carries:", "§7> §bExample §8[§7Void T4§8]§f: §b3§f/§b10 §7(12.5s | 28/hr)").fcs
     private val display = Ticking(5) {
         if (tracked.value.isEmpty()) return@Ticking null
 
@@ -92,9 +91,20 @@ object SlayerCarryTracker : Module(
         }.map { it.visualOrderText }
     }
 
-    private val hud = config.hud("Slayer carry display") {
-        if (it) return@hud sizedText(ex0)
-        sizedText(display.value ?: return@hud null)
+    private val hud by config.hud("Slayer carry display") {
+        val example = listOf("§f§lSlayer Carries:", "§7> §bExample §8[§7Void T4§8]§f: §b3§f/§b10 §7(12.5s | 28/hr)").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
     private var trader: String? = null
@@ -119,7 +129,7 @@ object SlayerCarryTracker : Module(
 
                 val tier = SlayerTier.entries.find { it.int == i0 }
                 tracked.update { add(SlayerCarryPlayer(name, type, tier, amount)) }
-                "<green>Now tracking <aqua>$name <gray>[${type.short}${tier?.let { " T${it.int}" } ?: " Any"}] x$amount!".mod()
+                "<green>Now tracking <aqua>$name <gray>[${type.short}${tier?.let { " T${it.int}" } ?: " Any"}] xathenmount!".mod()
             }.suggests { listOf("any", "1", "2", "3", "4", "5") }
 
             "carry" / "remove" / word("player") {
@@ -363,14 +373,13 @@ object SlayerCarryTracker : Module(
     }
 
     private fun help() {
-        val a = Athen.modId
         val b = listOf(
-            "/$a carry" to "Open the config tracker menu",
-            "/$a carry add <player> <amount> <type> <tier>" to ":3",
-            "/$a carry remove <player>" to "Removes a tracked player",
-            "/$a carry list" to "Lists players being tracked",
-            "/$a carry list clear" to "Clears the active list",
-            "/$a carry history [page=0]" to "Shows tracked history"
+            "/athen carry" to "Open the config tracker menu",
+            "/athen carry add <player> <amount> <type> <tier>" to ":3",
+            "/athen carry remove <player>" to "Removes a tracked player",
+            "/athen carry list" to "Lists players being tracked",
+            "/athen carry list clear" to "Clears the active list",
+            "/athen carry history [page=0]" to "Shows tracked history"
         )
 
         val c = ("<dark_gray>" + ("-".repeat())).parse()
