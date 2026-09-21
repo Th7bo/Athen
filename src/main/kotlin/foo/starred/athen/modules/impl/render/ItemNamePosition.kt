@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.render
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.hud.impl.HudRenderer
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
@@ -14,7 +14,7 @@ import foo.starred.athen.utils.render.fcs
 object ItemNamePosition : Module(
     "Item name position",
     "Changes the positions of item display names",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val example = "§cEpic item".fcs
     private val int by lazy {

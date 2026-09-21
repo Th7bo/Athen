@@ -3,7 +3,7 @@ package foo.starred.athen.modules.impl.kuudra
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.core.runWhen
@@ -18,7 +18,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object KuudraQueuer : Module(
     "Kuudra queuer",
     "Automatically re-queues at the end of each run.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val delay by config.slider("Delay", 20, 0, 100, "ticks")
 

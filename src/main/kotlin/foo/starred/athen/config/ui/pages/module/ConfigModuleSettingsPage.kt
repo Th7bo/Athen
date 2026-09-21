@@ -272,22 +272,17 @@ object ConfigModuleSettingsPage {
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 10f, 0f)
             })
 
-            val content = container {
-                position = FixedPositionConstraint(0f, 0f)
-                size = FixedSizeConstraint(241f, 26f)
-            }.also { adopt(it) }
-
             when (config) {
-                is ConfigSliderElementData -> ConfigSliderElement.of(content, config)
-                is ConfigSwitchElementData -> ConfigSwitchElement.of(content, config)
-                is ConfigButtonElementData -> ConfigButtonElement.of(content, config)
-                is ConfigTextInputElementData -> ConfigInputElement.of(content, config)
-                is ConfigKeybindElementData -> ConfigKeybindElement.of(content, config)
-                is ConfigSelectorElementData -> ConfigSelectorElement.of(content, config)
-                is ConfigMultiSelectorElementData -> ConfigMultiSelectorElement.of(content, config)
-                is ConfigVariablesElementData -> ConfigVariablesElement.of(content, config)
-                is ConfigColorPickerElementData -> ConfigColorPickerElement.of(content, config)
-                is ConfigHudElementData -> ConfigHUDElement.of(content, config)
+                is ConfigSliderElementData -> ConfigSliderElement.of(this, config)
+                is ConfigSwitchElementData -> ConfigSwitchElement.of(this, config)
+                is ConfigButtonElementData -> ConfigButtonElement.of(this, config)
+                is ConfigTextInputElementData -> ConfigInputElement.of(this, config)
+                is ConfigKeybindElementData -> ConfigKeybindElement.of(this, config)
+                is ConfigSelectorElementData -> ConfigSelectorElement.of(this, config)
+                is ConfigMultiSelectorElementData -> ConfigMultiSelectorElement.of(this, config)
+                is ConfigVariablesElementData -> ConfigVariablesElement.of(this, config)
+                is ConfigColorPickerElementData -> ConfigColorPickerElement.of(this, config)
+                is ConfigHudElementData -> ConfigHUDElement.of(this, config)
                 else -> {}
             }
 

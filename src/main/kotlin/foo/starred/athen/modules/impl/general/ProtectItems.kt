@@ -9,7 +9,7 @@ import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
 import foo.starred.athen.events.core.runWhen
@@ -33,7 +33,7 @@ import net.minecraft.world.item.Items
 object ProtectItems : Module(
     "Protect items",
     "Protects any item!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val _unused by config.information("Use command <red>\"/athen protect [add|remove|list]\"<r> to manage items!")
     private val move by config.switch("Allowing moving items")

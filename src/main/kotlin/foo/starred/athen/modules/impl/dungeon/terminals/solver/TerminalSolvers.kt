@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.dungeon.terminals.TerminalType
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
@@ -26,7 +26,7 @@ import net.minecraft.sounds.SoundEvents
 object TerminalSolvers : Module(
     "Terminal solvers",
     "Shows solutions for F7/M7 terminals in a nice custom gui!",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val settings by config.group("Settings")
     val firstClick by settings.slider("First click delay", 350, 150, 1000, "ms")

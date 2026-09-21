@@ -208,7 +208,7 @@ class KeybindsPopUp(
         `checkbox$category` = multiCheckbox {
             size = FixedSizeConstraint(170, 16)
             position = AnchorPositionConstraint({ field }, PositionAnchor.BELOW, 0, 16)
-            label = "Category"
+            label = "ConfigCategory"
             items = listOf("Uncategorized")
 
             selected {

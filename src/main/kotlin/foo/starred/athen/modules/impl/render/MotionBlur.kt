@@ -16,7 +16,7 @@ import com.mojang.blaze3d.textures.FilterMode
 import com.mojang.blaze3d.textures.GpuTextureView
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.storage.ResourceAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.client
 import net.minecraft.client.renderer.RenderPipelines
@@ -47,7 +47,7 @@ import com.mojang.renderpearl.api.pipeline.ColorTargetState
 object MotionBlur : Module(
     "Motion blur",
     "Motion blur, I think that's self-explanatory",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val view by config.group("Head movement motion blur")
     private val `view$enabled` by view.switch("Enabled", true)

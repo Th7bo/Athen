@@ -6,7 +6,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.attachedStripped
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.LocationEvent
@@ -34,7 +34,7 @@ import java.util.*
 object SlayerInfo : Module(
     "Slayer info",
     "Shows information about the boss, in a nicer way.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val entities: WeakHashMap<Entity, Info> = WeakHashMap()
     private val hideCache: MutableSet<Entity> = mutableSetOf()

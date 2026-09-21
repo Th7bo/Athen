@@ -8,7 +8,7 @@ import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin
@@ -26,7 +26,7 @@ import net.minecraft.util.FormattedCharSequence
 object VisualWords : Module(
     "Visual words",
     "Visually modify words!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private const val SKIP = "\u0000vw_bypass"
 

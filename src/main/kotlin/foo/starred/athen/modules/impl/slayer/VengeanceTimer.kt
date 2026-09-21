@@ -6,7 +6,7 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.slayers.SlayerAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.SlayerEvent
@@ -24,7 +24,7 @@ import tech.thatgravyboat.skyblockapi.api.datatype.getData
 object VengeanceTimer : Module(
     "Vengeance timer",
     "Shows the time until your vengeance damage should activate.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val compact = config.switch("Compact display").unique("compact")
     private val useTicks by config.switch("Use ticks", true)

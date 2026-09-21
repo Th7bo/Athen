@@ -4,7 +4,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.attachedStripped
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity
 object EndermanPhaseColor : Module(
     "Enderman phase color",
     "Changes the color of the boss based on it's current phase.",
-    Category.SLAYER,
+    ConfigCategory.SLAYER,
 ) {
     private val all by config.switch("Change for all bosses")
     private val normal by config.colorPicker("Normal", Catppuccin.Mocha.Text.argb)

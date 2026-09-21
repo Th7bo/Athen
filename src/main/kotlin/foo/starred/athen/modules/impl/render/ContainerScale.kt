@@ -1,7 +1,7 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.client
@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen
 object ContainerScale : Module(
     "Container scale",
     "Scales containers visually",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val inventory by config.switch("Inventory only")
     val scale by config.slider("Scale", 1f, 0.5f, 5f, double = true)

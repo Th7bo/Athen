@@ -7,7 +7,7 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.attachedNames
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
@@ -19,7 +19,7 @@ import net.minecraft.network.chat.Component
 object SlayerDisplay : Module(
     "Slayer display",
     "Displays the slayer boss's nametags on your screen.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val display = Ticking(2) {
         val entity = SlayerAPI.slayer?.entity ?: return@Ticking null

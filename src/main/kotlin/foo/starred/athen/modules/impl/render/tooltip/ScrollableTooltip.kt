@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.render.tooltip
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
@@ -20,7 +20,7 @@ import net.minecraft.resources.Identifier
 object ScrollableTooltip : Module(
     "Scrollable tooltip",
     "Allows you to scroll tooltips. Does nothing if \"CustomTooltip\" is enabled!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val horizontal by config.switch("Horizontal", true)
     private val `horizontal$key` by config.keybind("Horizontal keybind", InputConstants.KEY_LSHIFT)

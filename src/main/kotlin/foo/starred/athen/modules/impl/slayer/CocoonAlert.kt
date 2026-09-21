@@ -6,7 +6,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
@@ -19,7 +19,7 @@ import foo.starred.snowbird.utils.toDurationFromMillis
 object CocoonAlert : Module(
     "Cocoon alert",
     "Alerts you when you cocoon your slayer boss!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val alert by config.switch("Show alert", true)
     private val `alert$message` by config.input("Alert message", "<red>Boss cocooned!")

@@ -5,7 +5,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.core.runWhen
@@ -19,7 +19,7 @@ import foo.starred.snowbird.api.player
 object LagDetector : Module(
     "Lag detector",
     "Displays a timer since the last server tick if it was older than the threshold.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val threshold by config.slider("Threshold", 750, 100, 5000, "ms")
     private val notify = config.switch("Send message").unique("notify")

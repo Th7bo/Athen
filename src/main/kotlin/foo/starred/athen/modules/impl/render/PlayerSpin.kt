@@ -1,7 +1,7 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.client
@@ -13,7 +13,7 @@ import net.minecraft.util.Mth
 object PlayerSpin : Module(
     "Player spin",
     "Spins your player model around... nicely",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val head by config.switch("Rotate head")
     private val head0 by config.selector("Head rotation", listOf("Clockwise", "Anti-clockwise"))

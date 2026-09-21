@@ -6,7 +6,7 @@ import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraTier
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
@@ -21,7 +21,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
 object KuudraBreakdown : Module(
     "Kuudra breakdown",
     "Sends a message about what each player did at the end of the run.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val freshMessage = config.input("Fresh regex", "FRESH.*").unique("freshRegex")
     private var freshRegex: Regex? = null

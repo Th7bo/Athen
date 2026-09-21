@@ -12,7 +12,7 @@ import foo.starred.athen.api.slayers.enums.drop.impl.*
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
@@ -33,7 +33,7 @@ import kotlin.math.min
 object SlayerDropsData : Module(
     "Slayer drops data",
     "Shows useful data about your slayer drop chances!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val last by config.switch("Show chance on boss kill", true)
     private val _unused by config.information("This uses the last magic find from a boss drop to calculate the chances!")

@@ -216,7 +216,7 @@ class MessageActionsPopUp(
         }
 
         val `category$label` = text {
-            text = "Category".literal()
+            text = "ConfigCategory".literal()
             color = CascadeGeometricColor(Mocha.Subtext0.argb)
             position = AnchorPositionConstraint({ row0 }, PositionAnchor.BELOW, 0, 8)
             attach(box)

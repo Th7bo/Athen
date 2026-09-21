@@ -9,7 +9,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
@@ -33,7 +33,7 @@ import org.joml.Matrix3x2f
 object SlotBinds : Module(
     "Slot binds",
     "Bindings for slots!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val _unused0 by config.information("You can use the commands <red>\"/athen [import|export] slotbinds\"<r> to share configs!")
     private val bind by config.keybind("Bind keybind", InputConstants.KEY_B)

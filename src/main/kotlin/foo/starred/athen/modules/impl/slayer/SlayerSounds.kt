@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.SoundPlayEvent
 import foo.starred.athen.modules.Module
 import net.minecraft.sounds.SoundEvents
@@ -12,7 +12,7 @@ import net.minecraft.sounds.SoundEvents
 object SlayerSounds : Module(
     "Slayer sounds",
     "Toggles for slayer sounds!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val disableEnder by config.switch("Disable voidgloom sounds", true)
     private val enderSet = setOf(SoundEvents.ENDERMAN_STARE, SoundEvents.ENDERMAN_SCREAM)

@@ -9,7 +9,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.InputEvent
 import foo.starred.athen.events.LocationEvent
@@ -43,7 +43,7 @@ import net.minecraft.resources.Identifier
 object MobHighlight : Module(
     "Mob highlight",
     "Highlights mobs",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     val json = JsonStore("features/mobHighlight")
     val e0 = json.mutableList("e0", EntityNamed.CODEC)

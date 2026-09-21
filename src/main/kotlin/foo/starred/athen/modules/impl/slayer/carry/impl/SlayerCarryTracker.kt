@@ -14,7 +14,7 @@ import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.carry
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.runWhen
@@ -43,7 +43,7 @@ import kotlin.math.round
 object SlayerCarryTracker : Module(
     "Slayer carry tracker",
     "Track slayer carries and display progress.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val `announce$comp$party` by config.switch("Announce in party", true)
     private val `announce$spawn` by config.switch("Show spawn message", true)

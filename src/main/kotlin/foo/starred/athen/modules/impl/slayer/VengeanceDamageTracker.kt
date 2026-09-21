@@ -5,7 +5,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.slayers.SlayerAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
@@ -18,7 +18,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 object VengeanceDamageTracker : Module(
     "Vengeance damage tracker",
     "Tracks your vengeance damage in chat.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val abbreviate by config.switch("Abbreviate damage")
     private val regex: Regex = Regex("""^(?<damage>\d+(?:,\d+)*)ﬗ$""")
