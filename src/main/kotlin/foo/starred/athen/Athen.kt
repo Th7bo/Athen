@@ -9,7 +9,6 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.core.on
@@ -53,12 +52,7 @@ object Athen : ClientModInitializer {
             Scheduler.repeat(1.hours, action = ::broadcast)
         }.once()
 
-        on<GameEvent.Start> {
-            println("loaded game")
-        }
-
         InternalEvent.Mod.Loading.End.post()
-        println("Mod load finished")
     }
 
     private fun install() {
