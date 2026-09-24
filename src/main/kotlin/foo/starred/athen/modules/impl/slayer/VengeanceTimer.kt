@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.slayers.SlayerAPI
@@ -20,7 +20,7 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.api.datatype.getData
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.CRIMSON_ISLE])
+@OnlyIn(islands = [PresetSkyBlockIsland.CRIMSON_ISLE])
 object VengeanceTimer : Module(
     "Vengeance timer",
     "Shows the time until your vengeance damage should activate.",

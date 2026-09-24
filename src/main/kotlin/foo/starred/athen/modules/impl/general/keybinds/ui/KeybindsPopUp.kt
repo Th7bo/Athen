@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.general.keybinds.ui
 
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.dungeon.enums.DungeonClass
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent.Companion.multiCheckbox
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
@@ -245,18 +245,18 @@ class KeybindsPopUp(
             size = FixedSizeConstraint(170, 16)
             position = AnchorPositionConstraint({ `checkbox$category` }, PositionAnchor.BELOW, 0, 16)
             label = "Islands"
-            items = listOf("Any") + SkyBlockIsland.entries.map { it.displayName }
+            items = listOf("Any") + PresetSkyBlockIsland.entries.map { it.string }
 
             selected {
                 if (it == 0) condition.islands.isEmpty()
-                else condition.islands.contains(SkyBlockIsland.entries[it - 1])
+                else condition.islands.contains(PresetSkyBlockIsland.entries[it - 1])
             }
 
             select {
                 if (it == 0) {
                     condition.islands.clear()
                 } else {
-                    val i = SkyBlockIsland.entries[it - 1]
+                    val i = PresetSkyBlockIsland.entries[it - 1]
                     if (condition.islands.contains(i)) condition.islands.remove(i) else condition.islands.add(i)
                 }
 

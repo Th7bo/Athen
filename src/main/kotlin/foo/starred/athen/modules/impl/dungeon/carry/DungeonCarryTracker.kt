@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.dungeon.carry
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.dungeon.DungeonAPI
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
@@ -92,7 +92,7 @@ object DungeonCarryTracker : Module(
 
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
-        if (`hud$dungeon` && !SkyBlockIsland.THE_CATACOMBS.inIsland.value) return@Ticking null
+        if (`hud$dungeon` && !PresetSkyBlockIsland.THE_CATACOMBS.state.value) return@Ticking null
 
         buildString {
             append("§f§lDungeon Carries:")
@@ -200,7 +200,7 @@ object DungeonCarryTracker : Module(
                 val e = teammate.entity ?: continue
                 extractFrameBox(e.renderBoundingBox, playerColor, playerLineWidth, false)
             }
-        }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
+        }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
     }
 
     private fun showHelp() {

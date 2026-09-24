@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
@@ -14,7 +14,7 @@ import net.minecraft.world.entity.decoration.ArmorStand
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.CRIMSON_ISLE])
+@OnlyIn(islands = [PresetSkyBlockIsland.CRIMSON_ISLE])
 object VengeanceDamageTracker : Module(
     "Vengeance damage tracker",
     "Tracks your vengeance damage in chat.",

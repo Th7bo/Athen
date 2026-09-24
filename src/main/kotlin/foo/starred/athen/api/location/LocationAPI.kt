@@ -35,6 +35,10 @@ package foo.starred.athen.api.location
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.location.area.base.ISkyBlockArea
 import foo.starred.athen.api.location.area.impl.CustomSkyBlockArea
+import foo.starred.athen.api.location.area.impl.PresetSkyBlockArea
+import foo.starred.athen.api.location.island.base.ISkyBlockIsland
+import foo.starred.athen.api.location.island.impl.CustomSkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.ScoreboardEvent
 import foo.starred.athen.events.core.on
@@ -42,62 +46,47 @@ import foo.starred.athen.events.core.runWhen
 import foo.starred.snowbird.api.data.Observable
 import net.hypixel.data.type.GameType
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
-import kotlin.time.Clock
-import kotlin.time.Instant
 
 @Priority
 object LocationAPI {
-    private val locationRegex = Regex(" *[⏣ф\uE067\uE020] *(?<location>(?:\\s?[^[ൠ\uE018]\\s]+)*)(?: [ൠ\uE018] x\\d)?")
-    private val guestRegex = Regex("^ *\u270C *\\((?<guests>\\d+)/(?<max>\\d+)\\) *$")
-    private val playerCountRegex = Regex(" *(?:players|party) \\((?<count>\\d+)\\) *")
+    private val regex = Regex(" *[⏣ф\uE067\uE020] *(?<location>(?:\\s?[^[ൠ\uE018]\\s]+)*)(?: [ൠ\uE018] x\\d)?")
 
-    var forceOnSkyBlock: Boolean = false
+    val skyblock: Observable<Boolean> = Observable(false).onChange { (if (it) LocationEvent.SkyBlock.Connect else LocationEvent.SkyBlock.Disconnect).post() }
+    val island: Observable<ISkyBlockIsland> = Observable(PresetSkyBlockIsland.NONE)
+    val area: Observable<ISkyBlockArea> = Observable(PresetSkyBlockArea.NONE)
 
-    val isOnSkyBlock = Observable(false).onChange { (if (it) LocationEvent.SkyBlock.Connect else LocationEvent.SkyBlock.Disconnect).post() }
-
-    val island = Observable<SkyBlockIsland?>(null)
-
-    val area: Observable<ISkyBlockArea> = Observable(SkyBlockArea.NONE)
-
-    var serverId: String? = null
-        private set
-
-    var isGuest: Boolean = false
-        private set
-
-    var onHypixel: Boolean = false
-        private set
-
-    var onAlpha: Boolean = false
-        private set
-
-    var lastServerChange: Instant = Instant.DISTANT_PAST
+    var id: String? = null
         private set
 
     init {
         on<LocationEvent.Hypixel.Server> {
-            lastServerChange = Clock.System.now()
-            isOnSkyBlock.value = type == GameType.SKYBLOCK
+            skyblock.value = type == GameType.SKYBLOCK
 
-            val newIsland = if (isOnSkyBlock.value && mode != null) SkyBlockIsland.getByKey(mode) else null
-            val oldIsland = island.value
+            if (!skyblock.value || mode == null) {
+                val v0 = island.value
 
-            island.value = newIsland
-            LocationEvent.Hypixel.Island(oldIsland, newIsland).post()
-            serverId = name
+                id = name
+                island.value = PresetSkyBlockIsland.NONE
+                LocationEvent.SkyBlock.Island(v0, island.value).post()
+                return@on
+            }
+
+            val v0 = island.value
+            val v1 = PresetSkyBlockIsland.of(mode) ?: CustomSkyBlockIsland(mode)
+
+            id = name
+            island.value = v1
+            LocationEvent.SkyBlock.Island(v0, v1).post()
         }
 
-        on<ScoreboardEvent.UpdateTitle> {
-            isGuest = new.contains("guest", ignoreCase = true)
-        }.runWhen(isOnSkyBlock)
-
         on<ScoreboardEvent.Update> {
-            locationRegex.anyMatch(added, "location") { (location) ->
+            regex.anyMatch(added, "location") { (location) ->
                 val old = area.value
-                area.value = SkyBlockArea.getByKey(location) ?: CustomSkyBlockArea(location)
-                LocationEvent.Hypixel.Area(old, area.value).post()
+
+                area.value = PresetSkyBlockArea.of(location) ?: CustomSkyBlockArea(location)
+                LocationEvent.SkyBlock.Area(old, area.value).post()
             }
-        }.runWhen(isOnSkyBlock)
+        }.runWhen(skyblock)
 
         on<LocationEvent.Server.Disconnect> {
             reset()
@@ -105,19 +94,15 @@ object LocationAPI {
     }
 
     private fun reset() {
-        val oldArea = area.value
-        val oldIsland = island.value
+        val v00 = area.value
+        val v01 = island.value
 
-        isOnSkyBlock.value = false
-        area.value = SkyBlockArea.NONE
-        island.value = null
+        id = null
+        skyblock.value = false
+        island.value = PresetSkyBlockIsland.NONE
+        area.value = PresetSkyBlockArea.NONE
 
-        isGuest = false
-        onHypixel = false
-        onAlpha = false
-        serverId = null
-
-        if (oldArea != SkyBlockArea.NONE) LocationEvent.Hypixel.Area(oldArea, area.value).post()
-        if (oldIsland != null) LocationEvent.Hypixel.Island(oldIsland, island.value).post()
+        if (v00 != PresetSkyBlockArea.NONE) LocationEvent.SkyBlock.Area(v00, PresetSkyBlockArea.NONE).post()
+        if (v01 != PresetSkyBlockIsland.NONE) LocationEvent.SkyBlock.Island(v01, PresetSkyBlockIsland.NONE).post()
     }
 }

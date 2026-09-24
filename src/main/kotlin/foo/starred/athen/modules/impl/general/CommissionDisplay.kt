@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.general
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
@@ -20,7 +20,7 @@ import tech.thatgravyboat.skyblockapi.api.area.mining.CommissionArea
 import tech.thatgravyboat.skyblockapi.api.area.mining.CommissionsAPI
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.DWARVEN_MINES, SkyBlockIsland.MINESHAFT, SkyBlockIsland.CRYSTAL_HOLLOWS])
+@OnlyIn(islands = [PresetSkyBlockIsland.DWARVEN_MINES, PresetSkyBlockIsland.MINESHAFT, PresetSkyBlockIsland.CRYSTAL_HOLLOWS])
 object CommissionDisplay : Module(
     "Commission display",
     "Displays your commissions without you having to open the tab menu!",

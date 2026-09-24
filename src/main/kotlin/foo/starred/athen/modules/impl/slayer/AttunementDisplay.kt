@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.slayers.SlayerAPI
@@ -17,7 +17,7 @@ import net.minecraft.util.FormattedCharSequence
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroups
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.CRIMSON_ISLE])
+@OnlyIn(islands = [PresetSkyBlockIsland.CRIMSON_ISLE])
 object AttunementDisplay : Module(
     "Attunement display",
     "Displays the current attunement for blaze slayer, does not work with demons.",

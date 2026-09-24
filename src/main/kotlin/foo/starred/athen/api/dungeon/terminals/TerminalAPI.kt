@@ -40,7 +40,7 @@ object TerminalAPI {
         private set
 
     init {
-        val state = (LocationAPI.isOnSkyBlock or TerminalSimulator.s) or TerminalSimulator.s0
+        val state = (LocationAPI.skyblock or TerminalSimulator.s) or TerminalSimulator.s0
         val state0 = state and TerminalSolvers.observable
         val state1 = state and opened
 

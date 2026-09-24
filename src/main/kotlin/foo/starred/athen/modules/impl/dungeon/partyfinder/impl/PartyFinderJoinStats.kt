@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.dungeon.partyfinder.impl
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.dungeon.enums.DungeonClass
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
@@ -29,7 +29,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 import kotlin.time.Duration.Companion.hours
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.DUNGEON_HUB])
+@OnlyIn(islands = [PresetSkyBlockIsland.DUNGEON_HUB])
 object PartyFinderJoinStats : Module(
     "Party finder join stats",
     "Shows join stats for party finder! Allows you to auto-kick the player.",

@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.kuudra
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
@@ -13,7 +13,7 @@ import foo.starred.snowbird.api.text.parser.impl.parse
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object ManaUsedAlert : Module(
     "Mana used alert",
     "Alerts the party when you mana dump!",

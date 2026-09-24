@@ -6,7 +6,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraTier
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
@@ -87,7 +87,7 @@ object KuudraCarryTracker : Module(
 
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
-        if (`hud$kuudra` && !SkyBlockIsland.KUUDRA.inIsland.value) return@Ticking null
+        if (`hud$kuudra` && !PresetSkyBlockIsland.KUUDRA.state.value) return@Ticking null
 
         buildString {
             append("§f§lKuudra Carries:")
@@ -196,7 +196,7 @@ object KuudraCarryTracker : Module(
                 val e = teammate.entity ?: continue
                 extractFrameBox(e.renderBoundingBox, playerColor, playerLineWidth, false)
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
     }
 
     private fun showHelp() {

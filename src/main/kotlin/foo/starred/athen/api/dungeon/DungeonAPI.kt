@@ -35,7 +35,7 @@ package foo.starred.athen.api.dungeon
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.dungeon.enums.DungeonPlayer
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.on
@@ -94,7 +94,7 @@ object DungeonAPI {
     // </editor-fold>
 
     init {
-        on<LocationEvent.Hypixel.Island> {
+        on<LocationEvent.SkyBlock.Island> {
             "DungeonAPI: Cleaning up.".dev()
 
             bloodKilledAll.value = false
@@ -135,9 +135,9 @@ object DungeonAPI {
             }
 
             teammates = next.filterNotNull()
-        }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
+        }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
 
-        on<LocationEvent.Hypixel.Area> {
+        on<LocationEvent.SkyBlock.Area> {
             dungeonFloorRegex.find(new.string, "floor") { (f) ->
                 val old = floor.value
                 val new = DungeonFloor.getByName(f)
@@ -146,7 +146,7 @@ object DungeonAPI {
                 floor.value = new
                 floor.value?.let { DungeonEvent.Enter(it).post() }
             }
-        }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
+        }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
 
         on<MessageEvent.Chat.Receive> {
             playerGhostRegex.findThenNull(stripped, "name") { (s) ->
@@ -212,7 +212,7 @@ object DungeonAPI {
                     "DungeonAPI: P3 Phase set to 0.".dev()
                 }
             }
-        }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
+        }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
 
         on<TickEvent.Client.End> {
             if (ticks % 5 != 0) return@on
@@ -228,6 +228,6 @@ object DungeonAPI {
                     else -> 5
                 }
             }
-        }.runWhen(SkyBlockIsland.THE_CATACOMBS.inIsland)
+        }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
     }
 }

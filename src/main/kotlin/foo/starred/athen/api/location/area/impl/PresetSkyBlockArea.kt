@@ -34,7 +34,7 @@ import foo.starred.athen.api.location.LocationAPI
 import foo.starred.athen.api.location.area.base.ISkyBlockArea
 import foo.starred.snowbird.api.data.Observable
 
-enum class SkyBlockArea(val key: String, val displayName: String, override val string: String = displayName) : ISkyBlockArea {
+enum class PresetSkyBlockArea(val key: String, override val string: String) : ISkyBlockArea {
     NONE("none", "None"),
     PRIVATE_ISLAND("private_island", "Your Island"),
     GARDEN("garden", "The Garden"),
@@ -307,12 +307,16 @@ enum class SkyBlockArea(val key: String, val displayName: String, override val s
     SAFARI_ZONE("safari_zone", "Safari Zone")
     ;
 
-    val inArea: Observable<Boolean>
+    val state: Observable<Boolean>
         get() = LocationAPI.area.map { it == this }
 
-    override fun toString() = displayName
+    override fun toString(): String {
+        return string
+    }
 
     companion object {
-        fun getByKey(key: String) = entries.firstOrNull { it.displayName == key }
+        fun of(key: String): PresetSkyBlockArea? {
+            return entries.firstOrNull { it.string == key }
+        }
     }
 }
