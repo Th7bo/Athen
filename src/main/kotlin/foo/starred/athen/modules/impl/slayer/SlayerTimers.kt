@@ -12,9 +12,9 @@ import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.repeat
@@ -102,8 +102,8 @@ object SlayerTimers : Module(
 
                 else -> {
                     val a = time < pb * 1.1
-                    val c0 = if (a) Mocha.Peach.argb else MessageColors.RED.color
-                    val c1 = if (a) Mocha.Pink.argb else Mocha.Red.argb
+                    val c0 = if (a) MochaColorScheme.Peach.argb else MessageColors.RED.color
+                    val c1 = if (a) MochaColorScheme.Pink.argb else MochaColorScheme.Red.argb
                     "<$c0>" to pb2.parse(str1, (time - pb).toDuration(secondsDecimals = 1), pb.toDuration(secondsDecimals = 1), "<$c0>", "<$c1>", "$time0")
                 }
             }

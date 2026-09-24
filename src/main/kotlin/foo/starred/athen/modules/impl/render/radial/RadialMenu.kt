@@ -12,6 +12,7 @@ import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.InputEvent
@@ -20,7 +21,6 @@ import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialEditor
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.client
@@ -29,7 +29,10 @@ import foo.starred.snowbird.api.inputs.impl.MouseInputState
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.text.parser.impl.parse
-import foo.starred.snowbird.utils.*
+import foo.starred.snowbird.utils.compress
+import foo.starred.snowbird.utils.decompress
+import foo.starred.snowbird.utils.literal
+import foo.starred.snowbird.utils.safely
 import kotlin.math.hypot
 
 @Load
@@ -47,8 +50,8 @@ object RadialMenu : Module(
     val radius2 by config.slider("Outer radius", 80f, 40f, 180f, "pixels")
     val thickness by config.slider("Sub thickness", 18f, 8f, 40f, "pixels")
 
-    val `color$normal` by config.colorPicker("Normal color", Catppuccin.Mocha.Surface0.withAlpha(0.5f))
-    val `color$hover` by config.colorPicker("Hover color", Catppuccin.Mocha.Lavender.withAlpha(0.5f))
+    val `color$normal` by config.colorPicker("Normal color", MochaColorScheme.Surface0.alpha(0.5f))
+    val `color$hover` by config.colorPicker("Hover color", MochaColorScheme.Lavender.alpha(0.5f))
 
     private val _unused0 by config.button("Open editor") {
         RadialEditor.open()
@@ -306,7 +309,7 @@ object RadialMenu : Module(
             val bool0 = dist(x, y) < 15f
             val bool1 = stack.isNotEmpty() || (type == 2 && i2 != -1)
 
-            graphics.extractText(if (bool1) "←" else "✕", x - client.font.width(if (bool1) "←" else "✕") / 2, y - client.font.lineHeight / 2, false, if (bool0) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Subtext0.argb)
+            graphics.extractText(if (bool1) "←" else "✕", x - client.font.width(if (bool1) "←" else "✕") / 2, y - client.font.lineHeight / 2, false, if (bool0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
             val hovered = when {
                 i1 != -1 && i2 in current.indices -> current[i2].sub.getOrNull(i1)
@@ -317,8 +320,8 @@ object RadialMenu : Module(
             val x1 = MouseInputState.Position.Scaled.x.toInt() + 12
             val y1 = MouseInputState.Position.Scaled.y.toInt() - 4
 
-            graphics.rectangle(x1 - 5, y1 - 5, client.font.width(label) + 10, client.font.lineHeight + 10, Catppuccin.Mocha.Base.argb)
-            graphics.extractText(label, x1, y1, false, Catppuccin.Mocha.Text.argb)
+            graphics.rectangle(x1 - 5, y1 - 5, client.font.width(label) + 10, client.font.lineHeight + 10, MochaColorScheme.Base.argb)
+            graphics.extractText(label, x1, y1, false, MochaColorScheme.Text.argb)
         }.runWhen(open)
 
         on<GuiEvent.Open.Any> {
@@ -391,11 +394,11 @@ object RadialMenu : Module(
         divider.lie()
         "§bRadial Menu §7[Athen]".center().lie()
         divider.lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen radial edit <gray>- Opens editor".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen import radial <gray>- Imports config from clipboard".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen export radial <gray>- Exports current config to clipboard".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen radial edit <gray>- Opens editor".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen import radial <gray>- Imports config from clipboard".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen export radial <gray>- Exports current config to clipboard".parse().lie()
         divider.lie()
-        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${ModWrapper.discord}><${Catppuccin.Mocha.Lavender.argb}>discord!".parse().lie()
+        "Want to explore <red>presets<r>? Join the <hover:<red>Click to join!><click:url:${ModWrapper.discord}><${MochaColorScheme.Lavender.argb}>discord!".parse().lie()
         divider.lie()
     }
 

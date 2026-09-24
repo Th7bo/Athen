@@ -4,8 +4,8 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.ConfigManager
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -42,7 +42,7 @@ object Dev {
                 ConfigManager.update(key, !b)
 
                 val s = key.replace(r, " $1").lowercase().replaceFirstChar { it.uppercase() }
-                "<${Mocha.Lavender.argb}>$s <gray>➤ ${if (b) "<red>Disabled" else "<green>Enabled"}".mod()
+                "<${MochaColorScheme.Lavender.argb}>$s <gray>➤ ${if (b) "<red>Disabled" else "<green>Enabled"}".mod()
             }
 
             "simulate" / "chat" / bool("actionbar") / greedyString("message") {

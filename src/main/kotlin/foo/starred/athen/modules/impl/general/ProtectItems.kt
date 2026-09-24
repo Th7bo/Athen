@@ -10,17 +10,20 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.id
 import foo.starred.athen.utils.lore
 import foo.starred.athen.utils.uuid
-import foo.starred.snowbird.api.*
+import foo.starred.snowbird.api.client
+import foo.starred.snowbird.api.held
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
+import foo.starred.snowbird.api.lie
+import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -48,7 +51,7 @@ object ProtectItems : Module(
     private val types0 = json.mutableSet("type0", Codec.STRING)
 
     private val trade = Regex("^You\\s+\\w+$")
-    private val p = "<bold><${Catppuccin.Mocha.Lavender.argb}>P".parse().visualOrderText
+    private val p = "<bold><${MochaColorScheme.Lavender.argb}>P".parse().visualOrderText
 
     init {
         on<PlayerEvent.Drop> {

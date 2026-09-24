@@ -3,7 +3,7 @@ package foo.starred.athen.config.ui.pages.module.elements.slider
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSliderElementData
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -57,24 +57,24 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         }
 
     init {
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
         radius = CascadeGeometricRadius(4f)
         unfocus = false
 
         var outline: OutlineEffect
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         }.also { outline = it })
 
         on<FocusEvent.Gain> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Lavender.argb.brighten(0.6f))
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+            outline.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.6f))
         }
 
         on<FocusEvent.Lose> {
-            animateColor(CascadeGeometricColor(if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            animateColor(CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb), 0.15f)
+            outline.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
         }
 
         on<MouseEvent.Press> {
@@ -99,12 +99,12 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
 
         on<MouseEvent.Move.Enter> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
         }
 
         on<MouseEvent.Move.Exit> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
         }
     }
 
@@ -116,7 +116,7 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         if (value0 > 0f) {
             val pose = Matrix3x2f(graphics.pose())
             val scissor = graphics.scissorStack.peek()
-            graphics.roundedRectangle(x, y, width * value0, height, Catppuccin.Mocha.Lavender.argb.brighten(0.6f), radius, pose, scissor)
+            graphics.roundedRectangle(x, y, width * value0, height, MochaColorScheme.Lavender.argb.brighten(0.6f), radius, pose, scissor)
         }
 
         val font = CascadeFonts.sans
@@ -125,7 +125,7 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         val x1 = x + (width / 2f) - (_width / 2f)
         val y1 = y + (height / 2f) - (height0 / 2f)
 
-        font.extract(graphics, _component, x1, y1, Catppuccin.Mocha.Text.argb, true, 10f)
+        font.extract(graphics, _component, x1, y1, MochaColorScheme.Text.argb, true, 10f)
     }
 
     fun update(block: (Double) -> Unit) {

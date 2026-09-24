@@ -12,13 +12,13 @@ import foo.starred.athen.api.slayers.enums.drop.impl.*
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -107,7 +107,7 @@ object SlayerDropsData : Module(
             val i1 = xp ?: return@on
             val i2 = l.drop.xp ?: return@on
             val c0 = fn(i1, i2, l.drop.chance)
-            "   <dark-gray>- <${Catppuccin.Mocha.Green.argb}>${l.display} <r>chance: <${Catppuccin.Mocha.Sky.argb}>${"%.5f".format(c0)} <dark_gray>[✯$mf]".parse().lie()
+            "   <dark-gray>- <${MochaColorScheme.Green.argb}>${l.display} <r>chance: <${MochaColorScheme.Sky.argb}>${"%.5f".format(c0)} <dark_gray>[✯$mf]".parse().lie()
         }
 
         on<MessageEvent.Chat.Intercept> {
@@ -129,7 +129,7 @@ object SlayerDropsData : Module(
 
             if (!last) return@on
             val c = fn(i1, i2, l.drop.chance)
-            "   <dark_gray>- <${Catppuccin.Mocha.Green.argb}>${l.display} <r>chance: <${Catppuccin.Mocha.Sky.argb}>${"%.5f".format(c)}% <dark_gray>[✯$mf]".parse().lie()
+            "   <dark_gray>- <${MochaColorScheme.Green.argb}>${l.display} <r>chance: <${MochaColorScheme.Sky.argb}>${"%.5f".format(c)}% <dark_gray>[✯$mf]".parse().lie()
         }
     }
 

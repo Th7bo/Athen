@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigHudElementData
-import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
 import foo.starred.athen.config.hud.ui.HudElementEditorUI
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
+import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -35,10 +35,10 @@ class ConfigHUDElement(
             position = FixedPositionConstraint(0f, 0f)
             size = FixedSizeConstraint(14f, 14f)
             radius = CascadeGeometricRadius(4f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 inset = false
             })
 
@@ -49,16 +49,16 @@ class ConfigHUDElement(
             }
 
             on<MouseEvent.Move.Enter> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
             }
 
             on<MouseEvent.Move.Exit> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
             }
 
             adopt(image {
                 location = ResourceAPI.identify("textures/gui/move.png")
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 size = FixedSizeConstraint(12f, 12f)
                 interact = false

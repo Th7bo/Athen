@@ -3,7 +3,7 @@ package foo.starred.athen.api.rendering.ui.components.impl
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.extensions.scissor.scissor
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
@@ -87,18 +87,18 @@ open class MultiCheckboxComponent : IPrimitiveElement<MultiCheckboxComponent>() 
         val width = width.toInt()
         val height = height.toInt()
 
-        if (label.isNotEmpty()) graphics.extractText(label, x, y - font.lineHeight - 2, false, Catppuccin.Mocha.Subtext0.argb)
-        graphics.rectangle(x, y, width, height, Catppuccin.Mocha.Surface1.argb)
-        graphics.outline(x, y, width, height, 1, if (open) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Surface2.argb)
+        if (label.isNotEmpty()) graphics.extractText(label, x, y - font.lineHeight - 2, false, MochaColorScheme.Subtext0.argb)
+        graphics.rectangle(x, y, width, height, MochaColorScheme.Surface1.argb)
+        graphics.outline(x, y, width, height, 1, if (open) MochaColorScheme.Lavender.argb else MochaColorScheme.Surface2.argb)
 
-        graphics.extractText(text, x + 4, y + (height - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Text.argb)
-        graphics.extractText(if (open) "▾" else "▸", x + width - 12, y + (height - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Overlay0.argb)
+        graphics.extractText(text, x + 4, y + (height - font.lineHeight) / 2 + 1, false, MochaColorScheme.Text.argb)
+        graphics.extractText(if (open) "▾" else "▸", x + width - 12, y + (height - font.lineHeight) / 2 + 1, false, MochaColorScheme.Overlay0.argb)
 
         if (open) {
             val height1 = height1
 
-            graphics.rectangle(x, y + height, width, height1, Catppuccin.Mocha.Base.argb)
-            graphics.outline(x, y + height, width, height1, 1, Catppuccin.Mocha.Lavender.argb)
+            graphics.rectangle(x, y + height, width, height1, MochaColorScheme.Base.argb)
+            graphics.outline(x, y + height, width, height1, 1, MochaColorScheme.Lavender.argb)
 
             graphics.scissor(x, y + height + 1, width, height + height1 - 1) {
                 var y0 = y + height - scroll
@@ -108,11 +108,11 @@ open class MultiCheckboxComponent : IPrimitiveElement<MultiCheckboxComponent>() 
                         continue
                     }
 
-                    graphics.rectangle(x, y0, width, 14, Catppuccin.Mocha.Base.argb)
+                    graphics.rectangle(x, y0, width, 14, MochaColorScheme.Base.argb)
 
                     val b = selected(idx)
-                    graphics.extractText(item, x + 4, y0 + (14 - font.lineHeight) / 2 + 1, false, if (b) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Text.argb)
-                    if (b) graphics.extractText("✔", x + width - 14, y0 + (14 - font.lineHeight) / 2 + 1, false, Catppuccin.Mocha.Lavender.argb)
+                    graphics.extractText(item, x + 4, y0 + (14 - font.lineHeight) / 2 + 1, false, if (b) MochaColorScheme.Lavender.argb else MochaColorScheme.Text.argb)
+                    if (b) graphics.extractText("✔", x + width - 14, y0 + (14 - font.lineHeight) / 2 + 1, false, MochaColorScheme.Lavender.argb)
 
                     y0 += 14
                 }

@@ -11,10 +11,10 @@ import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.snowbird.api.client
@@ -124,7 +124,7 @@ object SlayerStats : Module(
             `last$tier` = slayerInfo.tier
 
             if ((a != null && a != `last$type`) || (b != null && b != `last$tier`)) {
-                "<hover:<${Mocha.Red.argb}>This WILL clear all your stats!><${Mocha.Lavender.argb}>Detected a different slayer, click to reset stats.".parse()
+                "<hover:<${MochaColorScheme.Red.argb}>This WILL clear all your stats!><${MochaColorScheme.Lavender.argb}>Detected a different slayer, click to reset stats.".parse()
                     .onClick {
                         reset()
                         "Slayer stats were reset!".mod()

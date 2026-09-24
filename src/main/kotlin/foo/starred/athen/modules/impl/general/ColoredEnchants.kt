@@ -9,11 +9,11 @@ import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager.update
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.data
 import foo.starred.athen.utils.enchants
@@ -38,7 +38,7 @@ object ColoredEnchants : Module(
     private val replaceRoman by config.switch("Replace roman", true)
 
     private val ultimate by config.group("Ultimate enchants")
-    private val `ultimate$color` by ultimate.colorPicker("Ultimate color", Catppuccin.Mocha.Mauve.argb)
+    private val `ultimate$color` by ultimate.colorPicker("Ultimate color", MochaColorScheme.Mauve.argb)
     private val `ultimate$style` by ultimate.multiSelector("Ultimate style", l, listOf(0))
 
     private val max by config.group("Maxed enchants")

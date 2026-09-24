@@ -15,19 +15,25 @@ import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.carry
-import foo.starred.athen.events.*
+import foo.starred.athen.events.LocationEvent
+import foo.starred.athen.events.MessageEvent
+import foo.starred.athen.events.SlayerEvent
+import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.slayer.carry.data.SlayerCarryHistory
 import foo.starred.athen.modules.impl.slayer.carry.data.SlayerCarryPlayer
 import foo.starred.athen.modules.impl.slayer.carry.ui.SlayerCarryGUI
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
-import foo.starred.snowbird.api.*
+import foo.starred.snowbird.api.center
+import foo.starred.snowbird.api.command
+import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.network.data.HttpRequest
+import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.scheduling.scheduler.extensions.clientTicks
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.literal
@@ -68,10 +74,10 @@ object SlayerCarryTracker : Module(
 
     private val _highlights by config.group("Highlights")
     private val `highlight$boss` = _highlights.switch("Highlight boss", true).unique("highlightBoss")
-    private val `highlight$boss$color` by _highlights.colorPicker("Boss color", Mocha.Red.argb)
+    private val `highlight$boss$color` by _highlights.colorPicker("Boss color", MochaColorScheme.Red.argb)
     private val `highlight$boss$width` by _highlights.slider("Boss line width", 2f, 0f, 10f)
     private val `highlight$player` = _highlights.switch("Highlight player", true).unique("highlightPlayer")
-    private val `highlight$player$color` by _highlights.colorPicker("Player color", Mocha.Blue.argb)
+    private val `highlight$player$color` by _highlights.colorPicker("Player color", MochaColorScheme.Blue.argb)
     private val `highlight$player$width` by _highlights.slider("Player line width", 2f, 0f, 10f)
 
     private val tradeCompleteRegex = Regex("^Trade completed with (?:\\[.*?] )?(?<player>\\w+)!$")
@@ -169,7 +175,7 @@ object SlayerCarryTracker : Module(
                 val i0 = maxOf(1, (e0.size + 9) / 10)
 
                 val c = ("<dark_gray>" + ("-".repeat())).parse()
-                val green = Mocha.Green.argb
+                val green = MochaColorScheme.Green.argb
 
                 c.lie()
                 "Carry History <gray>(1/$i0)<r>:".mod()
@@ -197,7 +203,7 @@ object SlayerCarryTracker : Module(
                 val list = history.value.asReversed()
 
                 val c = ("<dark_gray>" + ("-".repeat())).parse()
-                val green = Mocha.Green.argb
+                val green = MochaColorScheme.Green.argb
 
                 val page0 = maxOf(1, (list.size + 9) / 10)
                 if (page > page0) {
@@ -340,7 +346,7 @@ object SlayerCarryTracker : Module(
 
             if (result.last) {
                 val time = result.time0.toDuration()
-                "<${Mocha.Green.argb}>Completed bosses for <aqua>$name <gray>[${type.short}${if (carry.tier == null) " Any" else " T${slayerInfo.tier?.int}"}]<r> in <yellow>$time".mod()
+                "<${MochaColorScheme.Green.argb}>Completed bosses for <aqua>$name <gray>[${type.short}${if (carry.tier == null) " Any" else " T${slayerInfo.tier?.int}"}]<r> in <yellow>$time".mod()
 
                 if (webhook) {
                     `webhook$url`.request(HttpRequest.POST) {
@@ -388,7 +394,7 @@ object SlayerCarryTracker : Module(
         ("<aqua>" + ("Athen Slayer Carry".center())).parse().lie()
         c.lie()
 
-        for ((c, d) in b) "  <${Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
+        for ((c, d) in b) "  <${MochaColorScheme.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
 
         c.lie()
     }

@@ -5,9 +5,8 @@ package foo.starred.athen.modules.impl.render.highlight.ui
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.highlight.MobHighlight
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.*
@@ -18,6 +17,7 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.primitives.impl.ContainerPrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -60,7 +60,7 @@ class MobHighlightPopUp(
         rectangle {
             size = FillSizeConstraint()
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Crust.withAlpha(0.6f))
+            color = CascadeGeometricColor(MochaColorScheme.Crust.alpha(0.6f))
 
             on<MouseEvent.Press> {
                 cancel()
@@ -72,10 +72,10 @@ class MobHighlightPopUp(
         val box = rectangle {
             size = FixedSizeConstraint(300, 198)
             position = CenterPositionConstraint()
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             on<MouseEvent.Press> {
@@ -92,7 +92,7 @@ class MobHighlightPopUp(
 
             adopt(text {
                 text = "Add Highlight".literal()
-                color = CascadeGeometricColor(Mocha.Lavender.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
                 position = MixedPositionConstraint(FixedPositionConstraint(8, 0), CenterPositionConstraint())
             }.also { title = it })
         }
@@ -100,7 +100,7 @@ class MobHighlightPopUp(
         val divider0 = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 1))
             position = AnchorPositionConstraint({ header }, PositionAnchor.BELOW)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             attach(box)
         }
 
@@ -113,10 +113,10 @@ class MobHighlightPopUp(
         `tab$named` = rectangle {
             size = FixedSizeConstraint(140, 18)
             position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 0)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Lavender.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
             }.also { `tab$named$outline` = it })
 
             on<MouseEvent.Press> {
@@ -131,7 +131,7 @@ class MobHighlightPopUp(
             attach(tabs)
             adopt(text {
                 text = "Named".literal()
-                color = CascadeGeometricColor(Mocha.Lavender.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
                 position = CenterPositionConstraint()
             }.also { `tab$named$text` = it })
         }
@@ -139,10 +139,10 @@ class MobHighlightPopUp(
         `tab$typed` = rectangle {
             size = FixedSizeConstraint(140, 18)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
             }.also { `tab$typed$outline` = it })
 
             on<MouseEvent.Press> {
@@ -157,14 +157,14 @@ class MobHighlightPopUp(
             attach(tabs)
             adopt(text {
                 text = "Typed".literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
             }.also { `tab$typed$text` = it })
         }
 
         val `target$label` = text {
             text = "Name".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
             position = AnchorPositionConstraint({ tabs }, PositionAnchor.BELOW, 0, 8)
             attach(box)
         }.also { this@MobHighlightPopUp.`target$label` = it }
@@ -178,7 +178,7 @@ class MobHighlightPopUp(
 
         val `color$label` = text {
             text = "Color (Hex)".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
             position = AnchorPositionConstraint({ `target$field` }, PositionAnchor.BELOW, 0, 8)
             attach(box)
         }
@@ -196,7 +196,7 @@ class MobHighlightPopUp(
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
             })
 
             attach(`color$row`)
@@ -219,7 +219,7 @@ class MobHighlightPopUp(
 
         val maxHpLabel = text {
             text = "Filter Max HP (-1 for any)".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
             position = AnchorPositionConstraint({ `color$row` }, PositionAnchor.BELOW, 0, 8)
             attach(box)
         }
@@ -240,10 +240,10 @@ class MobHighlightPopUp(
         rectangle {
             size = FixedSizeConstraint(138, 20)
             position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 0)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Red.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb)
             })
 
             on<MouseEvent.Press> {
@@ -254,17 +254,17 @@ class MobHighlightPopUp(
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             }
 
             attach(footer)
             adopt(text {
                 text = "Cancel".literal()
-                color = CascadeGeometricColor(Mocha.Red.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb)
                 position = CenterPositionConstraint()
             })
         }
@@ -272,10 +272,10 @@ class MobHighlightPopUp(
         rectangle {
             size = FixedSizeConstraint(138, 20)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb)
             })
 
             on<MouseEvent.Press> {
@@ -286,17 +286,17 @@ class MobHighlightPopUp(
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             }
 
             attach(footer)
             adopt(text {
                 text = "Save".literal()
-                color = CascadeGeometricColor(Mocha.Green.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb)
                 position = CenterPositionConstraint()
             })
         }
@@ -357,13 +357,13 @@ class MobHighlightPopUp(
     }
 
     private fun tabs() {
-        `tab$named`.color = CascadeGeometricColor(if (!typed) Mocha.Surface1.argb else Mocha.Surface0.argb)
-        `tab$named$outline`.color = CascadeGeometricColor(if (!typed) Mocha.Lavender.argb else Mocha.Overlay0.argb)
-        `tab$named$text`.color = CascadeGeometricColor(if (!typed) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        `tab$named`.color = CascadeGeometricColor(if (!typed) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        `tab$named$outline`.color = CascadeGeometricColor(if (!typed) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
+        `tab$named$text`.color = CascadeGeometricColor(if (!typed) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
-        `tab$typed`.color = CascadeGeometricColor(if (typed) Mocha.Surface1.argb else Mocha.Surface0.argb)
-        `tab$typed$outline`.color = CascadeGeometricColor(if (typed) Mocha.Lavender.argb else Mocha.Overlay0.argb)
-        `tab$typed$text`.color = CascadeGeometricColor(if (typed) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        `tab$typed`.color = CascadeGeometricColor(if (typed) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        `tab$typed$outline`.color = CascadeGeometricColor(if (typed) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
+        `tab$typed$text`.color = CascadeGeometricColor(if (typed) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
         `target$label`.text = (if (typed) "Entity ID" else "Name").literal()
         `target$field`.placeholder = if (typed) "Entity Type (e.g. minecraft:zombie)" else "Entity Name (e.g. Lost Adventurer)"

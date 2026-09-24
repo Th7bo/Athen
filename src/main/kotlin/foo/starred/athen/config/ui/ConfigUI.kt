@@ -2,13 +2,13 @@ package foo.starred.athen.config.ui
 
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.config.hud.ui.HudElementEditorUI
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.main.ConfigCategories
 import foo.starred.athen.config.ui.pages.module.ConfigModules
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement.Companion.configInputElement
-import foo.starred.athen.config.hud.ui.HudElementEditorUI
 import foo.starred.athen.modules.impl.ModSettings
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.cascade.constraints.base.IPositionConstraint
 import foo.starred.cascade.constraints.base.ISizeConstraint
@@ -47,7 +47,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
     private val text = text {
         wrapper = CascadeTextWrapper
         textSize = 10f
-        color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
         position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.START, 4f, 4f)
     }
 
@@ -57,7 +57,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
             super.draw(graphics)
         }
     }.apply {
-        color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Base.argb)
         radius = CascadeGeometricRadius(4f)
         visible = false
         interact = false
@@ -68,7 +68,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         }
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
         })
 
         adopt(text)
@@ -121,11 +121,11 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         val header = roundedRectangle {
             position = FixedPositionConstraint(0f, 0f)
             size = FixedSizeConstraint(650f, 32f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
             radius = CascadeGeometricRadius(5f, 5f, 0f, 0f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 inset = false
             })
 
@@ -136,7 +136,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
             wrapper = CascadeTextWrapper
             text = "<bold><#FDCCDA>A<#FCDDD3>t<#FAEDCB>h<#F0E2D7>e<#E5D8E4>n<#DBCDF0>".parse()
             textSize = 16f
-            color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
             position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 12f, 0f)
 
             attach(header)
@@ -157,11 +157,11 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         left = roundedRectangle {
             position = AnchorPositionConstraint({ header }, PositionAnchor.BELOW)
             size = FixedSizeConstraint(140f, 318f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
             radius = CascadeGeometricRadius(0f, 0f, 5f, 0f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 inset = false
             })
 
@@ -171,11 +171,11 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         right0 = roundedRectangle {
             position = AnchorPositionConstraint({ left }, PositionAnchor.RIGHT)
             size = FixedSizeConstraint(510f, 318f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Crust.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Crust.argb)
             radius = CascadeGeometricRadius(0f, 0f, 0f, 5f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 inset = false
             })
 
@@ -242,7 +242,7 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
             "/athen irc help" to "View all IRC commands"
         )
 
-        for ((c, d) in commands) "  <${Catppuccin.Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
+        for ((c, d) in commands) "  <${MochaColorScheme.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
 
         divider.lie()
     }

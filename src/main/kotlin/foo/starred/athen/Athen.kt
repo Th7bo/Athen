@@ -9,11 +9,11 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.scheduling.Scheduler
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.core.on
 import foo.starred.athen.modules.impl.Dev
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.data
 import foo.starred.snowbird.api.EMPTY_COMPONENT
 import foo.starred.snowbird.api.center
@@ -61,7 +61,7 @@ object Athen : ClientModInitializer {
 
         val divider = ("<dark_gray><strikethrough>" + "-".repeat()).parse()
         divider.lie()
-        ("<${Mocha.Lavender.argb}>" + "Athen".center()).parse().lie()
+        ("<${MochaColorScheme.Lavender.argb}>" + "Athen".center()).parse().lie()
         divider.lie()
         "<gray>Thank you for installing Athen <dark_gray>(v${ModWrapper.version})<gray>.".parse().lie()
         EMPTY_COMPONENT.lie()
@@ -71,7 +71,7 @@ object Athen : ClientModInitializer {
         "  <aqua>/athen help <gray>- View all commands".parse().lie()
         EMPTY_COMPONENT.lie()
 
-        "<hover:<${Mocha.Lavender.argb}>Click to join!><click:url:${ModWrapper.discord}><gray>Need help? Click to join our Discord!".parse().lie()
+        "<hover:<${MochaColorScheme.Lavender.argb}>Click to join!><click:url:${ModWrapper.discord}><gray>Need help? Click to join our Discord!".parse().lie()
 
         divider.lie()
         "<gray><hover:<green>Click to open page!><click:url:https://patreon.com/starredskies>Want to help support the development for mods like Athen? Click here to open the Patreon :3".parse().lie()
@@ -83,7 +83,7 @@ object Athen : ClientModInitializer {
             success<String> {
                 val str = it.trim().takeIf { s -> s.isNotBlank() && s != Dev.lastBroadcast } ?: return@success
 
-                "<hover:<${Mocha.Lavender.argb}>Broadcasted message!>$str".mod()
+                "<hover:<${MochaColorScheme.Lavender.argb}>Broadcasted message!>$str".mod()
                 Dev.lastBroadcast = str
             }
 

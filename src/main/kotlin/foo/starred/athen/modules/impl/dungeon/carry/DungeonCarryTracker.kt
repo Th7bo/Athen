@@ -13,13 +13,12 @@ import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.carry.DungeonCarryStateTracker.tracked
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
@@ -52,7 +51,7 @@ object DungeonCarryTracker : Module(
 
     private val highlights by config.group("Highlights")
     private val highlightPlayer by highlights.switch("Highlight player", true)
-    private val playerColor by highlights.colorPicker("Player color", Catppuccin.Macchiato.Blue.argb)
+    private val playerColor by highlights.colorPicker("Player color", MochaColorScheme.Blue.argb)
     private val playerLineWidth by highlights.slider("Player line width", 2f, 0f, 10f)
 
     private val hud by config.hud("Dungeon carry display") {
@@ -176,7 +175,7 @@ object DungeonCarryTracker : Module(
 
                 if (result.completed) {
                     val time = result.totalTime.toDuration()
-                    "<${Mocha.Green.argb}>Completed carries for <aqua>${teammate.name} <gray>[${floor.name}] <r>in <yellow>$time".mod()
+                    "<${MochaColorScheme.Green.argb}>Completed carries for <aqua>${teammate.name} <gray>[${floor.name}] <r>in <yellow>$time".mod()
 
                     if (webhook) {
                         webhookUrl.request(HttpRequest.POST) {
@@ -220,7 +219,7 @@ object DungeonCarryTracker : Module(
         "§bAthen Dungeon Carry Commands".center().lie()
         divider.lie()
 
-        for ((c, d) in commands) "  <${Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
+        for ((c, d) in commands) "  <${MochaColorScheme.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
 
         divider.lie()
     }

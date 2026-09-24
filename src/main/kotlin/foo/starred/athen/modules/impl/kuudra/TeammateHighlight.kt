@@ -6,9 +6,9 @@ import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.snowbird.api.name
 
@@ -20,7 +20,7 @@ object TeammateHighlight : Module(
     ConfigCategory.KUUDRA
 ) {
     private val lineWidth by config.slider("Line width", 2f, 1f, 10f)
-    private val color by config.colorPicker("Color", Catppuccin.Mocha.Green.argb)
+    private val color by config.colorPicker("Color", MochaColorScheme.Green.argb)
 
     init {
         on<WorldRenderEvent.Extract> {

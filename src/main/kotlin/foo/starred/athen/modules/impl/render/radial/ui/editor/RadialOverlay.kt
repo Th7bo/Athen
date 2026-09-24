@@ -3,9 +3,9 @@ package foo.starred.athen.modules.impl.render.radial.ui.editor
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.snowbird.api.client
@@ -83,7 +83,7 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
         val back = bool || (RadialMenu.type == 2 && i0 in working.indices && i1 >= 0)
         val str = if (back) "←" else "✕"
 
-        graphics.extractText(str, x0 - client.font.width(str) / 2, y0 - client.font.lineHeight / 2, false, if (hc) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        graphics.extractText(str, x0 - client.font.width(str) / 2, y0 - client.font.lineHeight / 2, false, if (hc) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
         val label = if (hc) (if (back) "Back" else "Exit") else {
             if (sub != -1) working.getOrNull(i0)?.sub?.getOrNull(sub)?.name
@@ -95,9 +95,9 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
             val lmx = mx.toInt() + 12
             val lmy = my.toInt() - 4
 
-            graphics.rectangle(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, Mocha.Base.argb)
-            graphics.outline(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, 1, Mocha.Lavender.argb)
-            graphics.extractText(label, lmx, lmy, false, Mocha.Text.argb)
+            graphics.rectangle(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, MochaColorScheme.Base.argb)
+            graphics.outline(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, 1, MochaColorScheme.Lavender.argb)
+            graphics.extractText(label, lmx, lmy, false, MochaColorScheme.Text.argb)
         }
     }
 }

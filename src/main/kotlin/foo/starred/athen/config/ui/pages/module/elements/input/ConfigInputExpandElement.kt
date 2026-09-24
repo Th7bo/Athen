@@ -3,9 +3,9 @@ package foo.starred.athen.config.ui.pages.module.elements.input
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigTextInputElementData
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement.Companion.configInputElement
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -31,27 +31,27 @@ class ConfigInputExpandElement(
     init {
         size = FixedSizeConstraint(14f, 14f)
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
         })
 
         adopt(text {
             wrapper = CascadeTextWrapper
             text = "⛶".literal()
             textSize = 10f
-            color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
             position = CenterPositionConstraint()
             shadow = false
         })
 
         on<MouseEvent.Move.Enter> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
         }
 
         on<MouseEvent.Move.Exit> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
         }
 
         on<MouseEvent.Press> {
@@ -73,10 +73,10 @@ class ConfigInputExpandElement(
             position = CenterPositionConstraint()
             size = FixedSizeConstraint(400f, 30f)
             radius = CascadeGeometricRadius(8f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             })
 
             attach(main)
@@ -85,19 +85,19 @@ class ConfigInputExpandElement(
         roundedRectangle {
             size = FixedSizeConstraint(18f, 18f)
             radius = CascadeGeometricRadius(4f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -4f, 0f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             })
 
             on<MouseEvent.Move.Enter> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
             }
 
             on<MouseEvent.Move.Exit> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
             }
 
             on<MouseEvent.Press> {
@@ -110,7 +110,7 @@ class ConfigInputExpandElement(
                 wrapper = CascadeTextWrapper
                 text = "×".literal()
                 textSize = 10f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Red.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb)
                 position = CenterPositionConstraint()
             })
         }

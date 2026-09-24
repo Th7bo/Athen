@@ -15,13 +15,14 @@ import foo.starred.snowbird.api.name
 import foo.starred.snowbird.api.player
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.world.entity.monster.Giant
-//~ if >= 26.2 'monster.MagmaCube' -> 'monster.cubemob.MagmaCube'
-import net.minecraft.world.entity.monster.MagmaCube
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.extentions.serverMaxHealth
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
+
+//~ if >= 26.2 'monster.MagmaCube' -> 'monster.cubemob.MagmaCube'
+import net.minecraft.world.entity.monster.MagmaCube
 
 @Priority
 object KuudraAPI {

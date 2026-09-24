@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigGroupElementData
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.animation.data.AnimatableFloat
 import foo.starred.cascade.animation.enums.CascadeAnimations
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
@@ -33,7 +33,7 @@ object ConfigGroupElement {
             }
         }.apply {
             location = ResourceAPI.identify("textures/gui/chevron.png")
-            color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -12f, 0f)
             size = FixedSizeConstraint(8f, 8f)
 

@@ -9,10 +9,11 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.modules.Module
-//~ if >= 26.3 'EnderMan' -> 'Enderman'
-import net.minecraft.world.entity.monster.EnderMan
 import net.minecraft.world.entity.monster.Guardian
 import kotlin.math.abs
+
+//~ if >= 26.3 'EnderMan' -> 'Enderman'
+import net.minecraft.world.entity.monster.EnderMan
 
 @Load
 @OnlyIn(islands = [SkyBlockIsland.THE_END])
