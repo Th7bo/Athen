@@ -1,7 +1,7 @@
 package foo.starred.athen.modules.impl.kuudra
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
@@ -32,7 +32,7 @@ object KuudraQueuer : Module(
             partyRegex.findOrNull(stripped, "message") { (message) ->
                 if (message == "!dt") bool = true
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<KuudraEvent.End.Success> {
             if (PartyAPI.leader?.name?.equals(name) ?: false) return@on

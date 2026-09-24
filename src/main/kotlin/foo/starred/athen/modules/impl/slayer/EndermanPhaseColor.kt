@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.world.entity.Entity
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.THE_END])
+@OnlyIn(islands = [PresetSkyBlockIsland.THE_END])
 object EndermanPhaseColor : Module(
     "Enderman phase color",
     "Changes the color of the boss based on it's current phase.",

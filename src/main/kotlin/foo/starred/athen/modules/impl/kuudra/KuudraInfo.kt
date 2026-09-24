@@ -4,7 +4,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraTier
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
@@ -25,7 +25,7 @@ import net.minecraft.world.entity.LivingEntity
 import kotlin.math.abs
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object KuudraInfo : Module(
     "Kuudra info",
     "Displays information about kuudra and highlights him, nicely :3",

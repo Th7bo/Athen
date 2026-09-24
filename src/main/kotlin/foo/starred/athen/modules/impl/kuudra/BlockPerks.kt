@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.kuudra
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
@@ -11,7 +11,7 @@ import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.stripped
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object BlockPerks : Module(
     "Block perks",
     "Blocks certain perks in the kuudra perk gui so you don't click them!",

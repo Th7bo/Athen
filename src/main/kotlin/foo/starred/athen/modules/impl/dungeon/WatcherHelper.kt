@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.dungeon
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.dungeon.DungeonAPI
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
@@ -31,7 +31,7 @@ import net.minecraft.sounds.SoundEvent
 import kotlin.math.abs
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.THE_CATACOMBS])
+@OnlyIn(islands = [PresetSkyBlockIsland.THE_CATACOMBS])
 object WatcherHelper : Module(
     "Watcher helper",
     "Shows information about the watcher's speed and movements.",

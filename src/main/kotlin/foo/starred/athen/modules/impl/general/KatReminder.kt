@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.general
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.scheduling.Scheduler
@@ -123,7 +123,7 @@ object KatReminder : Module(
                 time = System.currentTimeMillis() + (s * 1000L)
                 fn()
             } ?: return@on
-        }.runWhen(SkyBlockIsland.HUB.inIsland)
+        }.runWhen(PresetSkyBlockIsland.HUB.state)
     }
 
     private fun fn() {

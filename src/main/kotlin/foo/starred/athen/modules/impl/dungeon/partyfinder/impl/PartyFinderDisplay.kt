@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.dungeon.partyfinder.impl
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.hours
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.DUNGEON_HUB])
+@OnlyIn(islands = [PresetSkyBlockIsland.DUNGEON_HUB])
 object PartyFinderDisplay : Module(
     "Party finder display",
     "Displays stats of party finder groups in the menu.",

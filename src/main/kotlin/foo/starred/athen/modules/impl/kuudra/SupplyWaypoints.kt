@@ -7,7 +7,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.kuudra.enums.KuudraSupply
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractBeam
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFilledBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
@@ -24,7 +24,7 @@ import foo.starred.snowbird.utils.toDurationFromMillis
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object SupplyWaypoints : Module(
     "Supply waypoints",
     "Waypoints for supplies, pickup and drop-off spots.",
