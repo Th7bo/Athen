@@ -3,9 +3,9 @@ package foo.starred.athen.config.ui.pages.module.elements.input
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigTextInputElementData
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputExpandElement.Companion.configExpandButtonElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputPreviewElement.Companion.configPreviewButtonElement
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -69,33 +69,33 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
         private set
 
     init {
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
         radius = CascadeGeometricRadius(4f)
 
         var outline: OutlineEffect
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         }.also { outline = it })
 
         on<FocusEvent.Gain> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Lavender.argb.brighten(0.6f))
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+            outline.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.6f))
         }
 
         on<FocusEvent.Lose> {
-            animateColor(CascadeGeometricColor(if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            animateColor(CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb), 0.15f)
+            outline.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
         }
 
         on<MouseEvent.Move.Enter> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
         }
 
         on<MouseEvent.Move.Exit> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
         }
 
         on<MouseEvent.Press> {
@@ -296,14 +296,14 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
                 val i1 = max(_selection0, _selection1)
                 val width = i1 - i0
 
-                graphics.rectangle(x1 + i0, y1, width, height0, Catppuccin.Mocha.Base.argb.withAlpha(0.5f))
+                graphics.rectangle(x1 + i0, y1, width, height0, MochaColorScheme.Base.argb.withAlpha(0.5f))
             }
 
             val bool1 = value.isEmpty() && bool0
-            font.extract(graphics, if (bool1) placeholder else value, x1, y1, if (bool1) Catppuccin.Mocha.Overlay0.argb else Catppuccin.Mocha.Text.argb, false)
+            font.extract(graphics, if (bool1) placeholder else value, x1, y1, if (bool1) MochaColorScheme.Overlay0.argb else MochaColorScheme.Text.argb, false)
 
             if (!bool0 && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, Catppuccin.Mocha.Lavender.argb, false)
+                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, MochaColorScheme.Lavender.argb, false)
             }
         }
     }

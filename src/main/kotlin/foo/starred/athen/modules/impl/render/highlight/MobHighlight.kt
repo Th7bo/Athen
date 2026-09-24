@@ -10,6 +10,7 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.InputEvent
 import foo.starred.athen.events.LocationEvent
@@ -17,7 +18,6 @@ import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.render.highlight.ui.MobHighlightGUI
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.name
 import foo.starred.athen.utils.render.renderBoundingBox
@@ -148,7 +148,7 @@ object MobHighlight : Module(
 
             "highlight" / "help" {
                 val a = ("<dark_gray>" + ("-".repeat())).parse()
-                val c = Catppuccin.Mocha.Green.argb
+                val c = MochaColorScheme.Green.argb
 
                 a.lie()
                 ("<red>" + ("Athen Higlights".center())).parse().lie()

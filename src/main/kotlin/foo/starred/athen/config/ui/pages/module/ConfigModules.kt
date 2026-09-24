@@ -1,13 +1,13 @@
 package foo.starred.athen.config.ui.pages.module
 
 import foo.starred.athen.api.storage.ResourceAPI
-import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.feature.ConfigFeatureData
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
 import foo.starred.athen.config.ui.pages.main.ConfigCategories
 import foo.starred.athen.config.ui.pages.main.ConfigInfoPage
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
@@ -67,7 +67,7 @@ object ConfigModules {
                 radius = CascadeGeometricRadius(4f)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                     inset = false
                 })
 
@@ -81,10 +81,10 @@ object ConfigModules {
                         val enabled = ConfigManager.get(v.configKey) as? Boolean ?: (v.default as? Boolean ?: false)
 
                         animateColor(CascadeGeometricColor(when {
-                            enabled && bool -> Catppuccin.Mocha.Lavender.argb.brighten(0.65f)
-                            enabled -> Catppuccin.Mocha.Lavender.argb.brighten(0.55f)
-                            bool -> Catppuccin.Mocha.Surface0.argb
-                            else -> Catppuccin.Mocha.Base.argb
+                            enabled && bool -> MochaColorScheme.Lavender.argb.brighten(0.65f)
+                            enabled -> MochaColorScheme.Lavender.argb.brighten(0.55f)
+                            bool -> MochaColorScheme.Surface0.argb
+                            else -> MochaColorScheme.Base.argb
                         }), 0.15f)
                     }
 
@@ -116,7 +116,7 @@ object ConfigModules {
                         wrapper = CascadeTextWrapper
                         text = CascadeFonts.sans.truncate(v.name, 12f, 115f).parse()
                         textSize = 12f
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                         position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 10f, 0f)
                     })
                 })
@@ -124,7 +124,7 @@ object ConfigModules {
                 adopt(rectangle {
                     position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -27f, 0f)
                     size = FixedSizeConstraint(1f, 28f)
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                     interact = false
                 })
 
@@ -132,11 +132,11 @@ object ConfigModules {
                     position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0f, 0f)
                     size = FixedSizeConstraint(27f, 28f)
                     radius = CascadeGeometricRadius(0f, 4f, 0f, 4f)
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
                     adopt(image {
                         location = ResourceAPI.identify("textures/gui/gear.png")
-                        color = CascadeGeometricColor(if (options) Catppuccin.Mocha.Text.argb else Catppuccin.Mocha.Surface1.argb)
+                        color = CascadeGeometricColor(if (options) MochaColorScheme.Text.argb else MochaColorScheme.Surface1.argb)
                         position = CenterPositionConstraint()
                         size = FixedSizeConstraint(14f, 14f)
                         interact = false
@@ -144,11 +144,11 @@ object ConfigModules {
 
                     if (!options) return@roundedRectangle
                     on<MouseEvent.Move.Enter> {
-                        animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                        animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
                     }
 
                     on<MouseEvent.Move.Exit> {
-                        animateColor(CascadeGeometricColor(Catppuccin.Mocha.Base.argb), 0.15f)
+                        animateColor(CascadeGeometricColor(MochaColorScheme.Base.argb), 0.15f)
                     }
 
                     on<MouseEvent.Press> {
@@ -181,7 +181,7 @@ object ConfigModules {
                 val parent = parent ?: return
                 val scroll = abs(ConfigUI.right.scroll)
                 val remaining = (max - scroll).coerceAtLeast(0f)
-                val base = Catppuccin.Mocha.Crust.argb
+                val base = MochaColorScheme.Crust.argb
                 val x = parent.x.toInt()
                 val y = parent.y.toInt()
                 val w = parent.width.toInt()

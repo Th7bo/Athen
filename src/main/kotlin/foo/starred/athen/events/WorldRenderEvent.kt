@@ -3,10 +3,11 @@ package foo.starred.athen.events
 import com.mojang.blaze3d.vertex.PoseStack
 import foo.starred.athen.events.core.CancellableEvent
 import foo.starred.athen.events.core.Event
-//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.state.level.CameraRenderState
+
+//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
+import net.minecraft.client.renderer.MultiBufferSource
 
 sealed class WorldRenderEvent {
     class Entity(

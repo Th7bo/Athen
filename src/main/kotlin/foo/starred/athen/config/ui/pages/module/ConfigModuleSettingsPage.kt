@@ -5,6 +5,7 @@ import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.base.IConfigElementData
 import foo.starred.athen.config.data.feature.ConfigFeatureData
 import foo.starred.athen.config.data.impl.*
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
 import foo.starred.athen.config.ui.pages.module.elements.button.ConfigButtonElement
 import foo.starred.athen.config.ui.pages.module.elements.color.ConfigColorPickerElement
@@ -18,7 +19,6 @@ import foo.starred.athen.config.ui.pages.module.elements.slider.ConfigSliderElem
 import foo.starred.athen.config.ui.pages.module.elements.texts.ConfigInformationElement
 import foo.starred.athen.config.ui.pages.module.elements.texts.ConfigVariablesElement
 import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.animation.enums.CascadeAnimations
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
@@ -63,20 +63,20 @@ object ConfigModuleSettingsPage {
         }.apply {
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.END, -12f, -12f)
             size = FixedSizeConstraint(24f, 24f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
             radius = CascadeGeometricRadius(4f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 inset = false
             })
 
             on<MouseEvent.Move.Enter> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
             }
 
             on<MouseEvent.Move.Exit> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb), 0.15f)
+                animateColor(CascadeGeometricColor(MochaColorScheme.Mantle.argb), 0.15f)
             }
 
             on<MouseEvent.Press> {
@@ -92,7 +92,7 @@ object ConfigModuleSettingsPage {
                 wrapper = CascadeTextWrapper
                 text = "×".literal()
                 textSize = 12f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
             })
         }
@@ -133,11 +133,11 @@ object ConfigModuleSettingsPage {
         return roundedRectangle {
             position = if (above == null) FixedPositionConstraint(14f, 14f) else AnchorPositionConstraint({ above }, PositionAnchor.BELOW, 0f, 14f)
             size = MixedSizeConstraint(FixedSizeConstraint(482f, 0f), FlexibleSizeConstraint(0f))
-            color = CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
             radius = CascadeGeometricRadius(6f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 inset = false
             })
 
@@ -161,7 +161,7 @@ object ConfigModuleSettingsPage {
                     wrapper = CascadeTextWrapper
                     text = first.name.parse()
                     textSize = 10f
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                     position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 10f, 0f)
                 })
 
@@ -268,7 +268,7 @@ object ConfigModuleSettingsPage {
                 wrapper = CascadeTextWrapper
                 text = config.name.parse()
                 textSize = 10f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 10f, 0f)
             })
 

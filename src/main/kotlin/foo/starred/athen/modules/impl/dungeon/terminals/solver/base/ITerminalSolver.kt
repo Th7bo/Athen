@@ -3,11 +3,11 @@ package foo.starred.athen.modules.impl.dungeon.terminals.solver.base
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.dungeon.terminals.TerminalType
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.TerminalSimulator
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.base.ITerminalSim
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.graphics.extensions.blur.blur
 import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.rectangle.rounded.roundedRectangle
@@ -174,7 +174,7 @@ abstract class ITerminalSolver(val type: TerminalType) {
         hollowRectangle(x1, y1, width1, height1, thickness, TerminalSolvers.`ui$border`, radius, true, pose, scissor)
 
         val size = 11f * scale
-        font.extract(this, title, (x + width / 2) * scale - font.width(title, size) / 2, (y + height / 2) * scale - (font.regular.height * size) / 2, Mocha.Text.rgba, false, size)
+        font.extract(this, title, (x + width / 2) * scale - font.width(title, size) / 2, (y + height / 2) * scale - (font.regular.height * size) / 2, MochaColorScheme.Text.rgba, false, size)
     }
 
     private fun grid(): Grid {

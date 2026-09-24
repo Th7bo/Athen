@@ -2,9 +2,9 @@ package foo.starred.athen.config.ui.pages.main
 
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI.left
 import foo.starred.athen.config.ui.pages.module.ConfigModules
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
@@ -45,14 +45,14 @@ object ConfigCategories {
                         wrapper = CascadeTextWrapper
                         text = "Categories".literal()
                         textSize = 9f
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                         position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 2f, 0f)
                     })
 
                     adopt(rectangle {
                         position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -2f, 0f)
                         size = FixedSizeConstraint(74f, 1f)
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                     })
                 }
             }
@@ -62,7 +62,7 @@ object ConfigCategories {
             last = roundedRectangle {
                 position = if (last1 == null) FixedPositionConstraint(8f, 8f) else if (a == ConfigCategory.GENERAL) AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 6f) else AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 4f)
                 size = FixedSizeConstraint(124f, 22f)
-                color = CascadeGeometricColor(if (bool) Catppuccin.Mocha.Surface0.argb else Catppuccin.Mocha.Mantle.argb)
+                color = CascadeGeometricColor(if (bool) MochaColorScheme.Surface0.argb else MochaColorScheme.Mantle.argb)
                 radius = CascadeGeometricRadius(4f)
 
                 on<MouseEvent.Press> {
@@ -86,12 +86,12 @@ object ConfigCategories {
 
                 on<MouseEvent.Move.Enter> {
                     if (active == a) return@on
-                    animateColor(CascadeGeometricColor(Catppuccin.Mocha.Base.argb), 0.15f)
+                    animateColor(CascadeGeometricColor(MochaColorScheme.Base.argb), 0.15f)
                 }
 
                 on<MouseEvent.Move.Exit> {
                     if (active == a) return@on
-                    animateColor(CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb), 0.15f)
+                    animateColor(CascadeGeometricColor(MochaColorScheme.Mantle.argb), 0.15f)
                 }
 
                 attach(left)
@@ -99,7 +99,7 @@ object ConfigCategories {
                     wrapper = CascadeTextWrapper
                     text = a.displayName.literal()
                     textSize = 12f
-                    color = CascadeGeometricColor(if (bool) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Subtext0.argb)
+                    color = CascadeGeometricColor(if (bool) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
                     position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8f, 0f)
                 })
             }

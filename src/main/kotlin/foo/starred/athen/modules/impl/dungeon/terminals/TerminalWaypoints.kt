@@ -6,11 +6,11 @@ import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractStyledBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.markerAABB
 import foo.starred.snowbird.api.data.Observable
 import net.minecraft.core.BlockPos
@@ -71,8 +71,8 @@ object TerminalWaypoints : Module(
     private val showText by config.switch("Render text", true)
     private val depthTest by config.switch("Depth test", false)
     private val highlightStyle by config.selector("Highlight style", listOf("Outline", "Filled", "Both"))
-    private val terminalColor by config.colorPicker("Terminal color", Catppuccin.Mocha.Blue.argb)
-    private val leverColor by config.colorPicker("Lever color", Catppuccin.Mocha.Yellow.argb)
+    private val terminalColor by config.colorPicker("Terminal color", MochaColorScheme.Blue.argb)
+    private val leverColor by config.colorPicker("Lever color", MochaColorScheme.Yellow.argb)
 
     private val section1 by config.group("Section 1")
     private val section2 by config.group("Section 2")

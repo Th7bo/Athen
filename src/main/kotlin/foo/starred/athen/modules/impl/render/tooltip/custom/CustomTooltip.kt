@@ -7,12 +7,12 @@ import foo.starred.athen.accessors.hovered
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.base.TooltipContext
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.impl.CombinedTooltip
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.impl.SeparatedTooltip
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import net.minecraft.client.gui.Font
@@ -49,10 +49,10 @@ object CustomTooltip : Module(
     val border by renderExpandable.switch("Border", true)
     val `border$width` by renderExpandable.slider("Border width", 1, 0, 5)
     val `border$rarity` by renderExpandable.switch("Use rarity color", true)
-    val `border$color` by renderExpandable.colorPicker("Border color", Catppuccin.Mocha.Sky.argb)
+    val `border$color` by renderExpandable.colorPicker("Border color", MochaColorScheme.Sky.argb)
 
     val background by renderExpandable.switch("Background", true)
-    val `background$color` by renderExpandable.colorPicker("Background color", Catppuccin.Mocha.Surface0.withAlpha(0.9f))
+    val `background$color` by renderExpandable.colorPicker("Background color", MochaColorScheme.Surface0.alpha(0.9f))
 
     val onlyName by renderExpandable.keybind("Only name toggle")
     val `onlyName$unused` by renderExpandable.information("Toggling only name mode will hide the actual tooltip and show only the name when it's toggled on.")

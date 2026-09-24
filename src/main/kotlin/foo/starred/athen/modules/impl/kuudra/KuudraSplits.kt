@@ -17,10 +17,10 @@ import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.snowbird.api.lie
@@ -192,7 +192,7 @@ object KuudraSplits : Module(
         if (this == Long.MAX_VALUE) return ""
 
         val f = this < 0
-        val color = if (f) "<${Catppuccin.Mocha.Green.argb}>" else "<${Catppuccin.Mocha.Peach.argb}>"
+        val color = if (f) "<${MochaColorScheme.Green.argb}>" else "<${MochaColorScheme.Peach.argb}>"
         val abs = abs(this).toDurationFromMillis(secondsDecimals = 1)
 
         return " $color[${if (f) "-" else "+"}$abs]"

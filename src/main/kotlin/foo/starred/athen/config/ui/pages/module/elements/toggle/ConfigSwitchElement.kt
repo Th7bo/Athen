@@ -3,7 +3,7 @@ package foo.starred.athen.config.ui.pages.module.elements.toggle
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSwitchElementData
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
 import foo.starred.cascade.animation.data.AnimatableFloat
 import foo.starred.cascade.animation.enums.CascadeAnimations
@@ -28,10 +28,10 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
         position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
         size = FixedSizeConstraint(28f, 14f)
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         })
 
@@ -45,12 +45,12 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
 
         on<MouseEvent.Move.Enter> {
             if (active) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
         }
 
         on<MouseEvent.Move.Exit> {
             if (active) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
         }
 
         adopt(roundedRectangle {
@@ -60,7 +60,7 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
             }
             size = FixedSizeConstraint(10f, 10f)
             radius = CascadeGeometricRadius(4f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
             interact = false
         })
     }
@@ -70,13 +70,13 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
         active = state
 
         if (animated) {
-            animateColor(CascadeGeometricColor(if (active) Catppuccin.Mocha.Lavender.argb.brighten(0.75f) else Catppuccin.Mocha.Surface0.argb), 0.25f, CascadeAnimations.EASE_OUT)
+            animateColor(CascadeGeometricColor(if (active) MochaColorScheme.Lavender.argb.brighten(0.75f) else MochaColorScheme.Surface0.argb), 0.25f, CascadeAnimations.EASE_OUT)
             val manager = root.animations
             if (manager != null) knob.animate(manager, if (active) 16f else 2f, 0.25f, CascadeAnimations.EASE_OUT) else knob.snap(if (active) 16f else 2f)
             return
         }
 
-        color = CascadeGeometricColor(if (active) Catppuccin.Mocha.Lavender.argb.brighten(0.75f) else Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(if (active) MochaColorScheme.Lavender.argb.brighten(0.75f) else MochaColorScheme.Surface0.argb)
         knob.snap(if (active) 16f else 2f)
     }
 

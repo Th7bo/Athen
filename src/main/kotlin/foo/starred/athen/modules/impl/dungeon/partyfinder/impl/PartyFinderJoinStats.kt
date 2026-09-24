@@ -11,9 +11,9 @@ import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.*
 import foo.starred.snowbird.api.scheduling.scheduler.extensions.serverTicks
@@ -152,9 +152,9 @@ object PartyFinderJoinStats : Module(
         val armor = inventory?.armor?.associateBy { it.i }
 
         val divider = ("<dark_gray><strikethrough>" + "-".repeat()).parse()
-        val main = Catppuccin.Mocha.Green.argb
-        val second = Catppuccin.Mocha.Lavender.argb
-        val third = Catppuccin.Mocha.Red.argb
+        val main = MochaColorScheme.Green.argb
+        val second = MochaColorScheme.Lavender.argb
+        val third = MochaColorScheme.Red.argb
 
         divider.lie()
         "Stats for <aqua>$name<white>:".mod()

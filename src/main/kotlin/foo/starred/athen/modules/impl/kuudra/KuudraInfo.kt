@@ -10,12 +10,12 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.athen.utils.render.renderPos
@@ -33,7 +33,7 @@ object KuudraInfo : Module(
 ) {
     private val highlight by config.switch("Highlight", true)
     private val lineWidth by config.slider("Line width", 2f, 1f, 10f)
-    private val color by config.colorPicker("Color", Catppuccin.Mocha.Peach.argb)
+    private val color by config.colorPicker("Color", MochaColorScheme.Peach.argb)
     private val hpOnKuudra by config.switch("Draw hp on boss", true)
 
     private var display: String? = null

@@ -9,9 +9,9 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.*
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -137,13 +137,13 @@ object VisualWords : Module(
         divider.lie()
         "§bVisual Words §7[Athen]".center().lie()
         divider.lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen visuals add [word] [word, supports space]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen visuals set [word] [word, supports space]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen visuals remove [word]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/athen visuals list".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals add [word] [word, supports space]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals set [word] [word, supports space]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals remove [word]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals list".parse().lie()
         divider.lie()
         " <dark_gray>• <r>The text supports the format: ".parse().append("<hex><bold>te</bold>xt").lie()
-        " <hover:<${Catppuccin.Mocha.Mauve.argb}>Click to join!><click:url:${ModWrapper.discord}><dark_gray>• <r>Want to know more about formats? Ask in the <${Catppuccin.Mocha.Mauve.argb}>discord<r>!".parse().lie()
+        " <hover:<${MochaColorScheme.Mauve.argb}>Click to join!><click:url:${ModWrapper.discord}><dark_gray>• <r>Want to know more about formats? Ask in the <${MochaColorScheme.Mauve.argb}>discord<r>!".parse().lie()
         divider.lie()
     }
 

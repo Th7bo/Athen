@@ -7,11 +7,11 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.graphics.extensions.circle.circle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
 import foo.starred.snowbird.api.data.Observable
@@ -31,8 +31,8 @@ object TerminalClick : Module(
 
     private val radius by config.slider("Radius", 4, 1, 10)
     private val thickness by config.slider("Thickness", 2, 1, 10)
-    private val `color$mouse$left` by config.colorPicker("Left mouse color", Catppuccin.Mocha.Lavender.argb)
-    private val `color$mouse$right` by config.colorPicker("Right mouse color", Catppuccin.Mocha.Peach.argb)
+    private val `color$mouse$left` by config.colorPicker("Left mouse color", MochaColorScheme.Lavender.argb)
+    private val `color$mouse$right` by config.colorPicker("Right mouse color", MochaColorScheme.Peach.argb)
 
     init {
         on<GuiEvent.Input.Mouse.Press> {

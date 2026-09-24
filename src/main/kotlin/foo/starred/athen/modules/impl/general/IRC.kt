@@ -9,11 +9,11 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.network.websocket.SocketPacket
 import foo.starred.athen.api.network.websocket.base.IWebSocket
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.kommand.IKommand
 import foo.starred.kommand.scopes.KommandCommandScope
@@ -233,7 +233,7 @@ object IRC : Module(
 
     private fun help() {
         val a = ("<dark_gray>" + ("-".repeat())).parse()
-        val c = Catppuccin.Mocha.Green.argb
+        val c = MochaColorScheme.Green.argb
 
         a.lie()
         ("<red>" + ("Athen IRC".center())).parse().lie()

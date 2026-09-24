@@ -3,7 +3,7 @@
 package foo.starred.athen.api.rendering.ui.components.impl
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.events.impl.FocusEvent
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
@@ -36,8 +36,8 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
     override var color: CascadeGeometricColor = CascadeGeometricColor.WHITE
 
     var textSize: Float = 8.5f
-    var color0: Int = Mocha.Text.argb
-    var color1: Int = Mocha.Lavender.argb
+    var color0: Int = MochaColorScheme.Text.argb
+    var color1: Int = MochaColorScheme.Lavender.argb
     var placeholder: String = "..."
 
     var editing: Boolean = false
@@ -289,14 +289,14 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
             if (editing && selected) {
                 val i0 = min(_selection0, _selection1)
                 val i1 = max(_selection0, _selection1)
-                graphics.rectangle(x1 + i0, y1, i1 - i0, height1, Mocha.Lavender.argb.withAlpha(0.35f))
+                graphics.rectangle(x1 + i0, y1, i1 - i0, height1, MochaColorScheme.Lavender.argb.withAlpha(0.35f))
             }
 
             val color = if (editing) color1 else if (hovered) color1 else color0
             font.extract(graphics, text, x1, y1, color, false, textSize)
 
             if (editing && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, Mocha.Lavender.argb, false, textSize)
+                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, MochaColorScheme.Lavender.argb, false, textSize)
             }
         }
     }

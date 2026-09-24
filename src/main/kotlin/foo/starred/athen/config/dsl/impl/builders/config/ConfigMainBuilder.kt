@@ -1,9 +1,9 @@
 package foo.starred.athen.config.dsl.impl.builders.config
 
 import foo.starred.athen.Athen
-import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.dsl.base.ConfigScope
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.data.Observable
 

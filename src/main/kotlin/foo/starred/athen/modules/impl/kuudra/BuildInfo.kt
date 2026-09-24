@@ -14,11 +14,11 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.render.fcs
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert
@@ -31,7 +31,7 @@ object BuildInfo : Module(
     ConfigCategory.KUUDRA
 ) {
     private val waypoints = config.switch("Unfinished build waypoint", true).unique("waypoints")
-    private val color by config.colorPicker("Color", Catppuccin.Mocha.Red.argb)
+    private val color by config.colorPicker("Color", MochaColorScheme.Red.argb)
     private val stun by config.switch("Stun notification", true)
     private val `stun$percent` by config.slider("Notify at", 90, 1, 100, "%")
     private val `stun$message` by config.input("Notification message", "<red>Stun!")

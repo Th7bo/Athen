@@ -10,12 +10,12 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.guiClick
 import foo.starred.cascade.graphics.extensions.stroke.stroke
@@ -51,21 +51,21 @@ object SlotBinds : Module(
 
     val m0 = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
     val m1 = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
-    val m2 = Int2IntOpenHashMap().apply { defaultReturnValue(Catppuccin.Mocha.Mauve.argb) }
+    val m2 = Int2IntOpenHashMap().apply { defaultReturnValue(MochaColorScheme.Mauve.argb) }
     val map0 = mutableMapOf<String, Int2IntOpenHashMap>()
     val map1 = mutableMapOf<String, Int2IntOpenHashMap>()
 
     val palette = intArrayOf(
-        Catppuccin.Mocha.Mauve.argb,
-        Catppuccin.Mocha.Sapphire.argb,
-        Catppuccin.Mocha.Green.argb,
-        Catppuccin.Mocha.Peach.argb,
-        Catppuccin.Mocha.Pink.argb,
-        Catppuccin.Mocha.Teal.argb,
-        Catppuccin.Mocha.Red.argb,
-        Catppuccin.Mocha.Yellow.argb,
-        Catppuccin.Mocha.Sky.argb,
-        Catppuccin.Mocha.Lavender.argb,
+        MochaColorScheme.Mauve.argb,
+        MochaColorScheme.Sapphire.argb,
+        MochaColorScheme.Green.argb,
+        MochaColorScheme.Peach.argb,
+        MochaColorScheme.Pink.argb,
+        MochaColorScheme.Teal.argb,
+        MochaColorScheme.Red.argb,
+        MochaColorScheme.Yellow.argb,
+        MochaColorScheme.Sky.argb,
+        MochaColorScheme.Lavender.argb,
     )
 
     init {

@@ -3,9 +3,8 @@
 package foo.starred.athen.modules.impl.render.highlight.ui
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.highlight.MobHighlight
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.*
@@ -15,6 +14,7 @@ import foo.starred.cascade.constraints.impl.size.MixedSizeConstraint
 import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
@@ -72,11 +72,11 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         val side0 = rectangle {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -91,11 +91,11 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         val right0 = rectangle {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -110,11 +110,11 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         footer = rectangle {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -134,10 +134,10 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         `highlight$add` = rectangle {
             size = FixedSizeConstraint(120, 20)
             position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
             })
 
             on<MouseEvent.Press> {
@@ -149,17 +149,17 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "+ Add Highlight".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             })
@@ -168,10 +168,10 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         `highlight$edit` = rectangle {
             size = FixedSizeConstraint(70, 20)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -82)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             }.also { `highlight$edit$outline` = it })
 
             on<MouseEvent.Press> {
@@ -184,17 +184,17 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Edit".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             }.also { `highlight$text$edit` = it })
@@ -203,10 +203,10 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         `highlight$delete` = rectangle {
             size = FixedSizeConstraint(70, 20)
             position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             }.also { `highlight$delete$outline` = it })
 
             on<MouseEvent.Press> {
@@ -231,17 +231,17 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Delete".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             }.also { `highlight$text$delete` = it })
@@ -283,7 +283,7 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 20))
                 position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, cy)
-                color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -301,11 +301,11 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
                 }
 
                 on<MouseEvent.Move.Enter> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Surface0.withAlpha(0.5f))
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.5f))
                 }
 
                 on<MouseEvent.Move.Exit> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Base.argb)
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 }
 
                 attach(left)
@@ -313,7 +313,7 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
 
             val label = text {
                 text = v.literal()
-                color = CascadeGeometricColor(if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 6)
                 attach(row)
             }
@@ -327,8 +327,8 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         val entry = rows0[key] ?: return
         val b0 = category == key
 
-        entry.row.color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
-        entry.label.color = CascadeGeometricColor(if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        entry.row.color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
+        entry.label.color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
     }
 
     private fun list() {
@@ -339,7 +339,7 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         if (total == 0) {
             text {
                 text = (if (category) "No typed highlights" else "No named highlights").literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 attach(right)
             }
@@ -370,10 +370,10 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 28))
                 position = FixedPositionConstraint(0, cy)
-                color = CascadeGeometricColor(if (bool) Mocha.Surface1.argb else Mocha.Surface0.argb)
+                color = CascadeGeometricColor(if (bool) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(if (bool) Mocha.Lavender.argb else Mocha.Overlay0.argb)
+                    color = CascadeGeometricColor(if (bool) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
                 }.also { outline = it })
 
                 on<MouseEvent.Press> {
@@ -401,7 +401,7 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
                 interact = false
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Surface2.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 })
 
                 attach(row)
@@ -409,7 +409,7 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
 
             text {
                 text = label.literal()
-                color = CascadeGeometricColor(Mocha.Text.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                 position = MixedPositionConstraint(AnchorPositionConstraint({ swatch }, PositionAnchor.RIGHT, 8), CenterPositionConstraint())
                 attach(row)
             }
@@ -420,17 +420,17 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
 
                 size = FixedSizeConstraint(width, 14)
                 position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8)
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Crust.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Crust.argb)
                 })
 
                 attach(row)
                 adopt(text {
                     text = hp.literal()
-                    color = CascadeGeometricColor(if (max == -1) Mocha.Subtext0.argb else Mocha.Peach.argb)
+                    color = CascadeGeometricColor(if (max == -1) MochaColorScheme.Subtext0.argb else MochaColorScheme.Peach.argb)
                     position = CenterPositionConstraint()
                 })
             }
@@ -444,21 +444,21 @@ object MobHighlightGUI : CascadeScreen("Mob Highlights [Athen]", CascadeGeometri
         val row = rows1[index] ?: return
         val bool = entry == index
 
-        row.row.color = CascadeGeometricColor(if (bool) Mocha.Surface1.argb else Mocha.Surface0.argb)
-        row.outline.color = CascadeGeometricColor(if (bool) Mocha.Lavender.argb else Mocha.Overlay0.argb)
+        row.row.color = CascadeGeometricColor(if (bool) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        row.outline.color = CascadeGeometricColor(if (bool) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
     }
 
     private fun footer() {
         val bool0 = entry != null
         val bool1 = deleting != null
 
-        `highlight$edit`.color = CascadeGeometricColor(if (bool0) Mocha.Lavender.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `highlight$edit$outline`.color = CascadeGeometricColor(if (bool0) Mocha.Lavender.argb.brighten(0.5f) else Mocha.Surface0.argb)
-        `highlight$text$edit`.color = CascadeGeometricColor(if (bool0) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `highlight$edit`.color = CascadeGeometricColor(if (bool0) MochaColorScheme.Lavender.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `highlight$edit$outline`.color = CascadeGeometricColor(if (bool0) MochaColorScheme.Lavender.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `highlight$text$edit`.color = CascadeGeometricColor(if (bool0) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
 
-        `highlight$delete`.color = CascadeGeometricColor(if (!bool0) Mocha.Surface1.argb else if (bool1) Mocha.Red.argb.brighten(0.9f) else Mocha.Red.argb.brighten(0.8f))
-        `highlight$delete$outline`.color = CascadeGeometricColor(if (!bool0) Mocha.Surface0.argb else Mocha.Red.argb.brighten(0.5f))
-        `highlight$text$delete`.color = CascadeGeometricColor(if (bool0) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `highlight$delete`.color = CascadeGeometricColor(if (!bool0) MochaColorScheme.Surface1.argb else if (bool1) MochaColorScheme.Red.argb.brighten(0.9f) else MochaColorScheme.Red.argb.brighten(0.8f))
+        `highlight$delete$outline`.color = CascadeGeometricColor(if (!bool0) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
+        `highlight$text$delete`.color = CascadeGeometricColor(if (bool0) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
         `highlight$text$delete`.text = (if (bool1) "✔" else "Delete").literal()
     }
 }

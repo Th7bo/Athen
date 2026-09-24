@@ -3,11 +3,11 @@
 package foo.starred.athen.modules.impl.render.radial.ui.components
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputElement.Companion.configInputElement
 import foo.starred.athen.modules.impl.render.radial.actions.IAction
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialEditor
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FillSizeConstraint
@@ -55,11 +55,11 @@ class RadialForm(mid: ContainerPrimitive) {
         val main = rectangle {
             size = FillSizeConstraint()
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(mid)
@@ -68,14 +68,14 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "Edit Slot".literal()
                 textSize = 10.5f
-                color = CascadeGeometricColor(Mocha.Text.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                 position = FixedPositionConstraint(12, 10)
             })
 
             adopt(rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 1))
                 position = FixedPositionConstraint(12, 26)
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                 interact = false
             })
 
@@ -83,7 +83,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "Name".literal()
                 textSize = 9f
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(12, 34)
             })
 
@@ -91,7 +91,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "Item ID".literal()
                 textSize = 9f
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(12, 74)
             })
 
@@ -99,7 +99,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "Action".literal()
                 textSize = 9f
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(12, 114)
             })
         }
@@ -166,11 +166,11 @@ class RadialForm(mid: ContainerPrimitive) {
             list.add(roundedRectangle {
                 size = FixedSizeConstraint(58, 18)
                 position = FixedPositionConstraint(i0 * 62, 0)
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 radius = CascadeGeometricRadius(4f)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 }.also { outlines.add(it) })
 
                 on<MouseEvent.Press> {
@@ -188,7 +188,7 @@ class RadialForm(mid: ContainerPrimitive) {
                     wrapper = CascadeTextWrapper
                     text = act0.name.literal()
                     textSize = 8.5f
-                    color = CascadeGeometricColor(Mocha.Text.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                     position = CenterPositionConstraint()
                 }.also { texts.add(it) })
             })
@@ -205,7 +205,7 @@ class RadialForm(mid: ContainerPrimitive) {
             wrapper = CascadeTextWrapper
             text = "Value".literal()
             textSize = 9f
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
             position = FixedPositionConstraint(0, 0)
 
             attach(box0)
@@ -245,7 +245,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "Texture".literal()
                 textSize = 9f
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(0, 0)
             })
 
@@ -253,7 +253,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "- Run /sbapi inventory".literal()
                 textSize = 8f
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = FixedPositionConstraint(0, 38)
             })
 
@@ -261,7 +261,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "- Hover over the skull you want the texture of".literal()
                 textSize = 8f
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = FixedPositionConstraint(0, 48)
             })
 
@@ -269,7 +269,7 @@ class RadialForm(mid: ContainerPrimitive) {
                 wrapper = CascadeTextWrapper
                 text = "- Press S to copy to clipboard".literal()
                 textSize = 8f
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = FixedPositionConstraint(0, 58)
             })
         }
@@ -308,9 +308,9 @@ class RadialForm(mid: ContainerPrimitive) {
         for ((k, v) in list.withIndex()) {
             val b0 = i1 == (list1.getOrNull(k)?.id ?: continue)
 
-            v.color = CascadeGeometricColor(if (b0) Mocha.Lavender.argb.brighten(0.9f) else Mocha.Surface1.argb)
-            outlines.getOrNull(k)?.color = CascadeGeometricColor(if (b0) Mocha.Lavender.argb.brighten(0.6f) else Mocha.Overlay0.argb)
-            texts.getOrNull(k)?.color = CascadeGeometricColor(if (b0) Mocha.Crust.argb else Mocha.Text.argb)
+            v.color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb.brighten(0.9f) else MochaColorScheme.Surface1.argb)
+            outlines.getOrNull(k)?.color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb.brighten(0.6f) else MochaColorScheme.Overlay0.argb)
+            texts.getOrNull(k)?.color = CascadeGeometricColor(if (b0) MochaColorScheme.Crust.argb else MochaColorScheme.Text.argb)
         }
     }
 

@@ -1,8 +1,8 @@
 package foo.starred.athen.config.ui.pages.module.elements.texts
 
 import foo.starred.athen.config.data.impl.ConfigInformationElementData
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
@@ -22,11 +22,11 @@ class ConfigInformationElement(
     init {
         position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.CENTER)
         size = FixedSizeConstraint(466f, 20f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
         radius = CascadeGeometricRadius(4f)
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         })
 
@@ -34,7 +34,7 @@ class ConfigInformationElement(
             wrapper = CascadeTextWrapper
             text = "<#89B4FA>! <dark_gray>| <#CDD6F4>${config.text}".parse(true)
             textSize = 9.5f
-            color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
             position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 6f, 0f)
         })
 

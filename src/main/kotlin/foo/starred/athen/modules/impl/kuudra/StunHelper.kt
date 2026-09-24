@@ -9,10 +9,10 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.CancellableEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.render.renderPos
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
@@ -35,7 +35,7 @@ object StunHelper : Module(
     private val highlightPod by config.switch("Highlight pods", true)
     private val highlightSpecific by config.switch("Highlight exact block")
     private val pod by config.selector("Exact pod", listOf("Left", "Middle", "Right"))
-    private val boxColor by config.colorPicker("Color", Catppuccin.Mocha.Sapphire.argb)
+    private val boxColor by config.colorPicker("Color", MochaColorScheme.Sapphire.argb)
     private val depthTest by config.switch("Depth test", true)
     private val blockAbility by config.switch("Block pickaxe ability", true)
     private val blockOverride by config.keybind("Block override key")
