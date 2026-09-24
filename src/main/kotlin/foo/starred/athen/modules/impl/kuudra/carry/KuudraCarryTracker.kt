@@ -13,7 +13,7 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -38,7 +38,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 object KuudraCarryTracker : Module(
     "Kuudra carry tracker",
     "Track kuudra carries and display progress.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)

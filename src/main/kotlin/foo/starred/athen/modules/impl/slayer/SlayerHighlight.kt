@@ -7,7 +7,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.slayers.SlayerAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.*
 import foo.starred.athen.modules.Module
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 object SlayerHighlight : Module(
     "Slayer highlights",
     "Highlights the slayer bosses.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val regex = Regex("^(?<attunement>[A-Z]+) ♨(\\d+) \\d\\d:\\d\\d$")
 

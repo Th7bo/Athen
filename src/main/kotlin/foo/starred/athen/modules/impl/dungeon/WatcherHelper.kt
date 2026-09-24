@@ -11,7 +11,7 @@ import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.PacketEvent
@@ -35,7 +35,7 @@ import kotlin.math.abs
 object WatcherHelper : Module(
     "Watcher helper",
     "Shows information about the watcher's speed and movements.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val breakdown by config.switch("Send breakdown", true)
     private val spawnedAll by config.switch("Show alert on all spawned", true)

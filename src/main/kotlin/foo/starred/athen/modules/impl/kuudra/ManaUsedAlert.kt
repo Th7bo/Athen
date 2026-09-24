@@ -4,7 +4,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.client
@@ -17,7 +17,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 object ManaUsedAlert : Module(
     "Mana used alert",
     "Alerts the party when you mana dump!",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val ignore0 by config.switch("Ignore if 0 players", true)
     private val regex = Regex("^Used Extreme Focus! \\((?<int>\\d+) Mana\\)$")

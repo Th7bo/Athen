@@ -10,7 +10,7 @@ import foo.starred.athen.api.profile.data.PlayerProfileStats
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.core.runWhen
@@ -47,7 +47,7 @@ import kotlin.time.Duration.Companion.hours
 object PartyFinderDisplay : Module(
     "Party finder display",
     "Displays stats of party finder groups in the menu.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val stats = config.switch("Show stats").unique("showStats")
     private val stack = config.switch("Party stack size", true).unique("stackSize")

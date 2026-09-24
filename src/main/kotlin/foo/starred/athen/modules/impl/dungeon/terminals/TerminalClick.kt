@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 object TerminalClick : Module(
     "Terminal click",
     "Lines between when you clicked the mouse button in terminals",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private data class Click(val x: Float, val y: Float, val button: Int)
     private val clicks = mutableListOf<Click>()

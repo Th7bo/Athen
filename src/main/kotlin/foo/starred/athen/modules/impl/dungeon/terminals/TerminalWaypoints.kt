@@ -5,7 +5,7 @@ import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractStyledBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -23,7 +23,7 @@ import net.minecraft.world.phys.AABB
 object TerminalWaypoints : Module(
     "Terminal waypoints",
     "Waypoints with terminal, allows for a ton of customisation!",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     // <editor-fold desc = "Brainfuck">
     private sealed class Node(val positions: List<BlockPos>, val defaultClass: DungeonClass, val configIndex: Int, val section: Int) {

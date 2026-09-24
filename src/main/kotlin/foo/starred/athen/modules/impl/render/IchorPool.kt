@@ -7,7 +7,7 @@ import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractStyledCircle
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.WorldRenderEvent
@@ -25,7 +25,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object IchorPool : Module(
     "Ichor pool",
     "Highlights the area on Ichor Pool",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val onlyKuudra by config.switch("Only in Kuudra")
     private val notifyParty by config.switch("Notify party", true)

@@ -6,7 +6,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.accessors.hovered
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.base.TooltipContext
@@ -27,7 +27,7 @@ import tech.thatgravyboat.skyblockapi.api.datatype.getData
 object CustomTooltip : Module(
     "Custom tooltip",
     "Custom tooltip rendering!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     val unused by config.information("This feature does not break any other mod's tooltip changes. It only changes the rendering.")
 

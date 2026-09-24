@@ -8,7 +8,7 @@ import foo.starred.athen.api.kuudra.enums.KuudraTier
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.CancellableEvent
 import foo.starred.athen.modules.Module
@@ -30,7 +30,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object StunHelper : Module(
     "Stun helper",
     "Helper features for stunning in kuudra.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val highlightPod by config.switch("Highlight pods", true)
     private val highlightSpecific by config.switch("Highlight exact block")

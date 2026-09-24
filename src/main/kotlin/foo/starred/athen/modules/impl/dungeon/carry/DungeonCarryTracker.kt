@@ -12,7 +12,7 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -39,7 +39,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 object DungeonCarryTracker : Module(
     "Dungeon carry tracker",
     "Track dungeon carries and display progress.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)

@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.general.keybinds
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.InputEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.general.keybinds.data.CategoryEntry
@@ -17,7 +17,7 @@ import foo.starred.snowbird.api.message
 object Keybinds : Module(
     "Keybinds",
     "Keybinds and shortcuts for various actions.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val keys = mutableSetOf<Int>()
     private val buttons = mutableSetOf<Int>()

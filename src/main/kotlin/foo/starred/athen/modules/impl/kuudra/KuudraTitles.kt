@@ -8,7 +8,7 @@ import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component
 object KuudraTitles : Module(
     "Kuudra titles",
     "Custom alerts and titles for kuudra!",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val supply0 by config.group("Supply titles")
     private val supply by supply0.hud("Supply titles") {

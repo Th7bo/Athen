@@ -8,7 +8,7 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.render.fcs
@@ -24,7 +24,7 @@ import tech.thatgravyboat.skyblockapi.api.area.mining.CommissionsAPI
 object CommissionDisplay : Module(
     "Commission display",
     "Displays your commissions without you having to open the tab menu!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val titleStyle = config.input("General title", "<red>Commissions:").unique("titleStyle")
     private val noneStyle = config.input("None available text", "<red>No commissions available!").unique("noneStyle")

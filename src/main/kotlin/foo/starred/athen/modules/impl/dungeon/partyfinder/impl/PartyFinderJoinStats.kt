@@ -10,7 +10,7 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin
@@ -33,7 +33,7 @@ import kotlin.time.Duration.Companion.hours
 object PartyFinderJoinStats : Module(
     "Party finder join stats",
     "Shows join stats for party finder! Allows you to auto-kick the player.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val stats by config.switch("Stats on join")
 

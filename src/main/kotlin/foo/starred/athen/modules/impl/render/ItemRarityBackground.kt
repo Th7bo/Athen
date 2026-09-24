@@ -7,7 +7,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
@@ -27,7 +27,7 @@ import tech.thatgravyboat.skyblockapi.api.datatype.getData
 object ItemRarityBackground : Module(
     "Item rarity background",
     "Displays a background for the item that's rendering!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val render by config.selector("Render style", listOf("Filled", "Outline",  "Framed", "Circle", "Framed circle"), 2)
     private val mode = config.selector("Render mode", listOf("Everywhere", "Slots"), 1).unique("mode")

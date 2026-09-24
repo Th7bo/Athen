@@ -6,7 +6,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerMini
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.core.runWhen
@@ -21,7 +21,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 object MinibossAlert : Module(
     "Miniboss alert",
     "Shows an alert for you when a miniboss spawns nearby.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val detection = config.selector("Detection type", listOf("Chat based", "Event based"), 1).unique("detection")
     private val _unused by config.information("Chat based detection type only works for your minibosses. Event based detection type works for all minibosses near you.")

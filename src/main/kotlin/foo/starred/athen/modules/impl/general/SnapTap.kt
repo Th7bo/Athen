@@ -1,7 +1,7 @@
 package foo.starred.athen.modules.impl.general
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.InputEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.core.override
@@ -14,7 +14,7 @@ import net.minecraft.client.KeyMapping
 object SnapTap : Module(
     "Snap-Tap",
     "Snap Tap allows you to strafe while continuing to hold the initial key and quickly tapping the opposing key.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val active = HashSet<Int>(4)
     private val pairs = ArrayList<Pair>(4)

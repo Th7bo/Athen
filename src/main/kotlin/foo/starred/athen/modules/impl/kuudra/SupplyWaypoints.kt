@@ -11,7 +11,7 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractBeam
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFilledBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -28,7 +28,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object SupplyWaypoints : Module(
     "Supply waypoints",
     "Waypoints for supplies, pickup and drop-off spots.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val dropOff by config.switch("Drop off", true)
     private val dropOffColor by config.colorPicker("Drop off color", Catppuccin.Mocha.Green.argb)

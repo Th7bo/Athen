@@ -3,14 +3,14 @@
 package foo.starred.athen.modules.impl
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 
 @Load
 object ModSettings : Module(
     "Mod settings",
     "Toggles for a lot of the internal stuff in the mod!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     @JvmStatic
     val disableTickCulling by config.switch("Disable tick culling", true)

@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.dungeon.terminals.simulator
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
@@ -20,7 +20,7 @@ import foo.starred.snowbird.api.data.Observable
 object TerminalSimulator : Module(
     "Terminal simulator",
     "Simulator terminal, terminal simulators?",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org")
     private val _unused0 by config.information("The simulator server IP is optional. You can still do <red>\"/athen simulate terminals\"<r> to simulate.")

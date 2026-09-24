@@ -10,7 +10,7 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
@@ -30,7 +30,7 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 object SlayerStats : Module(
     "Slayer stats",
     "Displays slayer session statistics.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private var `last$type`: SlayerBoss? = null
     private var `last$tier`: SlayerTier? = null

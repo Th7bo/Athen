@@ -11,7 +11,7 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
@@ -28,7 +28,7 @@ import tech.thatgravyboat.skyblockapi.api.profile.party.PartyAPI
 object FreshTools : Module(
     "Fresh tools",
     "Fresh notifier and timer for kuudra.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val alert by config.switch("Show alert", true)
     private val `alert$message` by config.switch("Alert message", true)

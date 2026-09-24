@@ -7,7 +7,7 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.items.ItemAPI.`watch$tooltip`
 import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
@@ -34,7 +34,7 @@ import kotlin.time.toJavaInstant
 object ItemTweaks : Module(
     "Item tweaks",
     "Tweaks to the items that are too small to be individual features.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val cakeRegex = Regex("New Year Cake \\(Year (?<year>\\d+)\\)") // https://regex101.com/r/lMIQJm/1
     private val enchants = hashSetOf("Aqua Affinity", "Depth Strider")

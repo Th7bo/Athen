@@ -11,7 +11,7 @@ import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
@@ -27,7 +27,7 @@ import foo.starred.snowbird.utils.toDuration
 object SlayerTimers : Module(
     "Slayer timers",
     "Kill and spawn timers for slayer bosses.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val style0 by config.input("Spawn style", "Slayer spawned in <yellow>#time<r>.")
     private val _unused0 by config.variables("#time")

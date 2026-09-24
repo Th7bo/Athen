@@ -1,7 +1,7 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack
 object RenderOptimiser :  Module(
     "Render optimiser",
     "Cleans up rendering stuff, and maybe optimizes a bit.",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val _arm by config.switch("Hide player arm")
     private val _effects by config.switch("Hide effects in UI", true)

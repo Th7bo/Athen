@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.data.feature.ConfigFeatureData
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.snowbird.api.data.Observable
 import java.awt.Color
 
@@ -15,7 +16,7 @@ object ConfigManager {
     private val json = JsonStore("config/Config")
 
     val values = mutableMapOf<String, Any>()
-    val features = mutableMapOf<Category, MutableList<ConfigFeatureData>>()
+    val features = mutableMapOf<ConfigCategory, MutableList<ConfigFeatureData>>()
     val states = mutableMapOf<String, Observable<Any>>()
 
     init {
@@ -26,7 +27,7 @@ object ConfigManager {
         }
     }
 
-    fun feature(name: String, description: String, category: Category, configKey: String, default: Any?): ConfigFeatureData {
+    fun feature(name: String, description: String, category: ConfigCategory, configKey: String, default: Any?): ConfigFeatureData {
         val feature = ConfigFeatureData(name, description, configKey, default).also { features.getOrPut(category) { mutableListOf() }.add(it) }
         return feature.also { it.default(configKey, default) }
     }

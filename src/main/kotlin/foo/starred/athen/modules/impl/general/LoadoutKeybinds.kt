@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.general
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.CancellableEvent
 import foo.starred.athen.events.core.runWhen
@@ -26,7 +26,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object LoadoutKeybinds : Module(
     "Loadout keybinds",
     "Keybinds for loadout slots!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val cancelAll by config.switch("Cancel all other clicks")
     private val override by config.keybind("Key override", InputConstants.KEY_LCONTROL)

@@ -8,7 +8,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.items.ItemAPI.`watch$tooltip`
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.ui.themes.Catppuccin.Mocha
@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component
 object MissingEnchants : Module(
     "Missing enchants",
     "Shows missing enchants on the item you hover over.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val keybind by config.keybind("Keybind", InputConstants.KEY_LSHIFT).`watch$tooltip`()
     private val _unused by config.information("You can unbind the keybind to always show.")

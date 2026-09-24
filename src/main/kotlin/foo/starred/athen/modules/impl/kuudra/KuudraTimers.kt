@@ -8,7 +8,7 @@ import foo.starred.athen.api.location.SkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.modules.Module
@@ -21,7 +21,7 @@ import net.minecraft.util.FormattedCharSequence
 object KuudraTimers : Module(
     "Kuudra timers",
     "Timers for various miscellaneous things in Kuudra.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     //<editor-fold desc="Supply timer">
     private var t0 = 0L

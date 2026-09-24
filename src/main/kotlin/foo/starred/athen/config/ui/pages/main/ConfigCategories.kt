@@ -1,7 +1,7 @@
 package foo.starred.athen.config.ui.pages.main
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ui.ConfigUI.left
 import foo.starred.athen.config.ui.pages.module.ConfigModules
 import foo.starred.athen.ui.themes.Catppuccin
@@ -24,18 +24,18 @@ import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.utils.literal
 
 object ConfigCategories {
-    var active: Category = Category.INFO
+    var active: ConfigCategory = ConfigCategory.INFO
         private set
 
     fun fn() {
         left.children.clear()
 
         var last: IPrimitiveElement<*>? = null
-        for (a in Category.entries) {
+        for (a in ConfigCategory.entries) {
             val bool = active == a
             val last0 = last
 
-            if (a == Category.GENERAL) {
+            if (a == ConfigCategory.GENERAL) {
                 last = container {
                     position = AnchorPositionConstraint({ last0!! }, PositionAnchor.BELOW, 0f, 6f)
                     size = FixedSizeConstraint(124f, 10f)
@@ -60,7 +60,7 @@ object ConfigCategories {
             val last1 = last
 
             last = roundedRectangle {
-                position = if (last1 == null) FixedPositionConstraint(8f, 8f) else if (a == Category.GENERAL) AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 6f) else AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 4f)
+                position = if (last1 == null) FixedPositionConstraint(8f, 8f) else if (a == ConfigCategory.GENERAL) AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 6f) else AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 4f)
                 size = FixedSizeConstraint(124f, 22f)
                 color = CascadeGeometricColor(if (bool) Catppuccin.Mocha.Surface0.argb else Catppuccin.Mocha.Mantle.argb)
                 radius = CascadeGeometricRadius(4f)

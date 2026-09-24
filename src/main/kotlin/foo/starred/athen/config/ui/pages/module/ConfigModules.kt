@@ -1,7 +1,7 @@
 package foo.starred.athen.config.ui.pages.module
 
 import foo.starred.athen.api.storage.ResourceAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.feature.ConfigFeatureData
 import foo.starred.athen.config.ui.ConfigUI
@@ -44,7 +44,7 @@ object ConfigModules {
 
         ConfigUI.headerText.text = "<bold><#FDCCDA>A<#FCDDD3>t<#FAEDCB>h<#F0E2D7>e<#E5D8E4>n<#DBCDF0>".parse()
         if (active != null) return ConfigModuleSettingsPage.fn(active!!)
-        if (ConfigCategories.active == Category.INFO) return ConfigInfoPage.fn()
+        if (ConfigCategories.active == ConfigCategory.INFO) return ConfigInfoPage.fn()
 
         val query = ConfigUI.searchBar.value.trim()
         val features = (ConfigManager.features[ConfigCategories.active] ?: return).filter { it.matches(query) }.sortedWith(compareByDescending<ConfigFeatureData> { it.name.startsWith(query, true) }.thenBy { it.name })
@@ -96,6 +96,12 @@ object ConfigModules {
 
                     on<MouseEvent.Move.Exit> {
                         colors(false)
+                        ConfigUI.hide()
+                    }
+
+                    on<MouseEvent.Move.Any> {
+                        if (!hovered) return@on
+                        ConfigUI.show(v.description, x, y)
                     }
 
                     on<MouseEvent.Press> {

@@ -16,7 +16,7 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.modules.Module
@@ -37,7 +37,7 @@ import kotlin.math.abs
 object KuudraSplits : Module(
     "Kuudra splits",
     "Splits for kuudra, very customisable.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val chat by config.switch("Send to chat", true)
     private val _hud by config.hud("Splits display") {

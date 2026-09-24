@@ -11,7 +11,7 @@ import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.InputEvent
@@ -36,7 +36,7 @@ import kotlin.math.hypot
 object RadialMenu : Module(
     "Radial menu",
     "Shows a cool radial menu with a ton of options for customisations!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val keybind by config.keybind("Keybind", InputConstants.KEY_R)
     private val releaseClose by config.switch("Release to close", true)

@@ -8,7 +8,7 @@ import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.network.websocket.SocketPacket
 import foo.starred.athen.api.network.websocket.base.IWebSocket
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.core.runWhen
@@ -28,7 +28,7 @@ import net.minecraft.network.protocol.game.ServerboundChatPacket
 object IRC : Module(
     "IRC",
     "Enables the IRC by default on launch if the module is enabled.",
-    Category.GENERAL,
+    ConfigCategory.GENERAL,
     true
 ), IWebSocket, IKommand<FabricClientCommandSource> {
     override val loader: KommandCommandScope<FabricClientCommandSource> = KommandCommandScope()

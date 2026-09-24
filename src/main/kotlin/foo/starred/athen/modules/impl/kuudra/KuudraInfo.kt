@@ -9,7 +9,7 @@ import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
@@ -29,7 +29,7 @@ import kotlin.math.abs
 object KuudraInfo : Module(
     "Kuudra info",
     "Displays information about kuudra and highlights him, nicely :3",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val highlight by config.switch("Highlight", true)
     private val lineWidth by config.slider("Line width", 2f, 1f, 10f)

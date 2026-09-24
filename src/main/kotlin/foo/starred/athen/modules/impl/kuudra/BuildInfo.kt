@@ -13,7 +13,7 @@ import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.events.core.runWhen
@@ -28,7 +28,7 @@ import foo.starred.snowbird.utils.alert
 object BuildInfo : Module(
     "Build info",
     "Shows information about the ballista build process in phase 2.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val waypoints = config.switch("Unfinished build waypoint", true).unique("waypoints")
     private val color by config.colorPicker("Color", Catppuccin.Mocha.Red.argb)
