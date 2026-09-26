@@ -3,6 +3,7 @@
 package foo.starred.athen.modules.impl.general.keybinds.ui
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -30,7 +31,6 @@ import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrolla
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
 import foo.starred.snowbird.utils.brighten
@@ -556,7 +556,7 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             rectangle {
                 val str = entry.binding.keys.str()
 
-                size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
+                size = FixedSizeConstraint(VanillaFontMeasurer.width(str) + 8, 16)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
                 color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false

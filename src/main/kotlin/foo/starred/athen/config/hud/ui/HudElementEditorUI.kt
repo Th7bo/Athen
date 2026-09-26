@@ -3,8 +3,7 @@ package foo.starred.athen.config.hud.ui
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.hud.data.editor.HudEditorRuntimeCoordinateData
 import foo.starred.athen.config.hud.data.editor.HudEditorRuntimeRenderData
 import foo.starred.athen.config.hud.data.element.HudElement
@@ -86,7 +85,7 @@ object HudElementEditorUI : Screen("HUD Editor [Athen]".literal()) {
             graphics.pose().scale(e.coordinate.scale, e.coordinate.scale)
 
             graphics.fill(-4, -4, e.coordinate.width.toInt() + 4, e.coordinate.height.toInt() + 4, MochaColorScheme.Base.alpha(0.5f))
-            graphics.outline(-4, -4, e.coordinate.width.toInt() + 8, e.coordinate.height.toInt() + 8, 1, MochaColorScheme.Text.argb)
+            graphics.outline(-4, -4, e.coordinate.width.toInt() + 8, e.coordinate.height.toInt() + 8, MochaColorScheme.Text.argb)
 
             graphics.pose().pushMatrix()
             e.preview(graphics)
@@ -104,8 +103,8 @@ object HudElementEditorUI : Screen("HUD Editor [Athen]".literal()) {
             graphics.pose().translate(coordinate.x + 12, coordinate.y - height / 2)
 
             graphics.fill(-6, -6, width + 6, height + 6, MochaColorScheme.Base.alpha(0.8f))
-            graphics.outline(-6, -6, width + 12, height + 12, 1, MochaColorScheme.Text.argb)
-            graphics.extractText(text, 0, 0, false, MochaColorScheme.Text.argb)
+            graphics.outline(-6, -6, width + 12, height + 12, MochaColorScheme.Text.argb)
+            VanillaFontRenderer.extract(graphics, text, 0, 0, false, MochaColorScheme.Text.argb)
             graphics.pose().popMatrix()
         }
 
@@ -264,14 +263,14 @@ object HudElementEditorUI : Screen("HUD Editor [Athen]".literal()) {
             pose().translate(x, y)
 
             fill(-4, -4, width + 4, height + 4, MochaColorScheme.Base.alpha(0.6f))
-            outline(-4, -4, width + 8, height + 8, 1, MochaColorScheme.Lavender.argb)
+            outline(-4, -4, width + 8, height + 8,  MochaColorScheme.Lavender.argb)
 
             var y1 = 0
             for (entry in lines) {
                 val (enabled, text) = entry()
 
-                extractText("•", 0, y1, false, if (enabled) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
-                extractText(text, t0, y1, false, MochaColorScheme.Text.argb)
+                VanillaFontRenderer.extract(this, "•", 0, y1, false, if (enabled) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
+                VanillaFontRenderer.extract(this, text, t0, y1, false, MochaColorScheme.Text.argb)
 
                 y1 += VanillaFontMeasurer.height
             }

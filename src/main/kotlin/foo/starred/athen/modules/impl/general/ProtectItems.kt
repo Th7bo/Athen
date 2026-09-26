@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -74,7 +74,7 @@ object ProtectItems : Module(
             if (!slot.item.fn()) return@on
             if (renderKey && !GenericInputState.pressed(renderKeybind)) return@on
 
-            graphics.extractText(p, slot.x, slot.y)
+            VanillaFontRenderer.extract(graphics, p, slot.x, slot.y)
         }.runWhen(render.state)
 
         command {

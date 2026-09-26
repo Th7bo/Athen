@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.Athen.GSON
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -18,7 +17,9 @@ import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.guiClick
+import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.compress
@@ -255,16 +256,21 @@ object SlotBinds : Module(
                 val b = slots.getOrNull(e.intValue) ?: continue
                 val c = m2.get(e.intKey)
 
-                graphics.stroke(a.x + 8f, a.y + 8f, b.x + 8f, b.y + 8f, c, 1f, false, pose, scissor)
+                val x0 = a.x.toFloat()
+                val y0 = a.y.toFloat()
+                val x1 = b.x.toFloat()
+                val y1 = b.y.toFloat()
 
-                graphics.outline(a.x, a.y, 16, 16, 1, c, true)
-                graphics.outline(b.x, b.y, 16, 16, 1, c, true)
+                graphics.stroke(x0 + 8f, y0 + 8f, x1 + 8f, y1 + 8f, c, 1f, false, pose, scissor)
+
+                graphics.hollowRectangle(x0, y0, 16f, 16f, 1f, c, pose = pose, scissor = scissor)
+                graphics.hollowRectangle(x1, y1, 16f, 16f, 1f, c, pose = pose, scissor = scissor)
             }
 
             val l = last0 ?: return@on
             val a = slots.getOrNull(l) ?: return@on
 
-            graphics.outline(a.x, a.y, 16, 16, 1, inset = true)
+            graphics.hollowRectangle(a.x.toFloat(), a.y.toFloat(), 16f, 16f, 1f, CascadeGeometricColor.WHITE)
         }
 
         on<PlayerEvent.Drop> {

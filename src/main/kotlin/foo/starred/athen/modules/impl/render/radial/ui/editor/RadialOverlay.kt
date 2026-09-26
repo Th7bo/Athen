@@ -1,14 +1,14 @@
 package foo.starred.athen.modules.impl.render.radial.ui.editor
 
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
+import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
+import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
-import foo.starred.snowbird.api.client
 import net.minecraft.client.gui.GuiGraphicsExtractor
 
 class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement<RadialOverlay>() {
@@ -83,7 +83,7 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
         val back = bool || (RadialMenu.type == 2 && i0 in working.indices && i1 >= 0)
         val str = if (back) "←" else "✕"
 
-        graphics.extractText(str, x0 - client.font.width(str) / 2, y0 - client.font.lineHeight / 2, false, if (hc) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+        VanillaFontRenderer.extract(graphics, str, x0 - VanillaFontMeasurer.width(str) / 2, y0 - VanillaFontMeasurer.height / 2, false, if (hc) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
         val label = if (hc) (if (back) "Back" else "Exit") else {
             if (sub != -1) working.getOrNull(i0)?.sub?.getOrNull(sub)?.name
@@ -91,13 +91,13 @@ class RadialOverlay(private val panel: IPrimitiveElement<*>) : IPrimitiveElement
         }
 
         if (label != null && panel.hovered) {
-            val tw = client.font.width(label)
-            val lmx = mx.toInt() + 12
-            val lmy = my.toInt() - 4
+            val width = VanillaFontMeasurer.width(label)
+            val mx0 = mx.toInt() + 12
+            val my0 = my.toInt() - 4
 
-            graphics.rectangle(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, MochaColorScheme.Base.argb)
-            graphics.outline(lmx - 5, lmy - 5, tw + 10, client.font.lineHeight + 10, 1, MochaColorScheme.Lavender.argb)
-            graphics.extractText(label, lmx, lmy, false, MochaColorScheme.Text.argb)
+            graphics.rectangle(mx0 - 5f, my0 - 5f, width + 10f, VanillaFontMeasurer.height + 10f, MochaColorScheme.Base.argb)
+            graphics.hollowRectangle(mx0 - 5f, my0 - 5f, width + 10f, VanillaFontMeasurer.height + 10f, 1f, MochaColorScheme.Lavender.argb, inset = false)
+            VanillaFontRenderer.extract(graphics, label, mx0, my0, false, MochaColorScheme.Text.argb)
         }
     }
 }

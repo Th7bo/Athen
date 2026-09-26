@@ -10,7 +10,7 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.base.TooltipContext
+import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.data.TooltipContext
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.impl.CombinedTooltip
 import foo.starred.athen.modules.impl.render.tooltip.custom.renderers.impl.SeparatedTooltip
 import foo.starred.snowbird.api.client
@@ -29,9 +29,9 @@ object CustomTooltip : Module(
     "Custom tooltip rendering!",
     ConfigCategory.RENDER
 ) {
-    val unused by config.information("This feature does not break any other mod's tooltip changes. It only changes the rendering.")
+    private val unused by config.information("This feature does not break any other mod's tooltip changes. It only changes the rendering.")
 
-    val customisation by config.group("Tooltip customisation")
+    private val customisation by config.group("Tooltip customisation")
     val `scroll$infinite` by customisation.switch("Infinite scroll")
     val `scroll$horizontal` by customisation.switch("Horizontal scroll", true)
     val `scroll$horizontal$key` by customisation.keybind("Horizontal keybind", InputConstants.KEY_LSHIFT)
@@ -42,36 +42,43 @@ object CustomTooltip : Module(
     val `scroll$scale` by customisation.switch("Scale tooltip")
     val `scroll$scale$key` by customisation.keybind("Scale keybind", InputConstants.KEY_LCONTROL)
 
-    val renderExpandable by config.group("Custom rendering")
-    val `tooltip$style` by renderExpandable.selector("Tooltip style", listOf("Combined", "Separated"), 1)
-    val `header$centered` by renderExpandable.switch("Centered header", true)
+    private val render by config.group("Custom rendering")
+    val `tooltip$style` by render.selector("Tooltip style", listOf("Combined", "Separated"), 1)
+    val `header$centered` by render.switch("Centered header", true)
+    val `body$visible` by render.keybind("Hide body keybind").description("Toggling only name mode will hide the actual tooltip and show only the name when it's toggled on.")
+    val `text$shadow` by render.switch("Text shadows", true)
 
-    val border by renderExpandable.switch("Border", true)
-    val `border$width` by renderExpandable.slider("Border width", 1, 0, 5)
-    val `border$rarity` by renderExpandable.switch("Use rarity color", true)
-    val `border$color` by renderExpandable.colorPicker("Border color", MochaColorScheme.Sky.argb)
+    private val _border by config.group("Border customisation")
+    val border by _border.switch("Border", true)
+    val `border$width` by _border.slider("Border width", 1, 0, 5)
+    val `border$rarity` by _border.switch("Use rarity color", true)
+    val `border$color` by _border.colorPicker("Border color", MochaColorScheme.Sky.argb)
 
-    val background by renderExpandable.switch("Background", true)
-    val `background$color` by renderExpandable.colorPicker("Background color", MochaColorScheme.Surface0.alpha(0.9f))
-
-    val onlyName by renderExpandable.keybind("Only name toggle")
-    val `onlyName$unused` by renderExpandable.information("Toggling only name mode will hide the actual tooltip and show only the name when it's toggled on.")
-
-    val `text$shadow` by renderExpandable.switch("Text shadows", true)
+    private val _background by config.group("Background customisation")
+    val background by _background.switch("Background", true)
+    val `background$color` by _background.colorPicker("Background color", MochaColorScheme.Surface0.alpha(0.9f))
+    val `background$blur` by _background.switch("Background blur", true)
+    val `background$strength` by _background.slider("Blur strength", 8f, 2f, 32f)
 
     var color: Int = `border$color`
+    var name: Boolean = false
     var last: Int = 0
+
+    var scale: Double = 1.0
     var xo: Double = 0.0
     var yo: Double = 0.0
-    var scale: Double = 1.0
-    var name: Boolean = false
     var mss: Double = 0.0
     var msx: Double = 0.0
 
     init {
         on<GuiEvent.Slots.Input.Hover> {
+            if (!`scroll$reset`) {
+                color = slot.item.getData(DataTypes.RARITY)?.color?.or(0xFF000000.toInt()) ?: `border$color`
+                return@on
+            }
+
+            reset()
             color = slot.item.getData(DataTypes.RARITY)?.color?.or(0xFF000000.toInt()) ?: `border$color`
-            if (`scroll$reset`) reset()
         }
 
         on<GuiEvent.Close.Any> {
@@ -81,8 +88,8 @@ object CustomTooltip : Module(
         }
 
         on<GuiEvent.Input.Key.Press> {
-            if (!GenericInputState.bound(onlyName.value)) return@on
-            if (keyEvent.key != onlyName.value) return@on
+            if (!GenericInputState.bound(`body$visible`.value)) return@on
+            if (keyEvent.key != `body$visible`.value) return@on
             if (last != Scheduler.ticks.client) return@on
 
             name = !name
@@ -118,10 +125,10 @@ object CustomTooltip : Module(
 
         last = Scheduler.ticks.client
         val components = if (name) components.take(1) else components
-        val cs = components.size == 1
+        val single = components.size == 1
 
         var width = 0
-        var height = if (cs) -2 else 0
+        var height = if (single) -2 else 0
 
         for (c in components) {
             width = maxOf(width, c.getWidth(font))
@@ -129,22 +136,21 @@ object CustomTooltip : Module(
         }
 
         val pos = positioner.positionTooltip(graphics.guiWidth(), graphics.guiHeight(), x, y, width, height)
-        val context = TooltipContext(graphics, font, components, pos.x(), pos.y(), width, height, graphics.guiHeight())
+        val context = TooltipContext(graphics, font, components, pos.x(), pos.y(), width, height)
 
-        val tx = pos.x()
-        val ty = pos.y()
+        val x1 = pos.x()
+        val y1 = pos.y()
         val pose = graphics.pose()
 
         pose.pushMatrix()
-        val s = if (`scroll$scale`) scale.toFloat() else 1f
-        pose.translate((tx - 4).toFloat(), (ty - 4).toFloat())
-        pose.scale(s, s)
-        pose.translate(-(tx - 4).toFloat(), -(ty - 4).toFloat())
+        pose.translate((x1 - 4).toFloat(), (y1 - 4).toFloat())
+        pose.scale(if (`scroll$scale`) scale.toFloat() else 1f)
+        pose.translate(-(x1 - 4).toFloat(), -(y1 - 4).toFloat())
         pose.translate(xo.toFloat(), 0f)
 
         when (`tooltip$style`) {
             0 -> CombinedTooltip
-            1 -> if (cs) CombinedTooltip else SeparatedTooltip
+            1 -> if (single) CombinedTooltip else SeparatedTooltip
             else -> null
         }?.r(context)
 

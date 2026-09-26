@@ -8,8 +8,8 @@ import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.mod.ModWrapper
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -22,6 +22,7 @@ import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialEditor
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
 import foo.starred.athen.utils.command
+import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
@@ -309,7 +310,7 @@ object RadialMenu : Module(
             val bool0 = dist(x, y) < 15f
             val bool1 = stack.isNotEmpty() || (type == 2 && i2 != -1)
 
-            graphics.extractText(if (bool1) "←" else "✕", x - client.font.width(if (bool1) "←" else "✕") / 2, y - client.font.lineHeight / 2, false, if (bool0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+            VanillaFontRenderer.extract(graphics, if (bool1) "←" else "✕", x - VanillaFontMeasurer.width(if (bool1) "←" else "✕") / 2, y - VanillaFontMeasurer.height / 2, false, if (bool0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
 
             val hovered = when {
                 i1 != -1 && i2 in current.indices -> current[i2].sub.getOrNull(i1)
@@ -320,8 +321,8 @@ object RadialMenu : Module(
             val x1 = MouseInputState.Position.Scaled.x.toInt() + 12
             val y1 = MouseInputState.Position.Scaled.y.toInt() - 4
 
-            graphics.rectangle(x1 - 5, y1 - 5, client.font.width(label) + 10, client.font.lineHeight + 10, MochaColorScheme.Base.argb)
-            graphics.extractText(label, x1, y1, false, MochaColorScheme.Text.argb)
+            graphics.rectangle(x1 - 5f, y1 - 5f, VanillaFontMeasurer.width(label) + 10f, VanillaFontMeasurer.height + 10f, MochaColorScheme.Base.argb)
+            VanillaFontRenderer.extract(graphics, label, x1, y1, false, MochaColorScheme.Text.argb)
         }.runWhen(open)
 
         on<GuiEvent.Open.Any> {

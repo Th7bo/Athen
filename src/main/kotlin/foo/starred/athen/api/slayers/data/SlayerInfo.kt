@@ -20,7 +20,7 @@ data class SlayerInfo(val entity: Entity) {
         get() = owner == name
 
     private fun fn0(): String? {
-        return level?.getEntity(entity.id + 3)?.customName?.stripped()?.substringAfterLast(":")?.trim()
+        return level?.getEntity(entity.id + 3)?.customName?.stripped()?.takeIf { it.contains("Spawned by:") }?.substringAfterLast(":")?.trim()
     }
 
     private fun fn1(): ISlayerType? {

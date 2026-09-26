@@ -3,6 +3,7 @@
 package foo.starred.athen.modules.impl.slayer.carry.ui
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.slayer.carry.impl.SlayerCarryTracker
@@ -24,7 +25,6 @@ import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrolla
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 
@@ -311,7 +311,7 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
 
             rectangle {
                 val s = "${carry.type.short}${carry.tier?.let { " T${it.int}" } ?: " Any"}"
-                val w = client.font.width(s) + 8
+                val w = VanillaFontMeasurer.width(s) + 8
 
                 size = FixedSizeConstraint(w, 16)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
@@ -380,7 +380,7 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 attach(row)
             }
 
-            offset -= client.font.width(s0) + 4
+            offset -= VanillaFontMeasurer.width(s0) + 4
             rectangle {
                 size = FixedSizeConstraint(16, 16)
                 position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
@@ -423,7 +423,7 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 attach(row)
             }
 
-            offset -= client.font.width("Total:") + 12
+            offset -= VanillaFontMeasurer.width("Total:") + 12
             rectangle {
                 size = FixedSizeConstraint(16, 16)
                 position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
@@ -466,7 +466,7 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 attach(row)
             }
 
-            offset -= client.font.width(s1) + 4
+            offset -= VanillaFontMeasurer.width(s1) + 4
             rectangle {
                 size = FixedSizeConstraint(16, 16)
                 position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)

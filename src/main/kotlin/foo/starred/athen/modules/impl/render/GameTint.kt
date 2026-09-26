@@ -1,7 +1,6 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
@@ -46,6 +45,6 @@ object GameTint : Module(
     }
 
     private fun GuiGraphicsExtractor.tint() {
-        rectangle(0, 0, guiWidth(), guiHeight(), color)
+        fill(0, 0, guiWidth(), guiHeight(), color)
     }
 }

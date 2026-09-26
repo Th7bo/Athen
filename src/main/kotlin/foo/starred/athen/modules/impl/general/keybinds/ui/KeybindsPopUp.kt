@@ -5,6 +5,7 @@ package foo.starred.athen.modules.impl.general.keybinds.ui
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent.Companion.multiCheckbox
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
@@ -34,7 +35,6 @@ import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangl
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.literal
 import tech.thatgravyboat.skyblockapi.api.area.dungeon.DungeonFloor
 
@@ -420,9 +420,9 @@ class KeybindsPopUp(
 
         `keys$hint` = rectangle {
             val str = "Press Enter to confirm | Escape to cancel"
-            val w = (client.font?.width(str) ?: 200) + 12
+            val w = VanillaFontMeasurer.width(str) + 12
 
-            size = FixedSizeConstraint(w, (client.font?.lineHeight ?: 9) + 8)
+            size = FixedSizeConstraint(w, VanillaFontMeasurer.height + 8)
             position = MixedPositionConstraint(CenterPositionConstraint(), AnchorPositionConstraint({ box }, PositionAnchor.BELOW, 0, 6))
             color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             visible = false

@@ -5,14 +5,14 @@ package foo.starred.athen.modules.impl.render
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.cascade.graphics.extensions.arc.ring
 import foo.starred.cascade.graphics.extensions.circle.circle
+import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
+import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.snowbird.api.data.Observable.Companion.and
 import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -63,18 +63,21 @@ object ItemRarityBackground : Module(
         val a = item.getData(DataTypes.RARITY) ?: return
         val color = a.get()
 
+        val x = x.toFloat()
+        val y = y.toFloat()
+
         when (render) {
             0 -> {
-                rectangle(x, y, 16, 16, color.withAlpha(fill))
+                rectangle(x, y, 16f, 16f, color.withAlpha(fill))
             }
 
             1 -> {
-                outline(x, y, 16, 16, 1, color, true)
+                hollowRectangle(x, y, 16f, 16f, 1f, color, inset = true)
             }
 
             2 -> {
-                rectangle(x, y, 16, 16, color.withAlpha(fill))
-                outline(x, y, 16, 16, 1, color, true)
+                rectangle(x, y, 16f, 16f, color.withAlpha(fill))
+                hollowRectangle(x, y, 16f, 16f, 1f, color, inset = false)
             }
 
             3 -> {

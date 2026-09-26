@@ -5,10 +5,10 @@ package foo.starred.athen.modules.impl.dungeon.partyfinder.impl
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -104,14 +104,14 @@ object PartyFinderDisplay : Module(
             if (!menu0) return@on
             val color = data[slot.index]?.status?.color?.takeIf { it.alpha > 10 } ?: return@on
 
-            graphics.rectangle(slot.x, slot.y, 16, 16, color)
+            graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }.runWhen(highlight.state)
 
         on<GuiEvent.Slots.Render.Any.Post> {
             if (!menu0) return@on
             val s = data[slot.index]?.members?.size?.toString() ?: return@on
 
-            graphics.extractText(s, slot.x + 17 - client.font.width(s), slot.y + 18 - client.font.lineHeight)
+            VanillaFontRenderer.extract(graphics, s, slot.x + 17 - VanillaFontMeasurer.width(s), slot.y + 18 - VanillaFontMeasurer.height)
         }.runWhen(stack.state)
 
         on<PacketEvent.Receive, ClientboundContainerSetContentPacket> {

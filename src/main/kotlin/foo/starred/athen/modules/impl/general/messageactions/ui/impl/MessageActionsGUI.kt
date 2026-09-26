@@ -3,6 +3,7 @@
 package foo.starred.athen.modules.impl.general.messageactions.ui.impl
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -27,7 +28,6 @@ import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrolla
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 
@@ -551,7 +551,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             val b = rectangle {
                 val str = action.match.displayName
 
-                size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
+                size = FixedSizeConstraint(VanillaFontMeasurer.width(str) + 8, 16)
                 position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
                 color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
@@ -571,7 +571,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             var next: RectanglePrimitive = b
             if (action.cancel) {
                 next = rectangle {
-                    size = FixedSizeConstraint(client.font?.width("✕")?.plus(6) ?: 12, 16)
+                    size = FixedSizeConstraint(VanillaFontMeasurer.width("✕") + 6, 16)
                     position = AnchorPositionConstraint({ b }, PositionAnchor.RIGHT, 4)
                     color = CascadeGeometricColor(MochaColorScheme.Red.alpha(0.2f))
                     interact = false
