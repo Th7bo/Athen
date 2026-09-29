@@ -17,8 +17,8 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.text.parser.impl.parse

@@ -3,8 +3,8 @@ package foo.starred.athen.modules.impl.render
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.data.Observable.Companion.and
 import net.minecraft.client.gui.GuiGraphicsExtractor

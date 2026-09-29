@@ -9,8 +9,8 @@ import foo.starred.athen.api.slayers.enums.type.impl.SlayerMini
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert

@@ -13,9 +13,9 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderPos
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.abbreviate

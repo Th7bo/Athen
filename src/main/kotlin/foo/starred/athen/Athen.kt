@@ -15,6 +15,7 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.core.on
 import foo.starred.athen.modules.impl.Dev
 import foo.starred.athen.utils.data
+import foo.starred.kbus.impl.KBus
 import foo.starred.snowbird.api.EMPTY_COMPONENT
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.lie
@@ -40,9 +41,12 @@ object Athen : ClientModInitializer {
     @JvmField
     val SCOPE: CoroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName(ModWrapper.name))
 
+    @JvmField
+    val BUS: KBus = KBus()
+
     override fun onInitializeClient() {
-        AnnotationLoader.load()
         InternalEvent.Mod.Loading.Start.post()
+        AnnotationLoader.load()
 
         ModrinthUpdateSource("athen").init(ModWrapper.version)
 

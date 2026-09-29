@@ -6,8 +6,8 @@ import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.MessageEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.name
 import foo.starred.snowbird.api.scheduling.scheduler.extensions.clientTicks

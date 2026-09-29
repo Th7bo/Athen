@@ -11,9 +11,9 @@ import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBo
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.*
-import foo.starred.athen.events.core.CancellableEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderPos
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
@@ -140,7 +140,7 @@ object StunHelper : Module(
         else -> null
     }
 
-    private fun CancellableEvent.ccl() {
+    private fun KBusCancellableTrait.ccl() {
         cancel()
 
         val now = System.currentTimeMillis()

@@ -5,8 +5,8 @@ import foo.starred.athen.annotations.Redstone
 import foo.starred.athen.config.dsl.impl.builders.config.ConfigMainBuilder
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.PacketEvent
-import foo.starred.athen.events.core.Event
-import foo.starred.athen.events.core.runWhen
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.ALWAYS_TRUE
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.data.Observable.Companion.and
@@ -39,7 +39,7 @@ open class Module(
     var enabled: Boolean = false
         private set
 
-    protected inline fun <reified T : Event> on(
+    protected inline fun <reified T : AthenEvent> on(
         priority: Int = 0,
         noinline handler: T.() -> Unit
     ) = foo.starred.athen.events.core.on<T>(priority, handler).runWhen(observable)
@@ -51,6 +51,6 @@ open class Module(
 
     private fun fn0() {
         enabled = observable.value
-        observable.onChange { enabled = it }
+        observable.observe { enabled = it }
     }
 }

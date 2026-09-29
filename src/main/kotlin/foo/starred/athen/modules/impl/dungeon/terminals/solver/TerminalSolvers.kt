@@ -11,10 +11,10 @@ import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.mixin.accessors.KeyMappingAccessor
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.impl.MelodySolver
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
 import foo.starred.snowbird.api.inputs.impl.MouseInputState

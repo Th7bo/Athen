@@ -36,8 +36,8 @@ object KuudraBreakdown : Module(
     init {
         freshRegex = freshMessage.value.regex()
 
-        freshMessage.state.onChange {
-            freshRegex = it.regex() ?: return@onChange
+        freshMessage.state.observe {
+            freshRegex = it.regex() ?: return@observe
         }
 
         on<KuudraEvent.Start> {

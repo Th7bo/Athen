@@ -39,7 +39,7 @@ import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.on
-import foo.starred.athen.events.core.runWhen
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.name
 import foo.starred.snowbird.api.player

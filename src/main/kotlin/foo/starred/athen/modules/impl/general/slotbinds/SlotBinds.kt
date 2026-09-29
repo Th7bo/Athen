@@ -13,13 +13,13 @@ import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.guiClick
 import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.compress

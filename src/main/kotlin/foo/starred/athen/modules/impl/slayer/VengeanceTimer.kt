@@ -11,8 +11,8 @@ import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.held
 import foo.starred.snowbird.utils.toDuration
@@ -50,7 +50,7 @@ object VengeanceTimer : Module(
     }
 
     init {
-        compact.state.onChange {
+        compact.state.observe {
             hud.constrain()
         }
 

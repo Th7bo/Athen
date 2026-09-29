@@ -45,8 +45,8 @@ object CommissionDisplay : Module(
     }
 
     init {
-        noneStyle.state.onChange { fcs0 = it.parse().visualOrderText }
-        titleStyle.state.onChange { fcs1 = it.parse().visualOrderText }
+        noneStyle.state.observe { fcs0 = it.parse().visualOrderText }
+        titleStyle.state.observe { fcs1 = it.parse().visualOrderText }
 
         config.hud("Commission display") {
             val example = listOf("§cCommissions:", "§7- §fExample: §640%", "§7- §fExample: §e70%", "§7- §fExample: §c7%").fcs

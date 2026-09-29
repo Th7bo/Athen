@@ -10,10 +10,10 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.cascade.graphics.extensions.circle.circle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.inputs.impl.MouseInputState
 import org.joml.Matrix3x2f

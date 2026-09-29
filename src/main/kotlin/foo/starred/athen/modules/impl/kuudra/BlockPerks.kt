@@ -5,8 +5,8 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.stripped
 
@@ -37,11 +37,11 @@ object BlockPerks : Module(
     private var menu: Boolean = false
 
     init {
-        perks0.state.onChange(::r)
-        perks1.state.onChange(::r)
-        perks2.state.onChange(::r)
-        perks3.state.onChange(::r)
-        perks4.state.onChange(::r)
+        perks0.state.observe(::r)
+        perks1.state.observe(::r)
+        perks2.state.observe(::r)
+        perks3.state.observe(::r)
+        perks4.state.observe(::r)
 
         on<GuiEvent.Open.Container> {
             menu = stripped == "Perk Menu"

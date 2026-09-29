@@ -93,7 +93,7 @@ object MotionBlur : Module(
     private var ubo: GpuBuffer? = null
 
     init {
-        observable.onChange {
+        observable.observe {
             destroy()
         }
     }

@@ -5,12 +5,12 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.CancellableEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.mixin.accessors.KeyMappingAccessor
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.guiClick
 import foo.starred.athen.utils.lore
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
@@ -106,7 +106,7 @@ object LoadoutKeybinds : Module(
         }.runWhen(cancelRender.state)
     }
 
-    private fun CancellableEvent.fn(key: InputConstants.Key) {
+    private fun KBusCancellableTrait.fn(key: InputConstants.Key) {
         val bool0 = GenericInputState.pressed(override)
         val bool1 = key == (client.options.keyInventory as KeyMappingAccessor).boundKey
         val bool2 = key.value == InputConstants.KEY_ESCAPE

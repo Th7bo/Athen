@@ -13,12 +13,12 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.id
 import foo.starred.athen.utils.lore
 import foo.starred.athen.utils.uuid
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.held
 import foo.starred.snowbird.api.inputs.impl.GenericInputState

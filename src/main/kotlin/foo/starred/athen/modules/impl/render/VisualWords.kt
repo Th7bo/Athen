@@ -41,7 +41,7 @@ object VisualWords : Module(
     val words = object : AbstractTextReplacer() {}.also { it.skips = SKIP }
 
     init {
-        observable.onChange {
+        observable.observe {
             words.version++
         }
 
@@ -49,12 +49,12 @@ object VisualWords : Module(
             nickname.value.fn()
         }
 
-        nickname.state.onChange {
+        nickname.state.observe {
             it.fn()
         }
 
-        nameChanger.state.onChange {
-            if (it) return@onChange nickname.value.fn()
+        nameChanger.state.observe {
+            if (it) return@observe nickname.value.fn()
             words.remove(name)
             words.build()
         }

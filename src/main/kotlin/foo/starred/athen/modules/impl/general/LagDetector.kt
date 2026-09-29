@@ -8,9 +8,9 @@ import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.player
 

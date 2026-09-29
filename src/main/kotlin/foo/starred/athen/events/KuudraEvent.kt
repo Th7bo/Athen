@@ -1,46 +1,46 @@
 package foo.starred.athen.events
 
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
-import foo.starred.athen.events.core.CancellableEvent
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
 
 sealed class KuudraEvent {
-    data object Start : Event()
+    data object Start : AthenEvent()
 
     sealed class End {
-        data object Success : Event()
+        data object Success : AthenEvent()
 
-        data object Defeat : Event()
+        data object Defeat : AthenEvent()
 
-        data object Any : Event()
+        data object Any : AthenEvent()
     }
 
     sealed class Supply {
         data class Progress(
             val progress: Int,
             val message: String
-        ) : CancellableEvent()
+        ) : AthenEvent(), KBusCancellableTrait
 
-        data object Drop : Event()
+        data object Drop : AthenEvent()
 
-        data object Pickup : Event()
+        data object Pickup : AthenEvent()
     }
 
     sealed class Phase {
-        data object Supply : Event()
+        data object Supply : AthenEvent()
 
-        data object Build : Event()
+        data object Build : AthenEvent()
 
-        data object Fuel : Event()
+        data object Fuel : AthenEvent()
 
-        data object Stun : Event()
+        data object Stun : AthenEvent()
 
-        data object DPS : Event()
+        data object DPS : AthenEvent()
 
-        data object Skip : Event()
+        data object Skip : AthenEvent()
 
-        data object Kill : Event()
+        data object Kill : AthenEvent()
 
-        data class Any(val new: KuudraPhase) : Event()
+        data class Any(val new: KuudraPhase) : AthenEvent()
     }
 }

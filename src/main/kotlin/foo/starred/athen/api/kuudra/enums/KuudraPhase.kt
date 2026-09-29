@@ -3,9 +3,9 @@ package foo.starred.athen.api.kuudra.enums
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.events.KuudraEvent
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
 
-enum class KuudraPhase(val event: Event, val tiers: IntRange = KuudraTier.BASIC.int..KuudraTier.INFERNAL.int) {
+enum class KuudraPhase(val event: AthenEvent, val tiers: IntRange = KuudraTier.BASIC.int..KuudraTier.INFERNAL.int) {
     Supply(KuudraEvent.Phase.Supply),
     Build(KuudraEvent.Phase.Build),
     Fuel(KuudraEvent.Phase.Fuel),

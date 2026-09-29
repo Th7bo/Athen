@@ -33,8 +33,4 @@ class ConfigMainBuilder(
             state.value = it as? Boolean ?: default
         }
     }
-
-    fun observe(call: (Boolean) -> Unit): Observable<Boolean> {
-        return state.onChange(call)
-    }
 }

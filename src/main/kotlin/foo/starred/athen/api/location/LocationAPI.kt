@@ -42,7 +42,7 @@ import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.ScoreboardEvent
 import foo.starred.athen.events.core.on
-import foo.starred.athen.events.core.runWhen
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import net.hypixel.data.type.GameType
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
@@ -51,7 +51,7 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
 object LocationAPI {
     private val regex = Regex(" *[⏣ф\uE067\uE020] *(?<location>(?:\\s?[^[ൠ\uE018]\\s]+)*)(?: [ൠ\uE018] x\\d)?")
 
-    val skyblock: Observable<Boolean> = Observable(false).onChange { (if (it) LocationEvent.SkyBlock.Connect else LocationEvent.SkyBlock.Disconnect).post() }
+    val skyblock: Observable<Boolean> = Observable(false).observe { (if (it) LocationEvent.SkyBlock.Connect else LocationEvent.SkyBlock.Disconnect).post() }
     val island: Observable<ISkyBlockIsland> = Observable(PresetSkyBlockIsland.NONE)
     val area: Observable<ISkyBlockArea> = Observable(PresetSkyBlockArea.NONE)
 

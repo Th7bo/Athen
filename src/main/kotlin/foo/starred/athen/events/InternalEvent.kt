@@ -1,6 +1,7 @@
 package foo.starred.athen.events
 
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.data.event.traits.KBusUnconditionalTrait
 
 sealed class InternalEvent {
     sealed class WebSocket {
@@ -9,14 +10,14 @@ sealed class InternalEvent {
             val body: String?,
             val channel: String?,
             val name: String?
-        ) : Event()
+        ) : AthenEvent()
     }
 
     sealed class Mod {
         sealed class Loading {
-            data object Start : Event()
+            data object Start : AthenEvent(), KBusUnconditionalTrait
 
-            data object End : Event()
+            data object End : AthenEvent(), KBusUnconditionalTrait
         }
     }
 }

@@ -57,7 +57,7 @@ object KuudraTitles : Module(
     private var display: Component? = null
 
     init {
-        supplyStyle.state.onChange {
+        supplyStyle.state.observe {
             dis0 = 20.str()
             supply.constrain()
         }.also { dis0 = 20.str() }

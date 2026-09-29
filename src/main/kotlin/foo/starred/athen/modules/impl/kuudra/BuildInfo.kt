@@ -17,9 +17,9 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.WorldRenderEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert
 
@@ -46,10 +46,10 @@ object BuildInfo : Module(
     private var sent: Boolean = false
 
     init {
-        KuudraAPI.buildProgress.onChange {
-            if (!stun) return@onChange
-            if (sent) return@onChange
-            if (it <= `stun$percent`) return@onChange
+        KuudraAPI.buildProgress.observe {
+            if (!stun) return@observe
+            if (sent) return@observe
+            if (it <= `stun$percent`) return@observe
 
             val prs = `stun$message`.parse(true)
             prs.alert()

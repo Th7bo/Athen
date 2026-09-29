@@ -39,7 +39,7 @@ object ConfigManager {
     }
 
     fun observe(key: String, listener: (Any) -> Unit) {
-        states.getOrPut(key) { Observable(get(key) ?: return) }.onChange(listener).also { listener(it.value) }
+        states.getOrPut(key) { Observable(get(key) ?: return) }.observe(listener).also { listener(it.value) }
     }
 
     fun get(key: String): Any? {

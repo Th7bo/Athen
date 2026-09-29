@@ -7,12 +7,12 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.cascade.graphics.extensions.arc.ring
 import foo.starred.cascade.graphics.extensions.circle.circle
 import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable.Companion.and
 import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.client.gui.GuiGraphicsExtractor

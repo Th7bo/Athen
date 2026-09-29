@@ -1,6 +1,7 @@
 package foo.starred.athen.events
 
-import foo.starred.athen.events.core.CancellableEvent
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.phys.Vec3
 
@@ -9,4 +10,4 @@ data class SoundPlayEvent(
     val pos: Vec3,
     val volume: Float,
     val pitch: Float
-) : CancellableEvent()
+) : AthenEvent(), KBusCancellableTrait

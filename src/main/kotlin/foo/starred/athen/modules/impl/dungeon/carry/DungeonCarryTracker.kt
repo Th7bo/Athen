@@ -16,12 +16,12 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.WorldRenderEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.carry.DungeonCarryStateTracker.tracked
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.lie

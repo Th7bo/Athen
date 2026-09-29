@@ -2,7 +2,8 @@ package foo.starred.athen.events
 
 import foo.starred.athen.api.location.area.base.ISkyBlockArea
 import foo.starred.athen.api.location.island.base.ISkyBlockIsland
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.data.event.traits.KBusUnconditionalTrait
 import net.hypixel.data.type.ServerType
 
 sealed class LocationEvent {
@@ -13,26 +14,26 @@ sealed class LocationEvent {
             val lobby: String?,
             val mode: String?,
             val map: String?,
-        ) : Event()
+        ) : AthenEvent(), KBusUnconditionalTrait
     }
 
     sealed class SkyBlock {
         data class Island(
             val old: ISkyBlockIsland,
             val new: ISkyBlockIsland
-        ) : Event()
+        ) : AthenEvent(), KBusUnconditionalTrait
 
         data class Area(
             val old: ISkyBlockArea,
             val new: ISkyBlockArea
-        ) : Event()
+        ) : AthenEvent(), KBusUnconditionalTrait
 
-        data object Connect : Event()
+        data object Connect : AthenEvent()
 
-        data object Disconnect : Event()
+        data object Disconnect : AthenEvent()
     }
 
-    sealed class Server : Event() {
+    sealed class Server : AthenEvent() {
         data object Connect : Server()
 
         data object Disconnect : Server()

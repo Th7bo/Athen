@@ -16,9 +16,9 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.level
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert
@@ -122,27 +122,27 @@ object WatcherHelper : Module(
     }
 
     init {
-        showTicks.state.onChange {
+        showTicks.state.observe {
             hud.constrain()
         }
 
-        DungeonAPI.inBoss.onChange {
-            if (!it) return@onChange
+        DungeonAPI.inBoss.observe {
+            if (!it) return@observe
             resetStr()
         }
 
-        DungeonAPI.bloodOpened.onChange {
-            if (!it) return@onChange
+        DungeonAPI.bloodOpened.observe {
+            if (!it) return@observe
 
             `blood$start` = System.currentTimeMillis()
             `blood$start$t` = Scheduler.ticks.server
         }
 
-        DungeonAPI.bloodSpawnedAll.onChange {
-            if (!it) return@onChange
-            if (`blood$start` == 0L) return@onChange
-            if (!spawnedAll) return@onChange
-            if (!enabled) return@onChange
+        DungeonAPI.bloodSpawnedAll.observe {
+            if (!it) return@observe
+            if (`blood$start` == 0L) return@observe
+            if (!spawnedAll) return@observe
+            if (!enabled) return@observe
 
             val t = System.currentTimeMillis() - `blood$start`
             val t0 = Scheduler.ticks.server - `blood$start$t`
@@ -153,14 +153,14 @@ object WatcherHelper : Module(
             "Watcher took <red>$d <gray>($d0) <r>to spawn all!".mod()
         }
 
-        DungeonAPI.bloodKilledAll.onChange {
-            if (!it) return@onChange
-            if (`blood$start` == 0L) return@onChange
-            if (!enabled) return@onChange
+        DungeonAPI.bloodKilledAll.observe {
+            if (!it) return@observe
+            if (`blood$start` == 0L) return@observe
+            if (!enabled) return@observe
 
             reset()
 
-            if (!breakdown) return@onChange
+            if (!breakdown) return@observe
             "Watcher time breakdown:".mod()
             " <gray>• <r>Speak time: <red>$`display$speak` <gray>| <red>$`display$speak$t`".mod()
             " <gray>• <r>Move time: <red>$`display$move` <gray>| <red>$`display$move$t`".mod()

@@ -5,8 +5,8 @@ import foo.starred.athen.api.kuudra.enums.*
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.on
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.utils.texture
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.lazy.RefreshableLazy

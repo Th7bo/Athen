@@ -6,11 +6,11 @@ import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.override
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.base.SimulatorMenu
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.impl.*
 import foo.starred.athen.utils.command
+import foo.starred.kbus.extensions.override
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 
@@ -32,13 +32,13 @@ object TerminalSimulator : Module(
             ping = pingInput.value.toIntOrNull() ?: return@run
         }
 
-        pingInput.state.onChange {
-            ping = it.toIntOrNull() ?: return@onChange
+        pingInput.state.observe {
+            ping = it.toIntOrNull() ?: return@observe
         }
 
-        observable.onChange {
+        observable.observe {
             SimulatorMenu.a()
-            if (!it) return@onChange
+            if (!it) return@observe
 
             "Run \"/athen simulate terminals ping <ping>\" to change ping!".mod()
             ConfigManager.update(configKey, false)

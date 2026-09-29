@@ -26,7 +26,7 @@ object PriceAPI {
         fn()
 
         task = Scheduler.repeat(ModSettings.priceFetch.value.minutes) { fn() }
-        ModSettings.priceFetch.state.onChange {
+        ModSettings.priceFetch.state.observe {
             task?.cancel()
             task = Scheduler.repeat(it.minutes) { fn() }
         }

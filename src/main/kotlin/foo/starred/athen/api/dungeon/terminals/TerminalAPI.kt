@@ -9,9 +9,9 @@ import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.core.on
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.TerminalSimulator
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.data.Observable.Companion.and
@@ -44,7 +44,7 @@ object TerminalAPI {
         val state0 = state and TerminalSolvers.observable
         val state1 = state and opened
 
-        opened.onChange {
+        opened.observe {
             (if (it) DungeonEvent.Terminal.Open else DungeonEvent.Terminal.Close).post()
         }
 

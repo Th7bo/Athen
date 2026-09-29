@@ -14,13 +14,13 @@ import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.partyfinder.data.PartyFinderSlotData
 import foo.starred.athen.modules.impl.dungeon.partyfinder.enums.PartyFinderClassType
 import foo.starred.athen.modules.impl.dungeon.partyfinder.enums.PartyFinderSlotStatus
 import foo.starred.athen.utils.contains
 import foo.starred.athen.utils.lore
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.mainThread
 import foo.starred.snowbird.api.text.parser.impl.parse

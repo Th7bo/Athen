@@ -16,13 +16,13 @@ import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.InputEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialEditor
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
 import foo.starred.athen.utils.command
 import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
@@ -68,8 +68,8 @@ object RadialMenu : Module(
     val current: List<RadialSlot>
         get() = stack.lastOrNull() ?: slots
 
-    val open = Observable(false).onChange {
-        if (it) return@onChange
+    val open = Observable(false).observe {
+        if (it) return@observe
 
         stack.clear()
         i0 = -1
