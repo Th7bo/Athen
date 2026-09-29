@@ -9,13 +9,14 @@ import foo.starred.athen.api.rendering.level.impl.queue.impl.LevelQueueImpl
 import foo.starred.athen.api.rendering.level.impl.renderers.base.ILevelRenderer
 import foo.starred.athen.api.rendering.level.internal.annotations.impl.LevelRenderer
 import foo.starred.athen.api.rendering.level.rendertypes.LevelRenderTypeImpl
-//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+
+//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
+import net.minecraft.client.renderer.MultiBufferSource
 
 @LevelRenderer
 object CircleRenderer : ILevelRenderer {

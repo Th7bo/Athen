@@ -7,40 +7,40 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.kuudra.enums.KuudraSupply
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractBeam
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFilledBox
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.WorldRenderEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.markerAABB
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.toDurationFromMillis
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object SupplyWaypoints : Module(
     "Supply waypoints",
     "Waypoints for supplies, pickup and drop-off spots.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val dropOff by config.switch("Drop off", true)
-    private val dropOffColor by config.colorPicker("Drop off color", Catppuccin.Mocha.Green.argb)
+    private val dropOffColor by config.colorPicker("Drop off color", MochaColorScheme.Green.argb)
 
     private val pickup by config.switch("Pick up", true)
-    private val pickupColor by config.colorPicker("Pick up color", Catppuccin.Mocha.Teal.argb)
+    private val pickupColor by config.colorPicker("Pick up color", MochaColorScheme.Teal.argb)
 
     private val fuel by config.switch("Fuel", true)
-    private val fuelColor by config.colorPicker("Fuel color", Catppuccin.Mocha.Blue.argb)
+    private val fuelColor by config.colorPicker("Fuel color", MochaColorScheme.Blue.argb)
 
     private val changeColor by config.switch("Detect player proximity", true)
-    private val playerColor by config.colorPicker("Nearby color", Catppuccin.Mocha.Peach.argb)
+    private val playerColor by config.colorPicker("Nearby color", MochaColorScheme.Peach.argb)
 
     private val customMessages = config.switch("Custom supply messages", true)
     private val textStyle by config.input("Supply text style", "<gray>➤ <red>#user <r>recovered a supply in <red>#time <gray>(#cur/#max)")

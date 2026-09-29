@@ -3,19 +3,18 @@
 package foo.starred.athen.modules.impl.general
 
 import com.google.gson.JsonParser
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.network.websocket.SocketPacket
 import foo.starred.athen.api.network.websocket.base.IWebSocket
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.PacketEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.kommand.IKommand
 import foo.starred.kommand.scopes.KommandCommandScope
 import foo.starred.snowbird.api.*
@@ -29,7 +28,7 @@ import net.minecraft.network.protocol.game.ServerboundChatPacket
 object IRC : Module(
     "IRC",
     "Enables the IRC by default on launch if the module is enabled.",
-    Category.GENERAL,
+    ConfigCategory.GENERAL,
     true
 ), IWebSocket, IKommand<FabricClientCommandSource> {
     override val loader: KommandCommandScope<FabricClientCommandSource> = KommandCommandScope()
@@ -234,19 +233,18 @@ object IRC : Module(
 
     private fun help() {
         val a = ("<dark_gray>" + ("-".repeat())).parse()
-        val b = Athen.modId
-        val c = Catppuccin.Mocha.Green.argb
+        val c = MochaColorScheme.Green.argb
 
         a.lie()
         ("<red>" + ("Athen IRC".center())).parse().lie()
         a.lie()
 
-        " <dark_gray>- <$c>/$b irc create [channel] [pin <gray>- optional<$c>]".parse().lie()
-        " <dark_gray>- <$c>/$b irc join [channel] [pin <gray>- optional<$c>]".parse().lie()
-        " <dark_gray>- <$c>/$b irc leave <gray>- leave channel".parse().lie()
-        " <dark_gray>- <$c>/$b irc pin [pin] <gray>- sets a pin".parse().lie()
-        " <dark_gray>- <$c>/$b irc chat [message]".parse().lie()
-        " <dark_gray>- <$c>/$b irc list <gray>- list channels".parse().lie()
+        " <dark_gray>- <$c>/athen irc create [channel] [pin <gray>- optional<$c>]".parse().lie()
+        " <dark_gray>- <$c>/athen irc join [channel] [pin <gray>- optional<$c>]".parse().lie()
+        " <dark_gray>- <$c>/athen irc leave <gray>- leave channel".parse().lie()
+        " <dark_gray>- <$c>/athen irc pin [pin] <gray>- sets a pin".parse().lie()
+        " <dark_gray>- <$c>/athen irc chat [message]".parse().lie()
+        " <dark_gray>- <$c>/athen irc list <gray>- list channels".parse().lie()
 
         a.lie()
 
@@ -257,7 +255,7 @@ object IRC : Module(
     }
 
     private fun er0() {
-        "Not connected to IRC! Use <yellow>/${Athen.modId} ws connect".mod(MessagePrefixType.ERROR)
+        "Not connected to IRC! Use <yellow>/athen ws connect".mod(MessagePrefixType.ERROR)
     }
 
     private fun er1() {

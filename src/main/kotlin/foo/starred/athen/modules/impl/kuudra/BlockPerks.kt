@@ -2,20 +2,20 @@ package foo.starred.athen.modules.impl.kuudra
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.config.Category
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.stripped
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object BlockPerks : Module(
     "Block perks",
     "Blocks certain perks in the kuudra perk gui so you don't click them!",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val cannoneer = listOf("Accelerated Shot", "Blast Radius", "Cannon Proficiency", "Multi-Shot", "Rapid Fire", "Steady Aim")
     private val crowd = listOf("Sweeping Edge", "Freezing Touch", "Bonus Damage", "Antibiotic", "Blight Slayer")
@@ -37,11 +37,11 @@ object BlockPerks : Module(
     private var menu: Boolean = false
 
     init {
-        perks0.state.onChange(::r)
-        perks1.state.onChange(::r)
-        perks2.state.onChange(::r)
-        perks3.state.onChange(::r)
-        perks4.state.onChange(::r)
+        perks0.state.observe(::r)
+        perks1.state.observe(::r)
+        perks2.state.observe(::r)
+        perks3.state.observe(::r)
+        perks4.state.observe(::r)
 
         on<GuiEvent.Open.Container> {
             menu = stripped == "Perk Menu"

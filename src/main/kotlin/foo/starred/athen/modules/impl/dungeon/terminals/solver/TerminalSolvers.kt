@@ -6,15 +6,15 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.dungeon.terminals.TerminalType
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.mixin.accessors.KeyMappingAccessor
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.impl.MelodySolver
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
 import foo.starred.snowbird.api.inputs.impl.MouseInputState
@@ -26,12 +26,11 @@ import net.minecraft.sounds.SoundEvents
 object TerminalSolvers : Module(
     "Terminal solvers",
     "Shows solutions for F7/M7 terminals in a nice custom gui!",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val settings by config.group("Settings")
     val firstClick by settings.slider("First click delay", 350, 150, 1000, "ms")
-    val clickDelay by settings.slider("Click delay", 100, 0, 500, "ms")
-    private val info by settings.information("Click delay only affects \"Panes\" terminal type.")
+    val clickDelay by settings.slider("Click delay", 100, 0, 500, "ms").description(("Click delay only affects \"Panes\" terminal type."))
     val resync by settings.slider("Resync timeout", 800, 0, 2000, "ms")
     val dropKey by settings.switch("Allow using drop key", true)
     val keybindL by settings.keybind("Keybind left click")

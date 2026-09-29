@@ -7,11 +7,11 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.slayers.SlayerAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.*
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.render.renderBoundingBox
 import net.minecraft.world.entity.Entity
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
@@ -22,24 +22,24 @@ import java.util.concurrent.ConcurrentHashMap
 object SlayerHighlight : Module(
     "Slayer highlights",
     "Highlights the slayer bosses.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val regex = Regex("^(?<attunement>[A-Z]+) ♨(\\d+) \\d\\d:\\d\\d$")
 
     private val _boss by config.group("Boss highlight")
     private val boss by _boss.switch("Highlight boss")
     private val `boss$mine` by _boss.switch("Only for mine", true)
-    private val `boss$color` by _boss.colorPicker("Color", Catppuccin.Mocha.Red.argb)
+    private val `boss$color` by _boss.colorPicker("Color", MochaColorScheme.Red.argb)
     private val `boss$width` by _boss.slider("Line width", 2f, 0f, 10f)
 
     private val _mini by config.group("Miniboss highlight")
     private val mini by _mini.switch("Highlight miniboss", false)
-    private val `mini$color` by _mini.colorPicker("Miniboss color", Catppuccin.Mocha.Peach.argb)
+    private val `mini$color` by _mini.colorPicker("Miniboss color", MochaColorScheme.Peach.argb)
     private val `mini$width` by _mini.slider("Miniboss line width", 2f, 0f, 10f)
 
     private val _demon by config.group("Demon highlight")
     private val demon by _demon.switch("Highlight demon", false)
-    private val `demon$color` by _demon.colorPicker("Demon color", Catppuccin.Mocha.Flamingo.argb)
+    private val `demon$color` by _demon.colorPicker("Demon color", MochaColorScheme.Flamingo.argb)
     private val `demon$width` by _demon.slider("Demon line width", 2f, 0f, 10f)
 
     private val _blaze by config.group("Blaze state colors")

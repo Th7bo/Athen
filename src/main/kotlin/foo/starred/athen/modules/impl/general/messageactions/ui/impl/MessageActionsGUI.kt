@@ -3,11 +3,11 @@
 package foo.starred.athen.modules.impl.general.messageactions.ui.impl
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.general.messageactions.MessageActions
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.*
@@ -18,6 +18,8 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
@@ -27,7 +29,6 @@ import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrolla
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
 
@@ -44,21 +45,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
     private var `category$new`: RectanglePrimitive
     private var `category$toggle`: RectanglePrimitive
     private var `category$delete`: RectanglePrimitive
-    private lateinit var `category$toggle$outline`: OutlineEffect
-    private lateinit var `category$delete$outline`: OutlineEffect
     private var `category$field`: TextFieldComponent
     private lateinit var `category$text$toggle`: TextPrimitive
     private lateinit var `category$text$delete`: TextPrimitive
 
     private var `action$edit`: RectanglePrimitive
     private var `action$delete`: RectanglePrimitive
-    private lateinit var `action$edit$outline`: OutlineEffect
-    private lateinit var `action$delete$outline`: OutlineEffect
     private lateinit var `action$edit$text`: TextPrimitive
     private lateinit var `action$delete$text`: TextPrimitive
 
     private data class CategoryRow(val row: RectanglePrimitive, val label: TextPrimitive)
-    private data class EntryRow(val row: RectanglePrimitive, val toggle: RectanglePrimitive, val outline: OutlineEffect)
+    private data class EntryRow(val row: RectanglePrimitive, val toggle: RectanglePrimitive)
 
     private val rows0 = LinkedHashMap<String?, CategoryRow>()
     private val rows1 = LinkedHashMap<Int, EntryRow>()
@@ -80,11 +77,11 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val side0 = rectangle {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -99,11 +96,11 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val right0 = rectangle {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -118,11 +115,11 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         footer = rectangle {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -141,10 +138,10 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val bar = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 24))
             position = FixedPositionConstraint(0, 276)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(side0)
@@ -152,11 +149,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
         `category$new` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 2)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
             })
 
             on<MouseEvent.Press> {
@@ -175,17 +173,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(bar)
             adopt(text {
                 text = "+".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             })
@@ -194,18 +192,18 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         `category$toggle` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
             position = CenterPositionConstraint()
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `category$toggle$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                 val name = category ?: return@on
 
                 MessageActions.toggle(name)
-                rows0[name]?.label?.color = CascadeGeometricColor(if (MessageActions.categories.find { it.name == name }?.enabled != true) Mocha.Overlay0.argb else Mocha.Lavender.argb)
+                rows0[name]?.label?.color = CascadeGeometricColor(if (MessageActions.categories.find { it.name == name }?.enabled != true) MochaColorScheme.Overlay0.argb else MochaColorScheme.Lavender.argb)
                 buttons()
                 cancel()
 
@@ -217,7 +215,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             attach(bar)
             adopt(text {
                 text = "\uD83D\uDD01".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `category$text$toggle` = it })
@@ -225,12 +223,13 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
         `category$delete` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -2)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `category$delete$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -255,7 +254,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             attach(bar)
             adopt(text {
                 text = "\uD83D\uDDD1".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `category$text$delete` = it })
@@ -299,11 +298,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         buttons()
         val create = rectangle {
             size = PercentSizeConstraint(32.2f, 78f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
             })
 
             on<MouseEvent.Press> {
@@ -315,17 +315,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Create action".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             })
@@ -333,12 +333,13 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
         `action$edit` = rectangle {
             size = PercentSizeConstraint(32.8f, 78f)
-            position = AnchorPositionConstraint({ create }, PositionAnchor.RIGHT, 3)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ create }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(3f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `action$edit$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -351,17 +352,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Edit action".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `action$edit$text` = it })
@@ -369,12 +370,13 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
         `action$delete` = rectangle {
             size = PercentSizeConstraint(32.2f, 78f)
-            position = AnchorPositionConstraint({ `action$edit` }, PositionAnchor.RIGHT, 3)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ `action$edit` }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(3f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `action$delete$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -388,17 +390,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Delete action".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `action$delete$text` = it })
@@ -426,8 +428,9 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 20))
-                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, cy)
-                color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, cy.toFloat())
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -446,11 +449,11 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
                 }
 
                 on<MouseEvent.Move.Enter> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Surface0.withAlpha(0.5f))
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.5f))
                 }
 
                 on<MouseEvent.Move.Exit> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Base.argb)
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 }
 
                 attach(left)
@@ -458,8 +461,9 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
             val label = text {
                 text = v.literal()
-                color = CascadeGeometricColor(if (!b1) Mocha.Overlay0.argb else if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+                color = CascadeGeometricColor(if (!b1) MochaColorScheme.Overlay0.argb else if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
                 attach(row)
             }
 
@@ -478,7 +482,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         if (filtered.isEmpty()) {
             text {
                 text = "No actions".literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 attach(right)
             }
@@ -488,18 +492,17 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
         var cy = 0
         for ((index, action) in filtered) {
-            lateinit var outline: OutlineEffect
             val b0 = action.enabled && (action.category.isEmpty() || MessageActions.categories.find { it.name == action.category }?.enabled != false)
             val b1 = entry == index
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 28))
                 position = FixedPositionConstraint(0, cy)
-                color = CascadeGeometricColor(if (b1) Mocha.Surface1.argb else if (!b0) Mocha.Red.withAlpha(0.15f) else Mocha.Surface0.argb)
+                color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else if (!b0) MochaColorScheme.Red.alpha(0.15f) else MochaColorScheme.Surface0.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (!b0) Mocha.Red.withAlpha(0.6f) else Mocha.Overlay0.argb)
-                }.also { outline = it })
+                    color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (!b0) MochaColorScheme.Red.alpha(0.6f) else MochaColorScheme.Overlay0.argb)
+                })
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -521,11 +524,12 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             var a = RectanglePrimitive.NONE
             rectangle {
                 size = FixedSizeConstraint(14, 14)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(8f, 0f)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Surface2.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 })
 
                 on<MouseEvent.Press> {
@@ -542,7 +546,7 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
                 adopt(rectangle {
                     size = FixedSizeConstraint(8, 8)
                     position = CenterPositionConstraint()
-                    color = CascadeGeometricColor(Mocha.Green.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Green.argb)
                     interact = false
                     visible = action.enabled
                 }.also { a = it })
@@ -551,19 +555,20 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             val b = rectangle {
                 val str = action.match.displayName
 
-                size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                size = FixedSizeConstraint(VanillaFontMeasurer.width(str) + 8, 16)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(30f, 0f)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Crust.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Crust.argb)
                 })
 
                 attach(row)
                 adopt(text {
                     text = str.literal()
-                    color = CascadeGeometricColor(Mocha.Lavender.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
                     position = CenterPositionConstraint()
                 })
             }
@@ -571,19 +576,20 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
             var next: RectanglePrimitive = b
             if (action.cancel) {
                 next = rectangle {
-                    size = FixedSizeConstraint(client.font?.width("✕")?.plus(6) ?: 12, 16)
-                    position = AnchorPositionConstraint({ b }, PositionAnchor.RIGHT, 4)
-                    color = CascadeGeometricColor(Mocha.Red.withAlpha(0.2f))
+                    size = FixedSizeConstraint(VanillaFontMeasurer.width("✕") + 6, 16)
+                    position = AnchorPositionConstraint({ b }, PositionAnchor.RIGHT)
+                    offset = CascadeGeometricOffset(4f, 0f)
+                    color = CascadeGeometricColor(MochaColorScheme.Red.alpha(0.2f))
                     interact = false
 
                     effect(OutlineEffect {
-                        color = CascadeGeometricColor(Mocha.Red.withAlpha(0.6f))
+                        color = CascadeGeometricColor(MochaColorScheme.Red.alpha(0.6f))
                     })
 
                     attach(row)
                     adopt(text {
                         text = "✕".literal()
-                        color = CascadeGeometricColor(Mocha.Red.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Red.argb)
                         position = CenterPositionConstraint()
                     })
                 }
@@ -591,12 +597,13 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
 
             text {
                 text = action.pattern.literal()
-                color = CascadeGeometricColor(if (b0) Mocha.Text.argb else Mocha.Red.argb)
-                position = MixedPositionConstraint(AnchorPositionConstraint({ next }, PositionAnchor.RIGHT, 8), CenterPositionConstraint())
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Text.argb else MochaColorScheme.Red.argb)
+                position = MixedPositionConstraint(AnchorPositionConstraint({ next }, PositionAnchor.RIGHT), CenterPositionConstraint())
+                offset = CascadeGeometricOffset(8f, 0f)
                 attach(row)
             }
 
-            rows1[index] = EntryRow(row, a, outline)
+            rows1[index] = EntryRow(row, a)
             cy += 32
         }
     }
@@ -606,8 +613,8 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val b0 = category == name
         val b1 = name == null || MessageActions.categories.find { it.name == name }?.enabled == true
 
-        entry.row.color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
-        entry.label.color = CascadeGeometricColor(if (!b1) Mocha.Overlay0.argb else if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        entry.row.color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
+        entry.label.color = CascadeGeometricColor(if (!b1) MochaColorScheme.Overlay0.argb else if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
     }
 
     private fun buttons() {
@@ -615,13 +622,13 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val b1 = b0 && MessageActions.categories.find { it.name == category }?.enabled == true
         val b2 = b0 && deleting == category
 
-        `category$toggle`.color = CascadeGeometricColor(if (!b0) Mocha.Surface1.argb else if (b1) Mocha.Lavender.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `category$toggle$outline`.color = CascadeGeometricColor(if (!b0) Mocha.Surface0.argb else if (b1) Mocha.Lavender.argb.brighten(0.5f) else Mocha.Overlay0.argb)
-        `category$text$toggle`.color = CascadeGeometricColor(if (!b0) Mocha.Overlay0.argb else Mocha.Base.argb)
+        `category$toggle`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface1.argb else if (b1) MochaColorScheme.Lavender.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `category$toggle`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface0.argb else if (b1) MochaColorScheme.Lavender.argb.brighten(0.5f) else MochaColorScheme.Overlay0.argb)
+        `category$text$toggle`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Overlay0.argb else MochaColorScheme.Base.argb)
 
-        `category$delete`.color = CascadeGeometricColor(if (!b0) Mocha.Surface1.argb else if (b2) Mocha.Red.argb.brighten(0.9f) else Mocha.Red.argb.brighten(0.8f))
-        `category$delete$outline`.color = CascadeGeometricColor(if (!b0) Mocha.Surface0.argb else Mocha.Red.argb.brighten(0.5f))
-        `category$text$delete`.color = CascadeGeometricColor(if (!b0) Mocha.Overlay0.argb else Mocha.Base.argb)
+        `category$delete`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface1.argb else if (b2) MochaColorScheme.Red.argb.brighten(0.9f) else MochaColorScheme.Red.argb.brighten(0.8f))
+        `category$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
+        `category$text$delete`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Overlay0.argb else MochaColorScheme.Base.argb)
         `category$text$delete`.text = (if (b2) "✔" else "\uD83D\uDDD1").literal()
     }
 
@@ -631,18 +638,18 @@ object MessageActionsGUI : CascadeScreen("Message Actions [Athen]", CascadeGeome
         val b0 = actionEntry.enabled && (actionEntry.category.isEmpty() || MessageActions.categories.find { it.name == actionEntry.category }?.enabled != false)
         val b1 = entry == index
 
-        row.row.color = CascadeGeometricColor(if (b1) Mocha.Surface1.argb else if (!b0) Mocha.Red.withAlpha(0.15f) else Mocha.Surface0.argb)
-        row.outline.color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (!b0) Mocha.Red.withAlpha(0.6f) else Mocha.Overlay0.argb)
+        row.row.color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else if (!b0) MochaColorScheme.Red.alpha(0.15f) else MochaColorScheme.Surface0.argb)
+        row.row.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (!b0) MochaColorScheme.Red.alpha(0.6f) else MochaColorScheme.Overlay0.argb)
     }
 
     private fun footer() {
         val b = entry != null
-        `action$edit`.color = CascadeGeometricColor(if (b) Mocha.Lavender.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `action$edit$outline`.color = CascadeGeometricColor(if (b) Mocha.Lavender.argb.brighten(0.5f) else Mocha.Surface0.argb)
-        `action$edit$text`.color = CascadeGeometricColor(if (b) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `action$edit`.color = CascadeGeometricColor(if (b) MochaColorScheme.Lavender.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `action$edit`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b) MochaColorScheme.Lavender.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `action$edit$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
 
-        `action$delete`.color = CascadeGeometricColor(if (b) Mocha.Red.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `action$delete$outline`.color = CascadeGeometricColor(if (b) Mocha.Red.argb.brighten(0.5f) else Mocha.Surface0.argb)
-        `action$delete$text`.color = CascadeGeometricColor(if (b) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `action$delete`.color = CascadeGeometricColor(if (b) MochaColorScheme.Red.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `action$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b) MochaColorScheme.Red.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `action$delete$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
     }
 }

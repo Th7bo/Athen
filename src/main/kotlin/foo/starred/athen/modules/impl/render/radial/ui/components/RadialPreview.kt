@@ -1,11 +1,11 @@
 package foo.starred.athen.modules.impl.render.radial.ui.components
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialEditor
 import foo.starred.athen.modules.impl.render.radial.ui.editor.RadialOverlay
 import foo.starred.athen.modules.impl.render.radial.utils.RadialRenderState
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FillSizeConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
@@ -25,10 +25,10 @@ class RadialPreview(main: ContainerPrimitive) {
         panel = rectangle {
             size = FixedSizeConstraint(320, 320)
             position = FixedPositionConstraint(586, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             on<MouseEvent.Press> {

@@ -4,13 +4,12 @@ package foo.starred.athen.modules.impl.general.messageactions
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import foo.starred.athen.Athen
 import foo.starred.athen.Athen.GSON
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.modules.Module
@@ -34,10 +33,10 @@ import java.lang.reflect.Type
 object MessageActions : Module(
     "Message actions",
     "Allows you to run actions when you receive a message.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val _unused by config.button("Open manager") { MessageActionsGUI.open() }
-    private val _unused0 by config.information("You can use the commands <red>\"/${Athen.modId} [import|export] messageactions\"<r> to share configs!")
+    private val _unused0 by config.information("Share command: <red>/athen [import|export] messageactions")
 
     private val json = JsonStore("features/MessageActions")
     private var _actions: String by json.string("actions")

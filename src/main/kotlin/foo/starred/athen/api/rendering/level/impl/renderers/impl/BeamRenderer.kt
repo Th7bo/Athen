@@ -8,14 +8,15 @@ import foo.starred.athen.api.rendering.level.impl.renderers.base.ILevelRenderer
 import foo.starred.athen.api.rendering.level.internal.annotations.impl.LevelRenderer
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.snowbird.api.client
-//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.ARGB
 import net.minecraft.util.LightCoordsUtil
 import net.minecraft.util.Mth
 import kotlin.math.sqrt
+
+//~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
+import net.minecraft.client.renderer.MultiBufferSource
 
 @LevelRenderer
 object BeamRenderer : ILevelRenderer {

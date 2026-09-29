@@ -2,32 +2,38 @@
 
 package foo.starred.athen.modules.impl.slayer.carry.impl
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.carry
-import foo.starred.athen.events.*
-import foo.starred.athen.events.core.runWhen
+import foo.starred.athen.events.LocationEvent
+import foo.starred.athen.events.MessageEvent
+import foo.starred.athen.events.SlayerEvent
+import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.slayer.carry.data.SlayerCarryHistory
 import foo.starred.athen.modules.impl.slayer.carry.data.SlayerCarryPlayer
 import foo.starred.athen.modules.impl.slayer.carry.ui.SlayerCarryGUI
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
-import foo.starred.snowbird.api.*
+import foo.starred.kbus.extensions.runWhen
+import foo.starred.snowbird.api.center
+import foo.starred.snowbird.api.command
+import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.network.data.HttpRequest
+import foo.starred.snowbird.api.repeat
 import foo.starred.snowbird.api.scheduling.scheduler.extensions.clientTicks
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.literal
@@ -43,7 +49,7 @@ import kotlin.math.round
 object SlayerCarryTracker : Module(
     "Slayer carry tracker",
     "Track slayer carries and display progress.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val `announce$comp$party` by config.switch("Announce in party", true)
     private val `announce$spawn` by config.switch("Show spawn message", true)
@@ -54,8 +60,7 @@ object SlayerCarryTracker : Module(
     private val _webhook by config.group("Discord webhook")
     private val webhook by _webhook.switch("Send to webhook")
     private val `webhook$each` by _webhook.switch("Send on each kill", true)
-    private val `webhook$url` by _webhook.input("Webhook URL")
-    private val `webhook$url$desc` by _webhook.information("Requires you to add your own webhook URL!")
+    private val `webhook$url` by _webhook.input("Webhook URL").description("Requires you to add your own webhook URL!")
 
     private val _void by config.group("Voidgloom Prices")
     private val `price$void$3` by _void.input("T3 Price (M)", "0.8, 0.65")
@@ -68,10 +73,10 @@ object SlayerCarryTracker : Module(
 
     private val _highlights by config.group("Highlights")
     private val `highlight$boss` = _highlights.switch("Highlight boss", true).unique("highlightBoss")
-    private val `highlight$boss$color` by _highlights.colorPicker("Boss color", Mocha.Red.argb)
+    private val `highlight$boss$color` by _highlights.colorPicker("Boss color", MochaColorScheme.Red.argb)
     private val `highlight$boss$width` by _highlights.slider("Boss line width", 2f, 0f, 10f)
     private val `highlight$player` = _highlights.switch("Highlight player", true).unique("highlightPlayer")
-    private val `highlight$player$color` by _highlights.colorPicker("Player color", Mocha.Blue.argb)
+    private val `highlight$player$color` by _highlights.colorPicker("Player color", MochaColorScheme.Blue.argb)
     private val `highlight$player$width` by _highlights.slider("Player line width", 2f, 0f, 10f)
 
     private val tradeCompleteRegex = Regex("^Trade completed with (?:\\[.*?] )?(?<player>\\w+)!$")
@@ -82,7 +87,6 @@ object SlayerCarryTracker : Module(
     val tracked = json.mutableList("tracked", SlayerCarryPlayer.CODEC)
     private val history = json.mutableList("history", SlayerCarryHistory.CODEC)
 
-    private val ex0 = listOf("§f§lSlayer Carries:", "§7> §bExample §8[§7Void T4§8]§f: §b3§f/§b10 §7(12.5s | 28/hr)").fcs
     private val display = Ticking(5) {
         if (tracked.value.isEmpty()) return@Ticking null
 
@@ -92,9 +96,20 @@ object SlayerCarryTracker : Module(
         }.map { it.visualOrderText }
     }
 
-    private val hud = config.hud("Slayer carry display") {
-        if (it) return@hud sizedText(ex0)
-        sizedText(display.value ?: return@hud null)
+    private val hud by config.hud("Slayer carry display") {
+        val example = listOf("§f§lSlayer Carries:", "§7> §bExample §8[§7Void T4§8]§f: §b3§f/§b10 §7(12.5s | 28/hr)").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
     private var trader: String? = null
@@ -119,7 +134,7 @@ object SlayerCarryTracker : Module(
 
                 val tier = SlayerTier.entries.find { it.int == i0 }
                 tracked.update { add(SlayerCarryPlayer(name, type, tier, amount)) }
-                "<green>Now tracking <aqua>$name <gray>[${type.short}${tier?.let { " T${it.int}" } ?: " Any"}] x$amount!".mod()
+                "<green>Now tracking <aqua>$name <gray>[${type.short}${tier?.let { " T${it.int}" } ?: " Any"}] xathenmount!".mod()
             }.suggests { listOf("any", "1", "2", "3", "4", "5") }
 
             "carry" / "remove" / word("player") {
@@ -159,7 +174,7 @@ object SlayerCarryTracker : Module(
                 val i0 = maxOf(1, (e0.size + 9) / 10)
 
                 val c = ("<dark_gray>" + ("-".repeat())).parse()
-                val green = Mocha.Green.argb
+                val green = MochaColorScheme.Green.argb
 
                 c.lie()
                 "Carry History <gray>(1/$i0)<r>:".mod()
@@ -187,7 +202,7 @@ object SlayerCarryTracker : Module(
                 val list = history.value.asReversed()
 
                 val c = ("<dark_gray>" + ("-".repeat())).parse()
-                val green = Mocha.Green.argb
+                val green = MochaColorScheme.Green.argb
 
                 val page0 = maxOf(1, (list.size + 9) / 10)
                 if (page > page0) {
@@ -330,7 +345,7 @@ object SlayerCarryTracker : Module(
 
             if (result.last) {
                 val time = result.time0.toDuration()
-                "<${Mocha.Green.argb}>Completed bosses for <aqua>$name <gray>[${type.short}${if (carry.tier == null) " Any" else " T${slayerInfo.tier?.int}"}]<r> in <yellow>$time".mod()
+                "<${MochaColorScheme.Green.argb}>Completed bosses for <aqua>$name <gray>[${type.short}${if (carry.tier == null) " Any" else " T${slayerInfo.tier?.int}"}]<r> in <yellow>$time".mod()
 
                 if (webhook) {
                     `webhook$url`.request(HttpRequest.POST) {
@@ -363,14 +378,13 @@ object SlayerCarryTracker : Module(
     }
 
     private fun help() {
-        val a = Athen.modId
         val b = listOf(
-            "/$a carry" to "Open the config tracker menu",
-            "/$a carry add <player> <amount> <type> <tier>" to ":3",
-            "/$a carry remove <player>" to "Removes a tracked player",
-            "/$a carry list" to "Lists players being tracked",
-            "/$a carry list clear" to "Clears the active list",
-            "/$a carry history [page=0]" to "Shows tracked history"
+            "/athen carry" to "Open the config tracker menu",
+            "/athen carry add <player> <amount> <type> <tier>" to ":3",
+            "/athen carry remove <player>" to "Removes a tracked player",
+            "/athen carry list" to "Lists players being tracked",
+            "/athen carry list clear" to "Clears the active list",
+            "/athen carry history [page=0]" to "Shows tracked history"
         )
 
         val c = ("<dark_gray>" + ("-".repeat())).parse()
@@ -379,7 +393,7 @@ object SlayerCarryTracker : Module(
         ("<aqua>" + ("Athen Slayer Carry".center())).parse().lie()
         c.lie()
 
-        for ((c, d) in b) "  <${Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
+        for ((c, d) in b) "  <${MochaColorScheme.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
 
         c.lie()
     }

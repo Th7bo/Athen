@@ -1,9 +1,9 @@
 package foo.starred.athen.config.dsl.impl.builders.config
 
 import foo.starred.athen.Athen
-import foo.starred.athen.config.Category
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.dsl.base.ConfigScope
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.data.Observable
 
@@ -11,7 +11,7 @@ class ConfigMainBuilder(
     val configKey: String,
     name: String,
     description: String,
-    category: Category,
+    category: ConfigCategory,
     private val default: Boolean = false
 ) : ConfigScope {
     val feature = ConfigManager.feature(name, description, category, configKey, default)
@@ -32,9 +32,5 @@ class ConfigMainBuilder(
         ConfigManager.observe(configKey) {
             state.value = it as? Boolean ?: default
         }
-    }
-
-    fun observe(call: (Boolean) -> Unit): Observable<Boolean> {
-        return state.onChange(call)
     }
 }

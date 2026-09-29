@@ -9,10 +9,7 @@ import foo.starred.athen.config.dsl.impl.builders.group.ConfigGroupBuilder
 import foo.starred.athen.config.dsl.impl.builders.hud.ConfigHudBuilder
 import foo.starred.athen.config.dsl.impl.builders.option.ConfigOptionBuilder
 import foo.starred.athen.config.dsl.impl.builders.sound.ConfigSoundOption
-import foo.starred.athen.hud.HUDElement
-import foo.starred.athen.hud.HUDManager
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
-import net.minecraft.client.gui.GuiGraphicsExtractor
 
 interface ConfigScope {
     val builder: ConfigMainBuilder
@@ -58,12 +55,8 @@ interface ConfigScope {
         return ConfigSoundOption(builder, name, default, enabled, pitch, volume, parent)
     }
 
-    fun hud(name: String, default: Boolean = true, outsidePreview: Boolean = true, renderer: GuiGraphicsExtractor.(Boolean) -> Pair<Int, Int>?): ConfigHudBuilder {
-        val key = "${builder.configKey}.hud_${name.hashCode()}"
-        val element = HUDElement(key, name, builder, renderer, enabled = default, renderOutsidePreview = outsidePreview)
-        builder.feature.option(ConfigHudElementData(name, key, default, element, builder, parent = parent))
-        HUDManager.register(element)
-        return ConfigHudBuilder(builder, element)
+    fun hud(name: String, default: Boolean = true, outside: Boolean = true, block: ConfigHudBuilder.() -> Unit = {}): ConfigHudBuilder {
+        return ConfigHudBuilder(builder, name, default, outside, parent).apply(block)
     }
 
     fun button(text: String, onClick: () -> Unit): ConfigOptionBuilder<String> {

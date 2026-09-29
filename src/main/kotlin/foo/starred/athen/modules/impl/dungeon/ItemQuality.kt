@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.dungeon
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -17,7 +17,7 @@ import tech.thatgravyboat.skyblockapi.api.datatype.getData
 object ItemQuality : Module(
     "Item quality",
     "Shows the quality of dungeon items.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val textStyle by config.input("Style", "&7Item Quality: &c#cur&8/&c#max &8(#floor)")
     private val _meow0 by config.variables("#cur", "#max", "#floor")

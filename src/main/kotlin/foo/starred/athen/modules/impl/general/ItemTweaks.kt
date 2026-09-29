@@ -6,12 +6,12 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.items.ItemAPI.`watch$tooltip`
 import foo.starred.athen.api.messaging.enums.MessageColors
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
-import foo.starred.athen.config.Category
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.snowbird.api.client
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.colorCoded
@@ -34,7 +34,7 @@ import kotlin.time.toJavaInstant
 object ItemTweaks : Module(
     "Item tweaks",
     "Tweaks to the items that are too small to be individual features.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val cakeRegex = Regex("New Year Cake \\(Year (?<year>\\d+)\\)") // https://regex101.com/r/lMIQJm/1
     private val enchants = hashSetOf("Aqua Affinity", "Depth Strider")
@@ -64,7 +64,7 @@ object ItemTweaks : Module(
             if (slot.item.item != Items.CAKE) return@on
 
             cakeRegex.findOrNull(slot.item.displayName.stripped(), "year") {
-                graphics.extractText("§b${it.component1()}", slot.x, slot.y + 8)
+                VanillaFontRenderer.extract(graphics, "§b${it.component1()}", slot.x, slot.y + 8)
             }
         }.runWhen(cakeNumbers.state)
 
@@ -109,7 +109,7 @@ object ItemTweaks : Module(
             if (stars <= 0) return@on
 
             val str = stars.toString()
-            graphics.extractText(str, x + 17 - client.font.width(str), y + 18 - client.font.lineHeight, color = starColor)
+            VanillaFontRenderer.extract(graphics, str, x + 17 - VanillaFontMeasurer.width(str), y + 18 - VanillaFontMeasurer.height, color = starColor)
         }.runWhen(showItemStars.state)
     }
 

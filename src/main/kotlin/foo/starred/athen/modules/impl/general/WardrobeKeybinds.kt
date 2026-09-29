@@ -5,13 +5,13 @@ package foo.starred.athen.modules.impl.general
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.CancellableEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.mixin.accessors.KeyMappingAccessor
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.guiClick
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
@@ -24,14 +24,13 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 object WardrobeKeybinds : Module(
     "Wardrobe keybinds",
     "Keybinds for wardrobe slots!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val preventUnequip by config.switch("Prevent unequip")
     private val cancelAll by config.switch("Cancel all other clicks")
     private val override by config.keybind("Key override", InputConstants.KEY_LCONTROL)
     private val cancelRender = config.switch("Cancel gui render").unique("cancelRender")
-    private val ping by config.slider("Ping", 250, 10, 1000, "ms")
-    private val _unused by config.information("Ping is used to estimate internal calculations.")
+    private val ping by config.slider("Ping", 250, 10, 1000, "ms").description("Ping is used to estimate internal calculations.")
 
     private val keybinds by config.group("General keybinds")
     private val useHotbar by keybinds.switch("Use hotbar binds", true)
@@ -102,7 +101,7 @@ object WardrobeKeybinds : Module(
         }.runWhen(cancelRender.state)
     }
 
-    private fun CancellableEvent.fn(key: InputConstants.Key) {
+    private fun KBusCancellableTrait.fn(key: InputConstants.Key) {
         val bool0 = GenericInputState.pressed(override)
         val bool1 = key == (client.options.keyInventory as KeyMappingAccessor).boundKey
         val bool2 = key.value == InputConstants.KEY_ESCAPE

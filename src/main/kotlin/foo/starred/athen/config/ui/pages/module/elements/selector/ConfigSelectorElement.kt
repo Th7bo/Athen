@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSelectorElementData
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -14,6 +14,7 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ImagePrimitive.Companion.image
@@ -23,6 +24,7 @@ import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.literal
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigSelectorElement(
     private val config: ConfigSelectorElementData
@@ -32,51 +34,55 @@ class ConfigSelectorElement(
         wrapper = CascadeTextWrapper
         text = CascadeFonts.sans.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
         textSize = 8f
-        color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
         position = CenterPositionConstraint()
     }
 
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(100f, 14f)
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         })
 
         adopt(image {
             location = ResourceAPI.identify("textures/gui/chevron.png")
             rotation = -90f
-            color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 5f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(5f, 0f)
             size = FixedSizeConstraint(6f, 6f)
             interact = false
         })
 
         adopt(rectangle {
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 16f, 0f)
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(16f, 0f)
             size = FixedSizeConstraint(1f, 8f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             interact = false
         })
 
         adopt(text)
-
         adopt(rectangle {
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -16f, 0f)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-16f, 0f)
             size = FixedSizeConstraint(1f, 8f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             interact = false
         })
 
         adopt(image {
             location = ResourceAPI.identify("textures/gui/chevron.png")
             rotation = 90f
-            color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -5f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-5f, 0f)
             size = FixedSizeConstraint(6f, 6f)
             interact = false
         })
@@ -92,17 +98,23 @@ class ConfigSelectorElement(
             text.text = CascadeFonts.sans.truncate(config.options.getOrNull(value) ?: "Unknown", 8f, 60f, "…").literal()
 
             ConfigManager.update(config.key, value1)
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb.brighten(0.9f)), 0.15f) {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animate(::color, CascadeGeometricColor(MochaColorScheme.Surface1.argb.brighten(0.85f)), 150.milliseconds) {
+                animate(150.milliseconds) {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+                }
             }
         }
 
         on<MouseEvent.Move.Enter> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
         }
 
         on<MouseEvent.Move.Exit> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            }
         }
     }
 

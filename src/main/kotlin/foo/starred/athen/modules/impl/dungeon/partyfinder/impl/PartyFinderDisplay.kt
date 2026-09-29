@@ -4,23 +4,23 @@ package foo.starred.athen.modules.impl.dungeon.partyfinder.impl
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.profile.ProfileAPI
 import foo.starred.athen.api.profile.data.PlayerProfileStats
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PacketEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.partyfinder.data.PartyFinderSlotData
 import foo.starred.athen.modules.impl.dungeon.partyfinder.enums.PartyFinderClassType
 import foo.starred.athen.modules.impl.dungeon.partyfinder.enums.PartyFinderSlotStatus
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.contains
 import foo.starred.athen.utils.lore
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.mainThread
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -43,11 +43,11 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.hours
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.DUNGEON_HUB])
+@OnlyIn(islands = [PresetSkyBlockIsland.DUNGEON_HUB])
 object PartyFinderDisplay : Module(
     "Party finder display",
     "Displays stats of party finder groups in the menu.",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private val stats = config.switch("Show stats").unique("showStats")
     private val stack = config.switch("Party stack size", true).unique("stackSize")
@@ -59,7 +59,7 @@ object PartyFinderDisplay : Module(
     val `color$vc` by config.colorPicker("VC color", 0xFF7300FF)
     val `color$perm` by config.colorPicker("Perm color", 0xFF00FFFF)
     val `color$carry` by config.colorPicker("Carry color", 0xFF640000)
-    private val _unused by config.information("Want to hide a color? You can set it's opacity to 0!")
+    private val _unused by config.information("Set opacity to 0 to hide color!")
 
     private val noteRegex = Regex("^Note: (?<note>.+)")
     private val floorRegex = Regex("^Floor: Floor (?<floor>[IV]+)$")
@@ -104,14 +104,14 @@ object PartyFinderDisplay : Module(
             if (!menu0) return@on
             val color = data[slot.index]?.status?.color?.takeIf { it.alpha > 10 } ?: return@on
 
-            graphics.rectangle(slot.x, slot.y, 16, 16, color)
+            graphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, color)
         }.runWhen(highlight.state)
 
         on<GuiEvent.Slots.Render.Any.Post> {
             if (!menu0) return@on
             val s = data[slot.index]?.members?.size?.toString() ?: return@on
 
-            graphics.extractText(s, slot.x + 17 - client.font.width(s), slot.y + 18 - client.font.lineHeight)
+            VanillaFontRenderer.extract(graphics, s, slot.x + 17 - VanillaFontMeasurer.width(s), slot.y + 18 - VanillaFontMeasurer.height)
         }.runWhen(stack.state)
 
         on<PacketEvent.Receive, ClientboundContainerSetContentPacket> {
@@ -251,7 +251,7 @@ object PartyFinderDisplay : Module(
             if (!first) root += " <gray>| "
             first = false
 
-            val color = if (a == klass) Catppuccin.Mocha.Teal.argb else Catppuccin.Mocha.Red.argb
+            val color = if (a == klass) MochaColorScheme.Teal.argb else MochaColorScheme.Red.argb
             root += "<$color>${a.full}"
         }
 

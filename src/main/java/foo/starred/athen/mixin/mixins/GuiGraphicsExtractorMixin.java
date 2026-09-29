@@ -14,10 +14,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-//~ if >= 26.2 'Quaternionf' -> 'Quaternionfc'
-import org.joml.Quaternionf;
-//~ if >= 26.2 'Vector3f' -> 'Vector3fc'
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,6 +21,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+
+//~ if >= 26.2 'Quaternionf' -> 'Quaternionfc'
+import org.joml.Quaternionf;
+//~ if >= 26.2 'Vector3f' -> 'Vector3fc'
+import org.joml.Vector3f;
 
 @Mixin(value = GuiGraphicsExtractor.class, priority = Integer.MAX_VALUE)
 public class GuiGraphicsExtractorMixin {

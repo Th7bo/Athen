@@ -1,5 +1,9 @@
 package foo.starred.athen.api.rendering.level.pipelines
 
+import foo.starred.athen.annotations.Load
+import foo.starred.athen.api.rendering.level.pipelines.impl.DualLevelPipeline
+import net.minecraft.client.renderer.RenderPipelines
+
 //? if >= 26.3 {
 /*import com.mojang.renderpearl.api.pipeline.PrimitiveTopology
 *///?} elif 26.2 {
@@ -7,9 +11,6 @@ package foo.starred.athen.api.rendering.level.pipelines
 *///?} else {
 import com.mojang.blaze3d.vertex.VertexFormat
 //?}
-import foo.starred.athen.annotations.Load
-import foo.starred.athen.api.rendering.level.pipelines.impl.DualLevelPipeline
-import net.minecraft.client.renderer.RenderPipelines
 
 @Load
 object LevelPipelineImpl {

@@ -2,8 +2,8 @@ package foo.starred.athen.modules.impl.dungeon.terminals.solver.impl
 
 import foo.starred.athen.api.dungeon.terminals.TerminalType
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
-import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.ITerminalSolver
+import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.rectangle.rounded.roundedRectangle
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius

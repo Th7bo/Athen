@@ -8,18 +8,19 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.kuudra.enums.KuudraTier
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.snowbird.api.lie
@@ -32,16 +33,37 @@ import net.minecraft.util.FormattedCharSequence
 import kotlin.math.abs
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.KUUDRA])
+@OnlyIn(islands = [PresetSkyBlockIsland.KUUDRA])
 object KuudraSplits : Module(
     "Kuudra splits",
     "Splits for kuudra, very customisable.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val chat by config.switch("Send to chat", true)
-    private val _hud = config.hud("Splits display") {
-        if (it) return@hud sizedText(fcs)
-        sizedText(display.value ?: return@hud null)
+    private val _hud by config.hud("Splits display") {
+        val example: List<FormattedCharSequence> =
+            """
+        §cSupply§f: 47.4s §7[46.4s]
+        §cBuild§f: 34.3s §7[31.9s]
+        §cEaten§f: 6.2s §7[5.7s]
+        §cStun§f: 0.3s §7[0.3s]
+        §cDPS§f: 8.2s §7[8.1s]
+        §cSkip§f: 5.6s §7[5.4s]
+        §cKill§f: 5.4s §7[5.4s]
+        §4Overall§f: 1m 40s §7[1m 38s]
+        """.trimIndent().lines().fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
     private val estimatePace by config.switch("Estimate run pace")
@@ -170,7 +192,7 @@ object KuudraSplits : Module(
         if (this == Long.MAX_VALUE) return ""
 
         val f = this < 0
-        val color = if (f) "<${Catppuccin.Mocha.Green.argb}>" else "<${Catppuccin.Mocha.Peach.argb}>"
+        val color = if (f) "<${MochaColorScheme.Green.argb}>" else "<${MochaColorScheme.Peach.argb}>"
         val abs = abs(this).toDurationFromMillis(secondsDecimals = 1)
 
         return " $color[${if (f) "-" else "+"}$abs]"
@@ -268,16 +290,4 @@ object KuudraSplits : Module(
                 }
             }
         }
-
-    private val fcs: List<FormattedCharSequence> =
-        """
-        §cSupply§f: 47.4s §7[46.4s]
-        §cBuild§f: 34.3s §7[31.9s]
-        §cEaten§f: 6.2s §7[5.7s]
-        §cStun§f: 0.3s §7[0.3s]
-        §cDPS§f: 8.2s §7[8.1s]
-        §cSkip§f: 5.6s §7[5.4s]
-        §cKill§f: 5.4s §7[5.4s]
-        §4Overall§f: 1m 40s §7[1m 38s]
-        """.trimIndent().lines().fcs
 }

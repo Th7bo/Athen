@@ -1,6 +1,6 @@
 package foo.starred.athen.events
 
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.core.Holder
 import net.minecraft.network.chat.Component
@@ -12,21 +12,21 @@ import tech.thatgravyboat.skyblockapi.api.events.entity.EntityAttributesUpdateEv
 sealed class EntityEvent {
     data class Load(
         val entity: Entity
-    ) : Event()
+    ) : AthenEvent()
 
     data class Unload(
         val entity: Entity
-    ) : Event()
+    ) : AthenEvent()
 
     data class Death(
         val entity: Entity
-    ) : Event()
+    ) : AthenEvent()
 
     sealed class Update {
         data class Attach(
             val component: Component,
             val entity: Entity
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped: String =
                 component.stripped()
         }
@@ -34,7 +34,7 @@ sealed class EntityEvent {
         data class Named(
             val component: Component,
             val entity: Entity
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped: String =
                 component.stripped()
         }
@@ -43,15 +43,15 @@ sealed class EntityEvent {
             val entity: LivingEntity,
             val old: Float?,
             val new: Float
-        ) : Event()
+        ) : AthenEvent()
 
         data class Equipment(
             val entity: LivingEntity
-        ) : Event()
+        ) : AthenEvent()
 
         data class Attributes(
             val entity: LivingEntity,
             val changed: Map<Holder<Attribute>, EntityAttributesUpdateEvent.ChangedAttribute>,
-        ) : Event()
+        ) : AthenEvent()
     }
 }

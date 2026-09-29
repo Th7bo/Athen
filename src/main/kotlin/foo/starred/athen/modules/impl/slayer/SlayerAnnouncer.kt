@@ -4,7 +4,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.command
@@ -15,7 +15,7 @@ import tech.thatgravyboat.skyblockapi.api.profile.party.PartyAPI
 object SlayerAnnouncer : Module(
     "Slayer announcer",
     "Sends a message when your boss spawns",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val party by config.switch("Check party status")
     private val slayer by config.switch("Check boss type")

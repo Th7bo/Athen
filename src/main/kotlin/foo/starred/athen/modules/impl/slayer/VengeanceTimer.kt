@@ -2,16 +2,17 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.slayers.SlayerAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.EntityEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.held
 import foo.starred.snowbird.utils.toDuration
@@ -19,30 +20,38 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.api.datatype.getData
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.CRIMSON_ISLE])
+@OnlyIn(islands = [PresetSkyBlockIsland.CRIMSON_ISLE])
 object VengeanceTimer : Module(
     "Vengeance timer",
     "Shows the time until your vengeance damage should activate.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
-    private val compact by config.switch("Compact display")
+    private val compact = config.switch("Compact display").unique("compact")
     private val useTicks by config.switch("Use ticks", true)
     private val abilityIds = listOf("HEARTFIRE_DAGGER", "BURSTFIRE_DAGGER", "FIREDUST_DAGGER")
     private var count: Observable<Boolean> = Observable(false)
     private var countDown: Int = 120
 
+    private val hud by config.hud("Vengeance") {
+        constrain {
+            VanillaFontMeasurer.constrain(if (compact.value) "120" else "§cVengeance: §f120")
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, if (compact.value) "120" else "§cVengeance: §f120", 0, 0)
+        }
+
+        render {
+            if (!count.value) return@render
+
+            val value = if (useTicks) "$countDown" else (countDown / 20.0).toDuration(secondsDecimals = 1)
+            VanillaFontRenderer.extract(graphics, if (compact.value) value else "§cVengeance: §f$value", 0, 0)
+        }
+    }
+
     init {
-        config.hud("Vengeance") {
-            if (!count.value && !it) return@hud null
-
-            val value = when {
-                it && useTicks -> "120"
-                it -> "6s"
-                useTicks -> "$countDown"
-                else -> (countDown / 20.0).toDuration(secondsDecimals = 1)
-            }
-
-            sizedText(if (compact) value else "§cVengeance: §f$value")
+        compact.state.observe {
+            hud.constrain()
         }
 
         on<TickEvent.Server> {

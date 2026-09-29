@@ -6,11 +6,11 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerMini
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert
@@ -21,17 +21,15 @@ import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 object MinibossAlert : Module(
     "Miniboss alert",
     "Shows an alert for you when a miniboss spawns nearby.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
-    private val detection = config.selector("Detection type", listOf("Chat based", "Event based"), 1).unique("detection")
-    private val _unused by config.information("Chat based detection type only works for your minibosses. Event based detection type works for all minibosses near you.")
+    private val detection = config.selector("Detection type", listOf("Chat based", "Event based"), 1).unique("detection").description("Chat based for your minibosses. Event based for all minibosses near you.")
     private val sendMessage by config.switch("Send message", true)
     private val vanillaMessage by config.switch("Use mc message")
     private val showTitle by config.switch("Show title", true)
     private val maxDistance by config.slider("Maximum distance", 10, 1, 15, "blocks")
     private val alertText by config.input("Alert text", "<aqua>Miniboss spawned!")
-    private val bigBoiText by config.input("Big boi text", "<red>Big boi spawned!")
-    private val _unused0 by config.information("The same text will be used for both title and message. <gray>Big boi = Big miniboss")
+    private val bigBoiText by config.input("Special text", "<red>Big boi spawned!")
 
     private val bigBoys = SlayerMini.entries.filter { it.special }.map { it.name }
     private val regex = Regex("^SLAYER MINI-BOSS (?<name>.+?) has spawned!$")

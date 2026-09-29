@@ -1,6 +1,6 @@
 package foo.starred.athen.api.storage
 
-import foo.starred.athen.Athen
+import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.snowbird.api.storage.AbstractResourceful
 
-object ResourceAPI : AbstractResourceful(Athen.modId)
+object ResourceAPI : AbstractResourceful(ModWrapper.id)

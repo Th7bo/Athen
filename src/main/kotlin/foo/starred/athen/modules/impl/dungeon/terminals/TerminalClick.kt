@@ -6,14 +6,14 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.scheduling.Scheduler
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.DungeonEvent
 import foo.starred.athen.events.GuiEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.cascade.graphics.extensions.circle.circle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.inputs.impl.MouseInputState
 import org.joml.Matrix3x2f
@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 object TerminalClick : Module(
     "Terminal click",
     "Lines between when you clicked the mouse button in terminals",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
     private data class Click(val x: Float, val y: Float, val button: Int)
     private val clicks = mutableListOf<Click>()
@@ -31,8 +31,8 @@ object TerminalClick : Module(
 
     private val radius by config.slider("Radius", 4, 1, 10)
     private val thickness by config.slider("Thickness", 2, 1, 10)
-    private val `color$mouse$left` by config.colorPicker("Left mouse color", Catppuccin.Mocha.Lavender.argb)
-    private val `color$mouse$right` by config.colorPicker("Right mouse color", Catppuccin.Mocha.Peach.argb)
+    private val `color$mouse$left` by config.colorPicker("Left mouse color", MochaColorScheme.Lavender.argb)
+    private val `color$mouse$right` by config.colorPicker("Right mouse color", MochaColorScheme.Peach.argb)
 
     init {
         on<GuiEvent.Input.Mouse.Press> {

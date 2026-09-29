@@ -2,21 +2,11 @@
 
 package foo.starred.athen.modules.impl.render
 
-//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
-import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.pipeline.*
-//~ if >= 26.3 'blaze3d.shaders' -> 'renderpearl.api.pipeline'
-import com.mojang.blaze3d.shaders.UniformType
-//~ if >= 26.3 'blaze3d.systems' -> 'renderpearl.api.commands'
-import com.mojang.blaze3d.systems.CommandEncoder
 import com.mojang.blaze3d.systems.RenderSystem
-//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
-import com.mojang.blaze3d.textures.FilterMode
-//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
-import com.mojang.blaze3d.textures.GpuTextureView
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.storage.ResourceAPI
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.modules.Module
 import foo.starred.snowbird.api.client
 import net.minecraft.client.renderer.RenderPipelines
@@ -30,6 +20,16 @@ import java.nio.ByteOrder
 import java.util.*
 import kotlin.math.abs
 
+//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
+import com.mojang.blaze3d.buffers.GpuBuffer
+//~ if >= 26.3 'blaze3d.shaders' -> 'renderpearl.api.pipeline'
+import com.mojang.blaze3d.shaders.UniformType
+//~ if >= 26.3 'blaze3d.systems' -> 'renderpearl.api.commands'
+import com.mojang.blaze3d.systems.CommandEncoder
+//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
+import com.mojang.blaze3d.textures.FilterMode
+//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
+import com.mojang.blaze3d.textures.GpuTextureView
 //? if >= 26.2 {
 /*//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
 import com.mojang.blaze3d.GpuFormat
@@ -37,7 +37,6 @@ import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.pipeline.BindGroupLayout
 import java.util.Optional
 *///? }
-
 //? if >= 26.3 {
 /*import com.mojang.renderpearl.api.pipeline.RenderPipeline
 import com.mojang.renderpearl.api.pipeline.ColorTargetState
@@ -47,7 +46,7 @@ import com.mojang.renderpearl.api.pipeline.ColorTargetState
 object MotionBlur : Module(
     "Motion blur",
     "Motion blur, I think that's self-explanatory",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val view by config.group("Head movement motion blur")
     private val `view$enabled` by view.switch("Enabled", true)
@@ -94,7 +93,7 @@ object MotionBlur : Module(
     private var ubo: GpuBuffer? = null
 
     init {
-        observable.onChange {
+        observable.observe {
             destroy()
         }
     }

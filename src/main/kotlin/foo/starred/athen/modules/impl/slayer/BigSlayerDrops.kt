@@ -4,7 +4,7 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.slayers.enums.drop.impl.*
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 object BigSlayerDrops : Module(
     "Big slayer drops",
     "Renders the items dropped by a slayer boss to be bigger!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val set = mutableSetOf<Vec3>()
 

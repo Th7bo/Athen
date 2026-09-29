@@ -4,10 +4,10 @@ package foo.starred.athen.modules.impl.dungeon.terminals.solver.impl
 
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.dungeon.terminals.TerminalType
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
-import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.ITerminalSolver
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
+import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.cascade.graphics.font.CascadeFonts
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
@@ -42,7 +42,7 @@ object RubixSolver : ITerminalSolver(TerminalType.RUBIX) {
             val string = button.toString()
             val size = 11f * scale
             val width = font.width(string, size)
-            font.extract(this, string, x + 8f * scale - width / 2, y + 3f * scale, Mocha.Text.rgba, false, size)
+            font.extract(this, string, x + 8f * scale - width / 2, y + 3f * scale, MochaColorScheme.Text.rgba, false, size)
         }
     }
 

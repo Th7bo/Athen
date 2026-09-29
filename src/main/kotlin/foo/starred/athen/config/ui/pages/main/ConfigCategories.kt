@@ -1,69 +1,54 @@
 package foo.starred.athen.config.ui.pages.main
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI.left
 import foo.starred.athen.config.ui.pages.module.ConfigModules
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.athen.config.ui.pages.module.ConfigModulesNavigationState
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.AnchorPositionConstraint
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
+import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
-import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
-import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive.Companion.roundedRectangle
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.utils.literal
+import kotlin.time.Duration.Companion.milliseconds
 
 object ConfigCategories {
-    var active: Category = Category.INFO
-        private set
+    var active: ConfigCategory = ConfigCategory.INFO
 
     fun fn() {
         left.children.clear()
 
         var last: IPrimitiveElement<*>? = null
-        for (a in Category.entries) {
+        for (a in ConfigCategory.entries) {
             val bool = active == a
-            val last0 = last
-
-            if (a == Category.GENERAL) {
-                last = container {
-                    position = AnchorPositionConstraint({ last0!! }, PositionAnchor.BELOW, 0f, 6f)
-                    size = FixedSizeConstraint(124f, 10f)
-                    attach(left)
-
-                    adopt(text {
-                        wrapper = CascadeTextWrapper
-                        text = "Categories".literal()
-                        textSize = 9f
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
-                        position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 2f, 0f)
-                    })
-
-                    adopt(rectangle {
-                        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -2f, 0f)
-                        size = FixedSizeConstraint(74f, 1f)
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
-                    })
-                }
-            }
-
             val last1 = last
 
             last = roundedRectangle {
-                position = if (last1 == null) FixedPositionConstraint(8f, 8f) else if (a == Category.GENERAL) AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 6f) else AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW, 0f, 4f)
+                position = if (last1 == null) FixedPositionConstraint(8f, 8f) else AnchorPositionConstraint({ last1 }, PositionAnchor.BELOW)
+                offset = if (last1 == null) CascadeGeometricOffset.ZERO else if (a == ConfigCategory.GENERAL) CascadeGeometricOffset(0f, 6f) else CascadeGeometricOffset(0f, 4f)
                 size = FixedSizeConstraint(124f, 22f)
-                color = CascadeGeometricColor(if (bool) Catppuccin.Mocha.Surface0.argb else Catppuccin.Mocha.Mantle.argb)
+                color = if (bool) CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.30f)) else CascadeGeometricColor.TRANSPARENT
                 radius = CascadeGeometricRadius(4f)
+
+                if (bool) {
+                    effect(OutlineEffect {
+                        color = CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.50f))
+                        inset = false
+                    })
+                }
 
                 on<MouseEvent.Press> {
                     cancel()
@@ -72,26 +57,27 @@ object ConfigCategories {
                         return@on
                     }
 
-                    if (active == a) {
-                        ConfigModules.active = null
-                        ConfigModules.fn()
+                    if (active == a && ConfigModules.active == null) {
                         return@on
                     }
 
-                    active = a
-                    ConfigModules.active = null
-                    fn()
-                    ConfigModules.fn()
+                    ConfigModulesNavigationState.navigate(a, null)
                 }
 
                 on<MouseEvent.Move.Enter> {
                     if (active == a) return@on
-                    animateColor(CascadeGeometricColor(Catppuccin.Mocha.Base.argb), 0.15f)
+
+                    animate(150.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.2f))
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {
                     if (active == a) return@on
-                    animateColor(CascadeGeometricColor(Catppuccin.Mocha.Mantle.argb), 0.15f)
+
+                    animate(150.milliseconds) {
+                        ::color to CascadeGeometricColor.TRANSPARENT
+                    }
                 }
 
                 attach(left)
@@ -99,8 +85,9 @@ object ConfigCategories {
                     wrapper = CascadeTextWrapper
                     text = a.displayName.literal()
                     textSize = 12f
-                    color = CascadeGeometricColor(if (bool) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Subtext0.argb)
-                    position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8f, 0f)
+                    color = CascadeGeometricColor(if (bool) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+                    position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                    offset = CascadeGeometricOffset(8f, 0f)
                 })
             }
         }

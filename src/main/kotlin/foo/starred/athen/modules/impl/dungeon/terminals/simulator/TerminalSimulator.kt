@@ -1,19 +1,16 @@
-@file:Suppress("Unused")
-
 package foo.starred.athen.modules.impl.dungeon.terminals.simulator
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.config.Category
 import foo.starred.athen.config.ConfigManager
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
-import foo.starred.athen.events.core.override
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.base.SimulatorMenu
 import foo.starred.athen.modules.impl.dungeon.terminals.simulator.impl.*
 import foo.starred.athen.utils.command
+import foo.starred.kbus.extensions.override
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 
@@ -21,10 +18,9 @@ import foo.starred.snowbird.api.data.Observable
 object TerminalSimulator : Module(
     "Terminal simulator",
     "Simulator terminal, terminal simulators?",
-    Category.DUNGEONS
+    ConfigCategory.DUNGEONS
 ) {
-    private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org")
-    private val _unused0 by config.information("The simulator server IP is optional. You can still do <red>\"/${Athen.modId} simulate terminals\"<r> to simulate.")
+    private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org").description("Optional")
     private val pingInput = config.input("Ping", "0", "0").unique("ping")
 
     var ping = 0
@@ -36,16 +32,16 @@ object TerminalSimulator : Module(
             ping = pingInput.value.toIntOrNull() ?: return@run
         }
 
-        pingInput.state.onChange {
-            ping = it.toIntOrNull() ?: return@onChange
+        pingInput.state.observe {
+            ping = it.toIntOrNull() ?: return@observe
         }
 
-        observable.onChange {
+        observable.observe {
             SimulatorMenu.a()
-            if (it) {
-                "Run \"/${Athen.modId} simulate terminals ping <ping>\" to change ping!".mod()
-                ConfigManager.update(configKey ?: return@onChange, false)
-            }
+            if (!it) return@observe
+
+            "Run \"/athen simulate terminals ping <ping>\" to change ping!".mod()
+            ConfigManager.update(configKey, false)
         }
 
         command {

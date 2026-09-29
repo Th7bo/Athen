@@ -3,15 +3,15 @@
 package foo.starred.athen.modules.impl.render
 
 import com.mojang.serialization.Codec
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.mod.ModWrapper
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.snowbird.api.*
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -26,11 +26,11 @@ import net.minecraft.util.FormattedCharSequence
 object VisualWords : Module(
     "Visual words",
     "Visually modify words!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private const val SKIP = "\u0000vw_bypass"
 
-    private val unused by config.information("Use the command \"/athen visuals help\" to learn more about the available commands!")
+    private val unused by config.information("Command: <red>/athen visuals help")
     private val nameChanger = config.switch("Name changer").unique("nameChanger")
     private val nickname = config.input("Nickname", "cooluser4").unique("nickname")
 
@@ -41,7 +41,7 @@ object VisualWords : Module(
     val words = object : AbstractTextReplacer() {}.also { it.skips = SKIP }
 
     init {
-        observable.onChange {
+        observable.observe {
             words.version++
         }
 
@@ -49,12 +49,12 @@ object VisualWords : Module(
             nickname.value.fn()
         }
 
-        nickname.state.onChange {
+        nickname.state.observe {
             it.fn()
         }
 
-        nameChanger.state.onChange {
-            if (it) return@onChange nickname.value.fn()
+        nameChanger.state.observe {
+            if (it) return@observe nickname.value.fn()
             words.remove(name)
             words.build()
         }
@@ -137,13 +137,13 @@ object VisualWords : Module(
         divider.lie()
         "§bVisual Words §7[Athen]".center().lie()
         divider.lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} visuals add [word] [word, supports space]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} visuals set [word] [word, supports space]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} visuals remove [word]".parse().lie()
-        " <dark_gray>• <${Catppuccin.Mocha.Green.argb}>/${Athen.modId} visuals list".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals add [word] [word, supports space]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals set [word] [word, supports space]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals remove [word]".parse().lie()
+        " <dark_gray>• <${MochaColorScheme.Green.argb}>/athen visuals list".parse().lie()
         divider.lie()
         " <dark_gray>• <r>The text supports the format: ".parse().append("<hex><bold>te</bold>xt").lie()
-        " <hover:<${Catppuccin.Mocha.Mauve.argb}>Click to join!><click:url:${Athen.discordUrl}><dark_gray>• <r>Want to know more about formats? Ask in the <${Catppuccin.Mocha.Mauve.argb}>discord<r>!".parse().lie()
+        " <hover:<${MochaColorScheme.Mauve.argb}>Click to join!><click:url:${ModWrapper.discord}><dark_gray>• <r>Want to know more about formats? Ask in the <${MochaColorScheme.Mauve.argb}>discord<r>!".parse().lie()
         divider.lie()
     }
 

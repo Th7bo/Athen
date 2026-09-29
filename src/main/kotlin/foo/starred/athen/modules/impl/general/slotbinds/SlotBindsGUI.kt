@@ -5,8 +5,7 @@ package foo.starred.athen.modules.impl.general.slotbinds
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -19,6 +18,8 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.extensions.stroke.stroke
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -44,15 +45,12 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
     private var `profile$new`: RectanglePrimitive
     private var `profile$rename`: RectanglePrimitive
     private var `profile$delete`: RectanglePrimitive
-    private lateinit var `profile$new$outline`: OutlineEffect
-    private lateinit var `profile$rename$outline`: OutlineEffect
-    private lateinit var `profile$delete$outline`: OutlineEffect
     private var `profile$field`: TextFieldComponent
     private lateinit var `profile$text$rename`: TextPrimitive
     private lateinit var `profile$text$delete`: TextPrimitive
 
     private data class ProfileRow(val row: RectanglePrimitive, val label: TextPrimitive)
-    private data class SlotCell(val cell: RectanglePrimitive, val label: TextPrimitive, val outline: OutlineEffect)
+    private data class SlotCell(val cell: RectanglePrimitive, val label: TextPrimitive)
 
     private val rows = LinkedHashMap<String, ProfileRow>()
     private val cells = LinkedHashMap<Int, SlotCell>()
@@ -74,11 +72,11 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         val side = rectangle {
             size = FixedSizeConstraint(110, 160)
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -93,10 +91,10 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         val bar = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 24))
             position = FixedPositionConstraint(0, 136)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(side)
@@ -104,12 +102,13 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
         `profile$new` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 2)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
-            }.also { `profile$new$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -128,17 +127,17 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(bar)
             adopt(text {
                 text = "+".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             })
@@ -147,11 +146,11 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         `profile$rename` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
             position = CenterPositionConstraint()
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `profile$rename$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -173,7 +172,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
             attach(bar)
             adopt(text {
                 text = "\u270F".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `profile$text$rename` = it })
@@ -181,12 +180,13 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
         `profile$delete` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -2)
-            color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.5f))
-            }.also { `profile$delete$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.5f))
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -214,7 +214,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
             attach(bar)
             adopt(text {
                 text = "\uD83D\uDDD1".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `profile$text$delete` = it })
@@ -298,10 +298,10 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         }.apply {
             size = FixedSizeConstraint(210, 160)
             position = FixedPositionConstraint(116, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             interact = false
@@ -310,7 +310,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
         text {
             text = "Preview".literal()
-            color = CascadeGeometricColor(Mocha.Text.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
             position = FixedPositionConstraint(6, 6)
             attach(preview)
         }
@@ -318,7 +318,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         rectangle {
             size = FixedSizeConstraint(198, 1)
             position = FixedPositionConstraint(6, 18)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             interact = false
             attach(preview)
         }
@@ -330,7 +330,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         rectangle {
             size = FixedSizeConstraint(178, 1)
             position = FixedPositionConstraint(16, 108)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             interact = false
             attach(preview)
         }
@@ -341,8 +341,9 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
         empty = text {
             text = "No binds yet.".literal()
-            color = CascadeGeometricColor(Mocha.Overlay0.argb)
-            position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, 30)
+            color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
+            position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+            offset = CascadeGeometricOffset(0f, 30f)
             attach(preview)
         }
 
@@ -377,8 +378,9 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 20))
-                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, cy)
-                color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, cy)
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -396,11 +398,11 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
                 }
 
                 on<MouseEvent.Move.Enter> {
-                    if (name != SlotBinds.active) color = CascadeGeometricColor(Mocha.Surface0.withAlpha(0.5f))
+                    if (name != SlotBinds.active) color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.5f))
                 }
 
                 on<MouseEvent.Move.Exit> {
-                    if (name != SlotBinds.active) color = CascadeGeometricColor(Mocha.Base.argb)
+                    if (name != SlotBinds.active) color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 }
 
                 attach(left)
@@ -408,8 +410,9 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
             val label = text {
                 text = name.literal()
-                color = CascadeGeometricColor(if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(4f, 0f)
                 attach(row)
             }
 
@@ -425,9 +428,9 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
             val b1 = selected == id
             val i0 = if (b0) SlotBinds.sc(id) else 0
 
-            cell.cell.color = CascadeGeometricColor(if (b1) Mocha.Surface1.argb else if (b0) Mocha.Surface2.argb else Mocha.Surface0.argb)
-            cell.outline.color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (b0) i0 else Mocha.Overlay0.argb)
-            cell.label.color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (b0) i0 else Mocha.Subtext0.argb)
+            cell.cell.color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else if (b0) MochaColorScheme.Surface2.argb else MochaColorScheme.Surface0.argb)
+            cell.cell.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (b0) i0 else MochaColorScheme.Overlay0.argb)
+            cell.label.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (b0) i0 else MochaColorScheme.Subtext0.argb)
         }
 
         empty.text = "${SlotBinds.m0.size} binds".literal()
@@ -437,13 +440,13 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
         val b0 = deleting == SlotBinds.active
         val b1 = SlotBinds.map0.size > 1
 
-        `profile$rename`.color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.8f))
-        `profile$rename$outline`.color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.5f))
-        `profile$text$rename`.color = CascadeGeometricColor(Mocha.Base.argb)
+        `profile$rename`.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.8f))
+        `profile$rename`.effect<OutlineEffect>()?.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.5f))
+        `profile$text$rename`.color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
-        `profile$delete`.color = CascadeGeometricColor(if (!b1) Mocha.Surface1.argb else if (b0) Mocha.Red.argb.brighten(0.9f) else Mocha.Red.argb.brighten(0.8f))
-        `profile$delete$outline`.color = CascadeGeometricColor(if (!b1) Mocha.Surface0.argb else Mocha.Red.argb.brighten(0.5f))
-        `profile$text$delete`.color = CascadeGeometricColor(if (!b1) Mocha.Overlay0.argb else Mocha.Base.argb)
+        `profile$delete`.color = CascadeGeometricColor(if (!b1) MochaColorScheme.Surface1.argb else if (b0) MochaColorScheme.Red.argb.brighten(0.9f) else MochaColorScheme.Red.argb.brighten(0.8f))
+        `profile$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b1) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
+        `profile$text$delete`.color = CascadeGeometricColor(if (!b1) MochaColorScheme.Overlay0.argb else MochaColorScheme.Base.argb)
         `profile$text$delete`.text = (if (b0) "✔" else "\uD83D\uDDD1").literal()
     }
 
@@ -453,16 +456,15 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
 
     private fun slot(slot: Int, x: Int, y: Int) {
         var label0 = TextPrimitive.NONE
-        lateinit var cellOutline: OutlineEffect
 
         val cell = rectangle {
             size = FixedSizeConstraint(18, 18)
             position = FixedPositionConstraint(x, y)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
-            }.also { cellOutline = it })
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
@@ -504,12 +506,12 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
             attach(preview)
             adopt(text {
                 text = slot.toString().literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             }.also { label0 = it })
         }
 
-        cells[slot] = SlotCell(cell, label0, cellOutline)
+        cells[slot] = SlotCell(cell, label0)
     }
 }

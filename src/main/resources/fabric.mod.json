@@ -20,7 +20,7 @@
     ],
     "modmenu": [
       {
-        "value": "foo.starred.athen.config.modMenu.Impl",
+        "value": "foo.starred.athen.compat.modmenu.ModMenuCompatibility",
         "adapter": "kotlin"
       }
     ]

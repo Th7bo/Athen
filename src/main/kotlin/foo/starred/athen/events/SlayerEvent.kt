@@ -1,7 +1,7 @@
 package foo.starred.athen.events
 
 import foo.starred.athen.api.slayers.data.SlayerInfo
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
 import net.minecraft.world.entity.Entity
 
 sealed class SlayerEvent {
@@ -9,45 +9,45 @@ sealed class SlayerEvent {
         data class Spawn(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
 
         data class Death(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
     }
 
     sealed class Miniboss {
         data class Spawn(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
 
         data class Death(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
     }
 
     sealed class Demon {
         data class Spawn(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
 
         data class Death(
             val entity: Entity,
             val slayerInfo: SlayerInfo
-        ) : Event()
+        ) : AthenEvent()
     }
 
     sealed class Quest {
-        data object Start : Event()
+        data object Start : AthenEvent()
 
-        data object End : Event()
+        data object End : AthenEvent()
     }
 
-    sealed class Reset : Event() {
+    sealed class Reset : AthenEvent() {
         data object QuestFail : Reset()
 
         data object ServerChange : Reset()

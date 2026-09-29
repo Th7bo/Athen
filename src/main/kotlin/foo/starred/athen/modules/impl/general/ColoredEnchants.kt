@@ -9,11 +9,11 @@ import foo.starred.athen.api.messaging.enums.MessageColors
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.config.Category
 import foo.starred.athen.config.ConfigManager.update
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.data
 import foo.starred.athen.utils.enchants
@@ -31,14 +31,14 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextUtils.substring
 object ColoredEnchants : Module(
     "Colored enchants",
     "Custom colors for enchants!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val l = listOf("Bold", "Italic", "Underline", "Strike-through")
 
     private val replaceRoman by config.switch("Replace roman", true)
 
     private val ultimate by config.group("Ultimate enchants")
-    private val `ultimate$color` by ultimate.colorPicker("Ultimate color", Catppuccin.Mocha.Mauve.argb)
+    private val `ultimate$color` by ultimate.colorPicker("Ultimate color", MochaColorScheme.Mauve.argb)
     private val `ultimate$style` by ultimate.multiSelector("Ultimate style", l, listOf(0))
 
     private val max by config.group("Maxed enchants")
@@ -173,7 +173,7 @@ object ColoredEnchants : Module(
 
     private data class Enchant(
         val name: String,
-        val category: Enchant.Category,
+        val category: Category,
         val max: Int,
         val good: Int
     ) {
@@ -185,7 +185,7 @@ object ColoredEnchants : Module(
 
         fun style(int: Int): String {
             val (s, c) = when {
-                category == Enchant.Category.Ultimate -> `ultimate$style` to `ultimate$color`
+                category == Category.Ultimate -> `ultimate$style` to `ultimate$color`
                 int >= max -> `max$style` to `max$color`
                 int > good -> `high$style` to `high$color`
                 int == good -> `normal$style` to `normal$color`
@@ -202,10 +202,10 @@ object ColoredEnchants : Module(
         }
 
         companion object {
-            fun category(str: String): Enchant.Category = when (str.uppercase()) {
-                "STACKING" -> Enchant.Category.Stacking
-                "ULTIMATE" -> Enchant.Category.Ultimate
-                else -> Enchant.Category.Normal
+            fun category(str: String): Category = when (str.uppercase()) {
+                "STACKING" -> Category.Stacking
+                "ULTIMATE" -> Category.Ultimate
+                else -> Category.Normal
             }
         }
     }

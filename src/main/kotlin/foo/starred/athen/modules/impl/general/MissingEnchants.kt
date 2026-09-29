@@ -1,5 +1,3 @@
-@file:Suppress("Unused")
-
 package foo.starred.athen.modules.impl.general
 
 import com.google.gson.JsonObject
@@ -8,10 +6,10 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.items.ItemAPI.`watch$tooltip`
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.data
 import foo.starred.athen.utils.enchants
 import foo.starred.snowbird.api.EMPTY_COMPONENT
@@ -25,10 +23,9 @@ import net.minecraft.network.chat.Component
 object MissingEnchants : Module(
     "Missing enchants",
     "Shows missing enchants on the item you hover over.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
-    private val keybind by config.keybind("Keybind", InputConstants.KEY_LSHIFT).`watch$tooltip`()
-    private val _unused by config.information("You can unbind the keybind to always show.")
+    private val keybind by config.keybind("Keybind", InputConstants.KEY_LSHIFT).`watch$tooltip`().description("You can unbind the keybind to always show.")
 
     private val typeRegex = Regex("""\b(?:COMMON|UNCOMMON|RARE|EPIC|LEGENDARY|MYTHIC|DIVINE|SPECIAL|VERY SPECIAL)\b\s+(?:DUNGEON\s+)?([A-Z]+(?: [A-Z]+)*)""") // https://regex101.com/r/MOQHMf/1
     private val romans = setOf("I","II","III","IV","V","VI","VII","VIII","IX","X")
@@ -117,11 +114,11 @@ object MissingEnchants : Module(
 
             val nl = ArrayList<Component>(2 + missing.size)
             nl.add(EMPTY_COMPONENT)
-            nl.add("<${Mocha.Mauve.argb}>✦ Missing:".parse())
+            nl.add("<${MochaColorScheme.Mauve.argb}>✦ Missing:".parse())
 
             for (i in missing.indices step 3) {
                 val chunk = missing.subList(i, minOf(i + 3, missing.size))
-                nl.add("<${Mocha.Text.argb}> • ${chunk.joinToString(", ")}".parse())
+                nl.add("<${MochaColorScheme.Text.argb}> • ${chunk.joinToString(", ")}".parse())
             }
 
             tooltip.addAll(ii, nl)

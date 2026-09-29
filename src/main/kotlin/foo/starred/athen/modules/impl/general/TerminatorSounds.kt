@@ -4,7 +4,7 @@ package foo.starred.athen.modules.impl.general
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.SoundPlayEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.id
@@ -17,7 +17,7 @@ import net.minecraft.world.item.BowItem
 object TerminatorSounds : Module(
     "Terminator sounds",
     "Custom sounds for terminator!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val wall by config.switch("Wall hit sound", true)
     private val sound0 by config.sound("Sound")

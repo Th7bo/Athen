@@ -1,7 +1,7 @@
 package foo.starred.athen.mixin.mixins;
 
 import com.mojang.blaze3d.platform.Window;
-import foo.starred.athen.hud.HUDManager;
+import foo.starred.athen.config.hud.impl.HudRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class WindowMixin {
     @Inject(method = "setGuiScale", at = @At("RETURN"))
     private void athen$setGuiScale(int guiScale, CallbackInfo ci) {
-        HUDManager.INSTANCE.compute();
+        HudRenderer.INSTANCE.compute();
     }
 }

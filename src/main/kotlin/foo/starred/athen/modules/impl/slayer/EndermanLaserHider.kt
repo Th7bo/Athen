@@ -2,24 +2,25 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
-import foo.starred.athen.config.Category
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.carry
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.modules.Module
-//~ if >= 26.3 'EnderMan' -> 'Enderman'
-import net.minecraft.world.entity.monster.EnderMan
 import net.minecraft.world.entity.monster.Guardian
 import kotlin.math.abs
 
+//~ if >= 26.3 'EnderMan' -> 'Enderman'
+import net.minecraft.world.entity.monster.EnderMan
+
 @Load
-@OnlyIn(islands = [SkyBlockIsland.THE_END])
+@OnlyIn(islands = [PresetSkyBlockIsland.THE_END])
 object EndermanLaserHider : Module(
     "Enderman laser hider",
     "Hides the lasers for voidgloom bosses!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private val carry by config.switch("Show for carries", true)
     //~ if >= 26.3 'EnderMan' -> 'Enderman'

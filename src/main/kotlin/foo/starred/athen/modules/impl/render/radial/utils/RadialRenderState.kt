@@ -1,7 +1,5 @@
 package foo.starred.athen.modules.impl.render.radial.utils
 
-//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
-import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.VertexConsumer
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
@@ -12,6 +10,9 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import org.joml.Matrix3x2f
 import kotlin.math.*
+
+//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
+import com.mojang.blaze3d.pipeline.RenderPipeline
 
 class RadialRenderState(
     graphics: GuiGraphicsExtractor,

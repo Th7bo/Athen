@@ -5,14 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.location.LocationAPI
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.snowbird.api.client
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import tech.thatgravyboat.skyblockapi.api.area.dungeon.DungeonFloor
 
 data class KeybindCondition(
     var workIn: KeybindWorkIn = KeybindWorkIn.OUTSIDE_GUI,
-    val islands: MutableSet<SkyBlockIsland> = mutableSetOf(),
+    val islands: MutableSet<PresetSkyBlockIsland> = mutableSetOf(),
     val floors: MutableSet<DungeonFloor> = mutableSetOf(),
     val classes: MutableSet<DungeonClass> = mutableSetOf(),
     val phases: MutableSet<Int> = mutableSetOf()
@@ -49,7 +49,7 @@ data class KeybindCondition(
             ).apply(inst) { workIn, islands, floors, classes, phases ->
                 KeybindCondition(
                     KeybindWorkIn.from(workIn),
-                    islands.mapNotNull { SkyBlockIsland.getByKey(it) }.toMutableSet(),
+                    islands.mapNotNull { PresetSkyBlockIsland.of(it) }.toMutableSet(),
                     floors.mapNotNull { DungeonFloor.getByName(it) }.toMutableSet(),
                     classes.mapNotNull { DungeonClass.get(it) }.toMutableSet(),
                     phases.toMutableSet()

@@ -4,9 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import foo.starred.athen.api.rendering.level.impl.data.base.ILevelExtractable
 import foo.starred.athen.api.rendering.level.impl.queue.data.ExtractedQueue
+import kotlin.math.sqrt
+
 //~ if >= 26.2 'MultiBufferSource' -> 'SubmitNodeCollector'
 import net.minecraft.client.renderer.MultiBufferSource
-import kotlin.math.sqrt
 
 interface ILevelRenderer {
     //~ if >= 26.2 'MultiBufferSource.BufferSource' -> 'SubmitNodeCollector'

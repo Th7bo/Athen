@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigMultiSelectorElementData
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -16,6 +16,7 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.*
@@ -26,17 +27,18 @@ import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.utils.literal
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigMultiSelectorElement(
     private val config: ConfigMultiSelectorElementData
 ) : RoundedRectanglePrimitive() {
+    private val selected: MutableList<Int> = get(ConfigManager.get(config.key))
     private val labels = mutableListOf<TextPrimitive>()
     private val slot0 = mutableListOf<ContainerPrimitive>()
     private val slot1 = mutableListOf<RectanglePrimitive>()
-    private val total: Int = maxOf(1, (config.options.size + 2) / 3)
+    private val total: Int = (config.options.size + 2) / 3
 
     private var page: Int = 0
-    private var selected: MutableList<Int> = get(ConfigManager.get(config.key))
 
     private var chevron0: ImagePrimitive? = null
     private var chevron1: ImagePrimitive? = null
@@ -44,7 +46,7 @@ class ConfigMultiSelectorElement(
     private val text0 = text {
         wrapper = CascadeTextWrapper
         textSize = 8f
-        color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
         position = CenterPositionConstraint()
     }
 
@@ -55,11 +57,11 @@ class ConfigMultiSelectorElement(
         }
     }.apply {
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
         visible = false
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             inset = false
         })
 
@@ -68,13 +70,14 @@ class ConfigMultiSelectorElement(
     }
 
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(if (total > 1) 140f else 114f, 14f)
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
         })
 
@@ -86,7 +89,7 @@ class ConfigMultiSelectorElement(
                 adopt(text {
                     wrapper = CascadeTextWrapper
                     textSize = 8f
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                     position = CenterPositionConstraint()
                 }.also { labels.add(it) })
 
@@ -132,7 +135,7 @@ class ConfigMultiSelectorElement(
             adopt(rectangle {
                 position = FixedPositionConstraint((i + 1) * 38f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             }.also { slot1.add(it) })
         }
@@ -141,7 +144,7 @@ class ConfigMultiSelectorElement(
             adopt(rectangle {
                 position = FixedPositionConstraint(114f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             })
 
@@ -151,7 +154,7 @@ class ConfigMultiSelectorElement(
 
                 adopt(image {
                     location = ResourceAPI.identify("textures/gui/chevron.png")
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                     position = CenterPositionConstraint()
                     size = FixedSizeConstraint(5f, 5f)
                     interact = false
@@ -169,7 +172,9 @@ class ConfigMultiSelectorElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page <= 0) return@on
-                    chevron0?.animateColor(CascadeGeometricColor(Catppuccin.Mocha.Text.argb), 0.1f)
+                    chevron0?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {
@@ -180,7 +185,7 @@ class ConfigMultiSelectorElement(
             adopt(rectangle {
                 position = FixedPositionConstraint(127f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
             })
 
@@ -191,7 +196,7 @@ class ConfigMultiSelectorElement(
                 adopt(image {
                     location = ResourceAPI.identify("textures/gui/chevron.png")
                     rotation = 180f
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                     position = CenterPositionConstraint()
                     size = FixedSizeConstraint(5f, 5f)
                     interact = false
@@ -209,7 +214,9 @@ class ConfigMultiSelectorElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page >= total - 1) return@on
-                    chevron1?.animateColor(CascadeGeometricColor(Catppuccin.Mocha.Text.argb), 0.1f)
+                    chevron1?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {
@@ -233,7 +240,7 @@ class ConfigMultiSelectorElement(
             slot0[i].position = FixedPositionConstraint(i * width1, 0f)
             slot0[i].size = FixedSizeConstraint(width1, 14f)
             labels[i].text = if (visible) CascadeFonts.sans.truncate(config.options[index], 8f, width1 - 6f, "…").literal() else "".literal()
-            labels[i].color = CascadeGeometricColor(if (selected.contains(index)) Catppuccin.Mocha.Green.argb else Catppuccin.Mocha.Subtext0.argb)
+            labels[i].color = CascadeGeometricColor(if (selected.contains(index)) MochaColorScheme.Green.argb else MochaColorScheme.Subtext0.argb)
 
             if (i >= 2) continue
             slot1[i].visible = i + 1 < count
@@ -241,8 +248,8 @@ class ConfigMultiSelectorElement(
         }
 
         if (total <= 1) return
-        chevron0?.color = CascadeGeometricColor(if (page > 0) Catppuccin.Mocha.Text.argb else Catppuccin.Mocha.Surface2.argb)
-        chevron1?.color = CascadeGeometricColor(if (page < total - 1) Catppuccin.Mocha.Text.argb else Catppuccin.Mocha.Surface2.argb)
+        chevron0?.color = CascadeGeometricColor(if (page > 0) MochaColorScheme.Text.argb else MochaColorScheme.Surface2.argb)
+        chevron1?.color = CascadeGeometricColor(if (page < total - 1) MochaColorScheme.Text.argb else MochaColorScheme.Surface2.argb)
     }
 
     private fun get(value: Any?): MutableList<Int> {

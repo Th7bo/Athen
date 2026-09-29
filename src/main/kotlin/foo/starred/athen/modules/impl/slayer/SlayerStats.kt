@@ -2,19 +2,19 @@
 
 package foo.starred.athen.modules.impl.slayer
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.snowbird.api.client
@@ -30,7 +30,7 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 object SlayerStats : Module(
     "Slayer stats",
     "Displays slayer session statistics.",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
     private var `last$type`: SlayerBoss? = null
     private var `last$tier`: SlayerTier? = null
@@ -41,9 +41,7 @@ object SlayerStats : Module(
     private var `start$quest` = 0L
     private var total = 0.0
 
-    private val ex0 = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
-
-    private val _unused by config.information("Use <red>/${Athen.modId} reset slayerStats<r> to reset.")
+    private val _unused by config.information("Reset command: <red>/athen reset slayerStats")
     private val displayOptions by config.multiSelector("Display options", listOf("Bosses killed", "Bosses/hr", "XP/hr", "Avg kill time", "Session time"), listOf(0, 1, 2, 3, 4))
     private val styleType by config.selector("Styling type", listOf("General", "Advanced"))
 
@@ -91,9 +89,20 @@ object SlayerStats : Module(
 
     init {
         config.hud("Stats display") {
-            if (it) return@hud sizedText(ex0)
-            if (kills <= 0) return@hud null
-            sizedText(display.value ?: return@hud null)
+            val example = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
+
+            constrain {
+                VanillaFontMeasurer.constrain(example)
+            }
+
+            preview {
+                VanillaFontRenderer.extract(graphics, example, 0, 0)
+            }
+
+            render {
+                if (kills <= 0) return@render
+                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+            }
         }
 
         on<SlayerEvent.Quest.Start> {
@@ -115,7 +124,7 @@ object SlayerStats : Module(
             `last$tier` = slayerInfo.tier
 
             if ((a != null && a != `last$type`) || (b != null && b != `last$tier`)) {
-                "<hover:<${Mocha.Red.argb}>This WILL clear all your stats!><${Mocha.Lavender.argb}>Detected a different slayer, click to reset stats.".parse()
+                "<hover:<${MochaColorScheme.Red.argb}>This WILL clear all your stats!><${MochaColorScheme.Lavender.argb}>Detected a different slayer, click to reset stats.".parse()
                     .onClick {
                         reset()
                         "Slayer stats were reset!".mod()

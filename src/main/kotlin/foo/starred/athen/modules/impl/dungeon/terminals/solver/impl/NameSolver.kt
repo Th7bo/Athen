@@ -3,8 +3,8 @@ package foo.starred.athen.modules.impl.dungeon.terminals.solver.impl
 import foo.starred.athen.api.dungeon.terminals.TerminalAPI
 import foo.starred.athen.api.dungeon.terminals.TerminalType
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
-import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.ITerminalSolver
+import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.athen.utils.glint
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.client.gui.GuiGraphicsExtractor

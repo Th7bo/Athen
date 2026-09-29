@@ -7,12 +7,11 @@ import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent.Companion.multiCheckbox
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.general.messageactions.MessageActions
 import foo.starred.athen.modules.impl.general.messageactions.actions.base.IMessageAction
 import foo.starred.athen.modules.impl.general.messageactions.actions.data.MessageActionEntry
 import foo.starred.athen.modules.impl.general.messageactions.actions.data.MessageMatchType
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.AnchorPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -25,6 +24,8 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.primitives.impl.ContainerPrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -51,11 +52,10 @@ class MessageActionsPopUp(
     private var `checkbox$match`: MultiCheckboxComponent
     private var `checkbox$category`: MultiCheckboxComponent
     private var `cancel$box`: RectanglePrimitive
-    private lateinit var `cancel$box$outline`: OutlineEffect
     private lateinit var `cancel$text`: TextPrimitive
 
     data class ActionEntryData(val index: Int, val entry: MessageActionEntry)
-    data class ActionButton(val rect: RectanglePrimitive, val text: TextPrimitive, val outline: OutlineEffect, val id: Int)
+    data class ActionButton(val rect: RectanglePrimitive, val text: TextPrimitive, val id: Int)
 
     private val actions = mutableListOf<ActionButton>()
     private val inputs = LinkedHashMap<String, TextFieldComponent>()
@@ -72,7 +72,7 @@ class MessageActionsPopUp(
         rectangle {
             size = FillSizeConstraint()
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Crust.withAlpha(0.6f))
+            color = CascadeGeometricColor(MochaColorScheme.Crust.alpha(0.6f))
 
             on<MouseEvent.Press> {
                 if (root.focused is MultiCheckboxComponent) root.focused = null
@@ -85,10 +85,10 @@ class MessageActionsPopUp(
         val box = rectangle {
             size = FixedSizeConstraint(380, 260)
             position = CenterPositionConstraint()
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             on<MouseEvent.Press> {
@@ -106,7 +106,7 @@ class MessageActionsPopUp(
 
             adopt(text {
                 text = "Create Action".literal()
-                color = CascadeGeometricColor(Mocha.Lavender.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
                 position = MixedPositionConstraint(FixedPositionConstraint(8, 0), CenterPositionConstraint())
             }.also { title = it })
         }
@@ -114,34 +114,38 @@ class MessageActionsPopUp(
         val divider = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 1))
             position = AnchorPositionConstraint({ header }, PositionAnchor.BELOW)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             attach(box)
         }
 
         val pattern0 = text {
             text = "Pattern".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ divider }, PositionAnchor.BELOW, 16, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ divider }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(16f, 8f)
             attach(box)
         }
 
         text {
             text = "Match Type".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ divider }, PositionAnchor.BELOW, 200, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ divider }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(200f, 8f)
             attach(box)
         }
 
         pattern = textField {
             size = FixedSizeConstraint(170, 16)
-            position = AnchorPositionConstraint({ pattern0 }, PositionAnchor.BELOW, 0, 2)
+            position = AnchorPositionConstraint({ pattern0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 2f)
             placeholder = "Pattern to match"
             attach(box)
         }
 
         `checkbox$match` = multiCheckbox {
             size = FixedSizeConstraint(170, 16)
-            position = AnchorPositionConstraint({ pattern0 }, PositionAnchor.BELOW, 184, 2)
+            position = AnchorPositionConstraint({ pattern0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(184f, 2f)
             items = MessageMatchType.entries.map { it.displayName }
 
             selected {
@@ -158,31 +162,32 @@ class MessageActionsPopUp(
 
         val action0 = text {
             text = "Action".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ pattern }, PositionAnchor.BELOW, 0, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ pattern }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 8f)
             attach(box)
         }
 
         val row0 = container {
             size = FixedSizeConstraint(354, 14)
-            position = AnchorPositionConstraint({ action0 }, PositionAnchor.BELOW, 0, 2)
+            position = AnchorPositionConstraint({ action0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 2f)
             attach(box)
         }
 
         val all = IMessageAction.all()
         val width = (354 - (all.size - 1) * 4) / all.size
         for ((index, type) in all.withIndex()) {
-            lateinit var outline: OutlineEffect
             var label = TextPrimitive.NONE
 
             val rect = rectangle {
                 size = FixedSizeConstraint(width, 16)
                 position = FixedPositionConstraint(index * (width + 4), 0)
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Overlay0.argb)
-                }.also { outline = it })
+                    color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
+                })
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -195,36 +200,38 @@ class MessageActionsPopUp(
 
                 on<MouseEvent.Move.Enter> {
                     if (action == type.id) return@on
-                    color = CascadeGeometricColor(Mocha.Surface2.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 }
 
                 on<MouseEvent.Move.Exit> {
                     if (action == type.id) return@on
-                    color = CascadeGeometricColor(Mocha.Surface1.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 }
 
                 attach(row0)
                 adopt(text {
                     text = type.name.literal()
-                    color = CascadeGeometricColor(Mocha.Text.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                     shadow = false
                     position = CenterPositionConstraint()
                 }.also { label = it })
             }
 
-            actions.add(ActionButton(rect, label, outline, type.id))
+            actions.add(ActionButton(rect, label, type.id))
         }
 
         val `category$label` = text {
             text = "Category".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ row0 }, PositionAnchor.BELOW, 0, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ row0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 8f)
             attach(box)
         }
 
         `checkbox$category` = multiCheckbox {
             size = FixedSizeConstraint(170, 16)
-            position = AnchorPositionConstraint({ `category$label` }, PositionAnchor.BELOW, 0, 2)
+            position = AnchorPositionConstraint({ `category$label` }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 2f)
             items = listOf("Uncategorized")
 
             selected {
@@ -241,14 +248,16 @@ class MessageActionsPopUp(
 
         val `delay$label` = text {
             text = "Delay".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ row0 }, PositionAnchor.BELOW, 184, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ row0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(184f, 8f)
             attach(box)
         }
 
         delay = textField {
             size = FixedSizeConstraint(170, 16)
-            position = AnchorPositionConstraint({ `delay$label` }, PositionAnchor.BELOW, 0, 2)
+            position = AnchorPositionConstraint({ `delay$label` }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 2f)
             placeholder = "Delay (seconds)"
 
             on<KeyEvent.Type> {
@@ -265,42 +274,45 @@ class MessageActionsPopUp(
 
         val `cancel$label` = text {
             text = "Cancel message".literal()
-            color = CascadeGeometricColor(Mocha.Subtext0.argb)
-            position = AnchorPositionConstraint({ `checkbox$category` }, PositionAnchor.BELOW, 0, 8)
+            color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
+            position = AnchorPositionConstraint({ `checkbox$category` }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 8f)
             attach(box)
         }
 
         `cancel$box` = rectangle {
             size = FixedSizeConstraint(170, 16)
-            position = AnchorPositionConstraint({ `cancel$label` }, PositionAnchor.BELOW, 0, 2)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ `cancel$label` }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 2f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+                color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
                 inset = false
-            }.also { `cancel$box$outline` = it })
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
 
                 cancel()
                 cancel = !cancel
-                `cancel$box$outline`.color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+                `cancel$box`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
                 `cancel$text`.text = (if (cancel) "True" else "False").literal()
-                `cancel$text`.color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+                `cancel$text`.color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
             }
 
             attach(box)
             adopt(text {
                 text = (if (cancel) "True" else "False").literal()
-                color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+                color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
                 position = CenterPositionConstraint()
             }.also { `cancel$text` = it })
         }
 
         panel = container {
             size = FixedSizeConstraint(354, 70)
-            position = AnchorPositionConstraint({ `checkbox$category` }, PositionAnchor.BELOW, 0, 8)
+            position = AnchorPositionConstraint({ `checkbox$category` }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 8f)
             interact = false
 
             attach(box)
@@ -308,7 +320,7 @@ class MessageActionsPopUp(
 
         text {
             text = $$"Regex: use $0 for full message, $1, $2... for groups".literal()
-            color = CascadeGeometricColor(Mocha.Overlay0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
             position = FixedPositionConstraint(16, 208)
             attach(box)
         }
@@ -316,17 +328,18 @@ class MessageActionsPopUp(
         val bottom = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 1))
             position = FixedPositionConstraint(0, 220)
-            color = CascadeGeometricColor(Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             attach(box)
         }
 
         val cancel0 = rectangle {
             size = FixedSizeConstraint(170, 22)
-            position = AnchorPositionConstraint({ bottom }, PositionAnchor.BELOW, 16, 8)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ bottom }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(16f, 8f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Red.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb)
             })
 
             on<MouseEvent.Press> {
@@ -337,28 +350,29 @@ class MessageActionsPopUp(
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             }
 
             attach(box)
             adopt(text {
                 text = "Cancel".literal()
-                color = CascadeGeometricColor(Mocha.Red.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Red.argb)
                 position = CenterPositionConstraint()
             })
         }
 
         rectangle {
             size = FixedSizeConstraint(170, 22)
-            position = AnchorPositionConstraint({ cancel0 }, PositionAnchor.RIGHT, 8)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ cancel0 }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(8f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb)
             })
 
             on<MouseEvent.Press> {
@@ -386,17 +400,17 @@ class MessageActionsPopUp(
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             }
 
             attach(box)
             adopt(text {
                 text = "Save".literal()
-                color = CascadeGeometricColor(Mocha.Green.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb)
                 position = CenterPositionConstraint()
             })
         }
@@ -424,19 +438,19 @@ class MessageActionsPopUp(
         actions()
         values(entry?.entry?.action?.serializable)
 
-        `cancel$box$outline`.color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+        `cancel$box`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
         `cancel$text`.text = (if (cancel) "True" else "False").literal()
-        `cancel$text`.color = CascadeGeometricColor(if (cancel) Mocha.Green.argb else Mocha.Red.argb)
+        `cancel$text`.color = CascadeGeometricColor(if (cancel) MochaColorScheme.Green.argb else MochaColorScheme.Red.argb)
         gui.scene.focused = this
     }
 
     private fun actions() {
-        for ((rect, text, outline, id) in actions) {
+        for ((rect, text, id) in actions) {
             val selected = id == action
 
-            rect.color = CascadeGeometricColor(if (selected) Mocha.Lavender.argb else Mocha.Surface1.argb)
-            outline.color = CascadeGeometricColor(if (selected) Mocha.Lavender.argb else Mocha.Overlay0.argb)
-            text.color = CascadeGeometricColor(if (selected) Mocha.Base.argb else Mocha.Text.argb)
+            rect.color = CascadeGeometricColor(if (selected) MochaColorScheme.Lavender.argb else MochaColorScheme.Surface1.argb)
+            rect.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (selected) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
+            text.color = CascadeGeometricColor(if (selected) MochaColorScheme.Base.argb else MochaColorScheme.Text.argb)
         }
     }
 
@@ -448,7 +462,7 @@ class MessageActionsPopUp(
         if (fields.isEmpty()) {
             text {
                 text = "Value".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 position = FixedPositionConstraint(184, 0)
                 attach(panel)
             }
@@ -456,11 +470,11 @@ class MessageActionsPopUp(
             rectangle {
                 size = FixedSizeConstraint(170, 16)
                 position = FixedPositionConstraint(184, 10)
-                color = CascadeGeometricColor(Mocha.Crust.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Crust.argb)
                 interact = false
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Surface0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
                     inset = false
                 })
 
@@ -479,7 +493,7 @@ class MessageActionsPopUp(
 
             text {
                 text = label.literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(x0, y0)
                 attach(panel)
             }

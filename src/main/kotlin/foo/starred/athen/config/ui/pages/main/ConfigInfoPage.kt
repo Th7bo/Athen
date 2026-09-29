@@ -1,10 +1,10 @@
 package foo.starred.athen.config.ui.pages.main
 
 import foo.starred.athen.api.network.http.WebAPI.request
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI.right
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.data
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -15,6 +15,7 @@ import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
@@ -25,6 +26,7 @@ import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.literal
 import foo.starred.snowbird.utils.open
+import kotlin.time.Duration.Companion.milliseconds
 
 object ConfigInfoPage {
     private var changelogs: List<String> = emptyList()
@@ -34,7 +36,7 @@ object ConfigInfoPage {
         get()
 
         val links = container {
-            position = FixedPositionConstraint(14f, 14f)
+            position = FixedPositionConstraint(10f, 10f)
             size = FixedSizeConstraint(482f, 28f)
 
             attach(right)
@@ -45,22 +47,27 @@ object ConfigInfoPage {
             for ((k, v) in list.reversed()) {
                 val last0 = last
                 last = roundedRectangle {
-                    position = if (last0 == null) AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0f, 0f) else AnchorPositionConstraint({ last0 }, PositionAnchor.LEFT, -10f, 0f)
+                    position = if (last0 == null) AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER) else AnchorPositionConstraint({ last0 }, PositionAnchor.LEFT)
+                    offset = if (last0 == null) CascadeGeometricOffset.ZERO else CascadeGeometricOffset(-10f, 0f)
                     size = FixedSizeConstraint(154f, 28f)
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.35f))
                     radius = CascadeGeometricRadius(4f)
 
                     effect(OutlineEffect {
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.2f))
                         inset = false
                     })
 
                     on<MouseEvent.Move.Enter> {
-                        animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.2f))
+                        }
                     }
 
                     on<MouseEvent.Move.Exit> {
-                        animateColor(CascadeGeometricColor(Catppuccin.Mocha.Base.argb), 0.15f)
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.3f))
+                        }
                     }
 
                     on<MouseEvent.Press> {
@@ -73,7 +80,7 @@ object ConfigInfoPage {
                         wrapper = CascadeTextWrapper
                         text = k.literal()
                         textSize = 12f
-                        color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                        color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
                         position = CenterPositionConstraint()
                     })
                 }
@@ -81,13 +88,14 @@ object ConfigInfoPage {
         }
 
         val card0 = roundedRectangle {
-            position = AnchorPositionConstraint({ links }, PositionAnchor.BELOW, 0f, 10f)
+            position = AnchorPositionConstraint({ links }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 10f)
             size = FixedSizeConstraint(482f, 96f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.3f))
             radius = CascadeGeometricRadius(4f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.18f))
                 inset = false
             })
 
@@ -96,7 +104,7 @@ object ConfigInfoPage {
                 wrapper = CascadeTextWrapper
                 text = "<bold><#FDCCDA>A<#FCDDD3>t<#FAEDCB>h<#F0E2D7>e<#E5D8E4>n<#DBCDF0> <white>Configuration".parse()
                 textSize = 18f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                 position = FixedPositionConstraint(14f, 14f)
             })
 
@@ -104,7 +112,7 @@ object ConfigInfoPage {
                 wrapper = CascadeTextWrapper
                 text = "- Run /athen help to view all commands".literal()
                 textSize = 12f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(14f, 40f)
             })
 
@@ -112,7 +120,7 @@ object ConfigInfoPage {
                 wrapper = CascadeTextWrapper
                 text = "- Run /athen hud to open hud editor".literal()
                 textSize = 12f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(14f, 56f)
             })
 
@@ -120,19 +128,20 @@ object ConfigInfoPage {
                 wrapper = CascadeTextWrapper
                 text = "- Donate to get cosmetics such as custom name and size along with other perks!".literal()
                 textSize = 12f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = FixedPositionConstraint(14f, 72f)
             })
         }
 
         roundedRectangle {
-            position = AnchorPositionConstraint({ card0 }, PositionAnchor.BELOW, 0f, 10f)
+            position = AnchorPositionConstraint({ card0 }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 10f)
             size = FixedSizeConstraint(482f, 96f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.3f))
             radius = CascadeGeometricRadius(4f)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.18f))
                 inset = false
             })
 
@@ -141,7 +150,7 @@ object ConfigInfoPage {
                 wrapper = CascadeTextWrapper
                 text = "<bold>Changelogs".parse()
                 textSize = 18f
-                color = CascadeGeometricColor(Catppuccin.Mocha.Text.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                 position = FixedPositionConstraint(14f, 14f)
             })
 
@@ -154,7 +163,7 @@ object ConfigInfoPage {
                     wrapper = CascadeTextWrapper
                     text = "- $log".literal()
                     textSize = 12f
-                    color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                     position = FixedPositionConstraint(14f, y0)
                 }.also { texts.add(it) })
 

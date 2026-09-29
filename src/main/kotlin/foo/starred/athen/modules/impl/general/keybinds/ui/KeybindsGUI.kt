@@ -3,14 +3,14 @@
 package foo.starred.athen.modules.impl.general.keybinds.ui
 
 import com.mojang.blaze3d.platform.InputConstants
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent
 import foo.starred.athen.api.rendering.ui.components.impl.TextFieldComponent.Companion.textField
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.general.keybinds.Keybinds
 import foo.starred.athen.modules.impl.general.keybinds.Keybinds.remove
 import foo.starred.athen.modules.impl.general.keybinds.Keybinds.update
 import foo.starred.athen.modules.impl.general.keybinds.data.BindingEntry
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
-import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.*
@@ -21,6 +21,8 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricResolution
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
@@ -30,7 +32,6 @@ import foo.starred.cascade.primitives.impl.ScrollablePrimitive.Companion.scrolla
 import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.screen.CascadeScreen
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
 import foo.starred.snowbird.utils.brighten
@@ -49,21 +50,17 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
     private var `category$new`: RectanglePrimitive
     private var `category$toggle`: RectanglePrimitive
     private var `category$delete`: RectanglePrimitive
-    private lateinit var `category$toggle$outline`: OutlineEffect
-    private lateinit var `category$delete$outline`: OutlineEffect
     private var `category$field`: TextFieldComponent
     private lateinit var `category$text$toggle`: TextPrimitive
     private lateinit var `category$text$delete`: TextPrimitive
 
     private var `keybind$edit`: RectanglePrimitive
     private var `keybind$delete`: RectanglePrimitive
-    private lateinit var `keybind$edit$outline`: OutlineEffect
-    private lateinit var `keybind$delete$outline`: OutlineEffect
     private lateinit var `keybind$edit$text`: TextPrimitive
     private lateinit var `keybind$delete$text`: TextPrimitive
 
     private data class CategoryRow(val row: RectanglePrimitive, val label: TextPrimitive)
-    private data class EntryRow(val row: RectanglePrimitive, val toggle: RectanglePrimitive, val outline: OutlineEffect)
+    private data class EntryRow(val row: RectanglePrimitive, val toggle: RectanglePrimitive)
 
     private val rows0 = LinkedHashMap<String?, CategoryRow>()
     private val rows1 = LinkedHashMap<Int, EntryRow>()
@@ -85,11 +82,11 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val side0 = rectangle {
             size = FixedSizeConstraint(110, 300)
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -104,11 +101,11 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val right0 = rectangle {
             size = FixedSizeConstraint(460, 260)
             position = FixedPositionConstraint(116, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -123,11 +120,11 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         footer = rectangle {
             size = FixedSizeConstraint(460, 34)
             position = FixedPositionConstraint(116, 266)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
             interact = false
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)
@@ -146,10 +143,10 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val bar = rectangle {
             size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 24))
             position = FixedPositionConstraint(0, 276)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(side0)
@@ -157,11 +154,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
         `category$new` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 2)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
             })
 
             on<MouseEvent.Press> {
@@ -180,17 +178,17 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(bar)
             adopt(text {
                 text = "+".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 position = CenterPositionConstraint()
                 shadow = false
             })
@@ -199,18 +197,18 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         `category$toggle` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
             position = CenterPositionConstraint()
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `category$toggle$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                 val name = category ?: return@on
 
                 Keybinds.toggleCategory(name)
-                rows0[name]?.label?.color = CascadeGeometricColor(if (Keybinds.categories.value.find { it.name == name }?.enabled != true) Mocha.Overlay0.argb else Mocha.Lavender.argb)
+                rows0[name]?.label?.color = CascadeGeometricColor(if (Keybinds.categories.value.find { it.name == name }?.enabled != true) MochaColorScheme.Overlay0.argb else MochaColorScheme.Lavender.argb)
                 buttons()
                 cancel()
 
@@ -222,7 +220,7 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             attach(bar)
             adopt(text {
                 text = "\uD83D\uDD01".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `category$text$toggle` = it })
@@ -230,12 +228,13 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
         `category$delete` = rectangle {
             size = PercentSizeConstraint(31f, 84f)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -2)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-2f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `category$delete$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -260,7 +259,7 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             attach(bar)
             adopt(text {
                 text = "\uD83D\uDDD1".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `category$text$delete` = it })
@@ -304,11 +303,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         buttons()
         val create = rectangle {
             size = PercentSizeConstraint(32.2f, 78f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
-            color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.5f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.5f))
             })
 
             on<MouseEvent.Press> {
@@ -320,17 +320,17 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             }
 
             on<MouseEvent.Move.Enter> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.9f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                color = CascadeGeometricColor(Mocha.Green.argb.brighten(0.8f))
+                color = CascadeGeometricColor(MochaColorScheme.Green.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Create keybind".literal()
-                color = CascadeGeometricColor(Mocha.Base.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             })
@@ -338,12 +338,13 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
         `keybind$edit` = rectangle {
             size = PercentSizeConstraint(32.8f, 78f)
-            position = AnchorPositionConstraint({ create }, PositionAnchor.RIGHT, 3)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ create }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(3f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `keybind$edit$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -356,17 +357,17 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Lavender.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Edit keybind".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `keybind$edit$text` = it })
@@ -374,12 +375,13 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
         `keybind$delete` = rectangle {
             size = PercentSizeConstraint(32.2f, 78f)
-            position = AnchorPositionConstraint({ `keybind$edit` }, PositionAnchor.RIGHT, 3)
-            color = CascadeGeometricColor(Mocha.Surface1.argb)
+            position = AnchorPositionConstraint({ `keybind$edit` }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(3f, 0f)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
-            }.also { `keybind$delete$outline` = it })
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -393,17 +395,17 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             }
 
             on<MouseEvent.Move.Enter> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.9f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.9f))
             }
 
             on<MouseEvent.Move.Exit> {
-                if (entry != null) color = CascadeGeometricColor(Mocha.Red.argb.brighten(0.8f))
+                if (entry != null) color = CascadeGeometricColor(MochaColorScheme.Red.argb.brighten(0.8f))
             }
 
             attach(footer)
             adopt(text {
                 text = "Delete keybind".literal()
-                color = CascadeGeometricColor(Mocha.Overlay0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.argb)
                 shadow = false
                 position = CenterPositionConstraint()
             }.also { `keybind$delete$text` = it })
@@ -431,8 +433,9 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 20))
-                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, cy)
-                color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, cy.toFloat())
+                color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -451,11 +454,11 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
                 }
 
                 on<MouseEvent.Move.Enter> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Surface0.withAlpha(0.5f))
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.5f))
                 }
 
                 on<MouseEvent.Move.Exit> {
-                    if (category != k) color = CascadeGeometricColor(Mocha.Base.argb)
+                    if (category != k) color = CascadeGeometricColor(MochaColorScheme.Base.argb)
                 }
 
                 attach(left)
@@ -463,8 +466,9 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
 
             val label = text {
                 text = v.literal()
-                color = CascadeGeometricColor(if (!b1) Mocha.Overlay0.argb else if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+                color = CascadeGeometricColor(if (!b1) MochaColorScheme.Overlay0.argb else if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
                 attach(row)
             }
 
@@ -483,7 +487,7 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         if (list.isEmpty()) {
             text {
                 text = "No keybinds".literal()
-                color = CascadeGeometricColor(Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 attach(right)
             }
@@ -495,16 +499,15 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         for (entry in list) {
             val b0 = entry.binding.enabled && (entry.binding.category.isEmpty() || Keybinds.categories.value.find { it.name == entry.binding.category }?.enabled != false)
             val b1 = KeybindsGUI.entry == entry.index
-            lateinit var outline: OutlineEffect
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 28))
                 position = FixedPositionConstraint(0, cy)
-                color = CascadeGeometricColor(if (b1) Mocha.Surface1.argb else if (!b0) Mocha.Red.withAlpha(0.15f) else Mocha.Surface0.argb)
+                color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else if (!b0) MochaColorScheme.Red.alpha(0.15f) else MochaColorScheme.Surface0.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (!b0) Mocha.Red.withAlpha(0.6f) else Mocha.Overlay0.argb)
-                }.also { outline = it })
+                    color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (!b0) MochaColorScheme.Red.alpha(0.6f) else MochaColorScheme.Overlay0.argb)
+                })
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -526,11 +529,12 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             var a = RectanglePrimitive.NONE
             rectangle {
                 size = FixedSizeConstraint(14, 14)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
-                color = CascadeGeometricColor(Mocha.Surface1.argb)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(8f, 0f)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Surface2.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 })
 
                 on<MouseEvent.Press> {
@@ -547,7 +551,7 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
                 adopt(rectangle {
                     size = FixedSizeConstraint(8, 8)
                     position = CenterPositionConstraint()
-                    color = CascadeGeometricColor(Mocha.Green.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Green.argb)
                     interact = false
                     visible = entry.binding.enabled
                 }.also { a = it })
@@ -556,31 +560,33 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
             rectangle {
                 val str = entry.binding.keys.str()
 
-                size = FixedSizeConstraint(client.font?.width(str)?.plus(8) ?: 20, 16)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 30)
-                color = CascadeGeometricColor(Mocha.Surface2.argb)
+                size = FixedSizeConstraint(VanillaFontMeasurer.width(str) + 8, 16)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(30f, 0f)
+                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(Mocha.Crust.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Crust.argb)
                 })
 
                 attach(row)
                 adopt(text {
                     text = str.literal()
-                    color = CascadeGeometricColor(Mocha.Text.argb)
+                    color = CascadeGeometricColor(MochaColorScheme.Text.argb)
                     position = CenterPositionConstraint()
                 })
 
                 adopt(text {
                     text = entry.binding.command.literal()
-                    color = CascadeGeometricColor(Mocha.Text.argb)
-                    position = MixedPositionConstraint(AnchorPositionConstraint({ this@rectangle }, PositionAnchor.RIGHT, 8), CenterPositionConstraint())
+                    color = CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    position = MixedPositionConstraint(AnchorPositionConstraint({ this@rectangle }, PositionAnchor.RIGHT), CenterPositionConstraint())
+                    offset = CascadeGeometricOffset(8f, 0f)
                     attach(row)
                 })
             }
 
-            rows1[entry.index] = EntryRow(row, a, outline)
+            rows1[entry.index] = EntryRow(row, a)
             cy += 32
         }
     }
@@ -590,8 +596,8 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val b0 = category == name
         val b1 = name == null || Keybinds.categories.value.find { it.name == name }?.enabled == true
 
-        entry.row.color = CascadeGeometricColor(if (b0) Mocha.Surface0.argb else Mocha.Base.argb)
-        entry.label.color = CascadeGeometricColor(if (!b1) Mocha.Overlay0.argb else if (b0) Mocha.Lavender.argb else Mocha.Subtext0.argb)
+        entry.row.color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
+        entry.label.color = CascadeGeometricColor(if (!b1) MochaColorScheme.Overlay0.argb else if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
     }
 
     private fun buttons() {
@@ -599,13 +605,13 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val b1 = b0 && Keybinds.categories.value.find { it.name == category }?.enabled == true
         val b2 = b0 && deleting == category
 
-        `category$toggle`.color = CascadeGeometricColor(if (!b0) Mocha.Surface1.argb else if (b1) Mocha.Lavender.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `category$toggle$outline`.color = CascadeGeometricColor(if (!b0) Mocha.Surface0.argb else if (b1) Mocha.Lavender.argb.brighten(0.5f) else Mocha.Overlay0.argb)
-        `category$text$toggle`.color = CascadeGeometricColor(if (!b0) Mocha.Overlay0.argb else Mocha.Base.argb)
+        `category$toggle`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface1.argb else if (b1) MochaColorScheme.Lavender.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `category$toggle`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface0.argb else if (b1) MochaColorScheme.Lavender.argb.brighten(0.5f) else MochaColorScheme.Overlay0.argb)
+        `category$text$toggle`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Overlay0.argb else MochaColorScheme.Base.argb)
 
-        `category$delete`.color = CascadeGeometricColor(if (!b0) Mocha.Surface1.argb else if (b2) Mocha.Red.argb.brighten(0.9f) else Mocha.Red.argb.brighten(0.8f))
-        `category$delete$outline`.color = CascadeGeometricColor(if (!b0) Mocha.Surface0.argb else Mocha.Red.argb.brighten(0.5f))
-        `category$text$delete`.color = CascadeGeometricColor(if (!b0) Mocha.Overlay0.argb else Mocha.Base.argb)
+        `category$delete`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface1.argb else if (b2) MochaColorScheme.Red.argb.brighten(0.9f) else MochaColorScheme.Red.argb.brighten(0.8f))
+        `category$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
+        `category$text$delete`.color = CascadeGeometricColor(if (!b0) MochaColorScheme.Overlay0.argb else MochaColorScheme.Base.argb)
         `category$text$delete`.text = (if (b2) "✔" else "\uD83D\uDDD1").literal()
     }
 
@@ -615,19 +621,19 @@ object KeybindsGUI : CascadeScreen("Keybinds Manager [Athen]", CascadeGeometricR
         val b0 = binding.enabled && (binding.category.isEmpty() || Keybinds.categories.value.find { it.name == binding.category }?.enabled != false)
         val b1 = entry == index
 
-        row.row.color = CascadeGeometricColor(if (b1) Mocha.Surface1.argb else if (!b0) Mocha.Red.withAlpha(0.15f) else Mocha.Surface0.argb)
-        row.outline.color = CascadeGeometricColor(if (b1) Mocha.Lavender.argb else if (!b0) Mocha.Red.withAlpha(0.6f) else Mocha.Overlay0.argb)
+        row.row.color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else if (!b0) MochaColorScheme.Red.alpha(0.15f) else MochaColorScheme.Surface0.argb)
+        row.row.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else if (!b0) MochaColorScheme.Red.alpha(0.6f) else MochaColorScheme.Overlay0.argb)
     }
 
     private fun footer() {
         val b = entry != null
-        `keybind$edit`.color = CascadeGeometricColor(if (b) Mocha.Lavender.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `keybind$edit$outline`.color = CascadeGeometricColor(if (b) Mocha.Lavender.argb.brighten(0.5f) else Mocha.Surface0.argb)
-        `keybind$edit$text`.color = CascadeGeometricColor(if (b) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `keybind$edit`.color = CascadeGeometricColor(if (b) MochaColorScheme.Lavender.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `keybind$edit`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b) MochaColorScheme.Lavender.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `keybind$edit$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
 
-        `keybind$delete`.color = CascadeGeometricColor(if (b) Mocha.Red.argb.brighten(0.8f) else Mocha.Surface1.argb)
-        `keybind$delete$outline`.color = CascadeGeometricColor(if (b) Mocha.Red.argb.brighten(0.5f) else Mocha.Surface0.argb)
-        `keybind$delete$text`.color = CascadeGeometricColor(if (b) Mocha.Base.argb else Mocha.Overlay0.argb)
+        `keybind$delete`.color = CascadeGeometricColor(if (b) MochaColorScheme.Red.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
+        `keybind$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b) MochaColorScheme.Red.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `keybind$delete$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
     }
 
     fun Iterable<Int>.str(): String {

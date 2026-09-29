@@ -5,7 +5,7 @@ package foo.starred.athen.modules.impl.general
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.skyblock.PriceAPI.price
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.id
@@ -20,7 +20,7 @@ import tech.thatgravyboat.skyblockapi.api.item.calculator.getItemValue
 object ItemValue : Module(
     "Item value",
     "Shows the craft cost, and lowest bin of items.",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
     private val number by config.selector("Number style", listOf("Abbreviate", "Comma"))
 

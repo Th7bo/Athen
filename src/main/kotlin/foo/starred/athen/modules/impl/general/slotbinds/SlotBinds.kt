@@ -4,22 +4,22 @@ package foo.starred.athen.modules.impl.general.slotbinds
 
 import com.google.gson.reflect.TypeToken
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.Athen
 import foo.starred.athen.Athen.GSON
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.GuiEvent
 import foo.starred.athen.events.PlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.guiClick
+import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
 import foo.starred.cascade.graphics.extensions.stroke.stroke
+import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import foo.starred.snowbird.utils.compress
@@ -34,14 +34,14 @@ import org.joml.Matrix3x2f
 object SlotBinds : Module(
     "Slot binds",
     "Bindings for slots!",
-    Category.GENERAL
+    ConfigCategory.GENERAL
 ) {
-    private val _unused0 by config.information("You can use the commands <red>\"/${Athen.modId} [import|export] slotbinds\"<r> to share configs!")
     private val bind by config.keybind("Bind keybind", InputConstants.KEY_B)
     private val swap by config.keybind("Swap keybind", InputConstants.KEY_LSHIFT)
     private val lock = config.switch("Lock bound slots").unique("lock")
-    private val _unused1 by config.button("Open editor") { SlotBindsGUI.open() }
-    private val _unused2 by config.information("You can use the command <red>\"/${Athen.modId} slotbinds profile swap [profile]\"<r> to swap profiles!")
+    private val _unused0 by config.button("Open editor") { SlotBindsGUI.open() }
+    private val _unused1 by config.information("Share command: <red>/athen [import|export] slotbinds")
+    private val _unused2 by config.information("Swap command: <red>/athen slotbinds profile swap [profile]")
 
     private var last0: Int? = null
     private var last1: Int = 0
@@ -52,21 +52,21 @@ object SlotBinds : Module(
 
     val m0 = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
     val m1 = Int2IntOpenHashMap().apply { defaultReturnValue(-1) }
-    val m2 = Int2IntOpenHashMap().apply { defaultReturnValue(Catppuccin.Mocha.Mauve.argb) }
+    val m2 = Int2IntOpenHashMap().apply { defaultReturnValue(MochaColorScheme.Mauve.argb) }
     val map0 = mutableMapOf<String, Int2IntOpenHashMap>()
     val map1 = mutableMapOf<String, Int2IntOpenHashMap>()
 
     val palette = intArrayOf(
-        Catppuccin.Mocha.Mauve.argb,
-        Catppuccin.Mocha.Sapphire.argb,
-        Catppuccin.Mocha.Green.argb,
-        Catppuccin.Mocha.Peach.argb,
-        Catppuccin.Mocha.Pink.argb,
-        Catppuccin.Mocha.Teal.argb,
-        Catppuccin.Mocha.Red.argb,
-        Catppuccin.Mocha.Yellow.argb,
-        Catppuccin.Mocha.Sky.argb,
-        Catppuccin.Mocha.Lavender.argb,
+        MochaColorScheme.Mauve.argb,
+        MochaColorScheme.Sapphire.argb,
+        MochaColorScheme.Green.argb,
+        MochaColorScheme.Peach.argb,
+        MochaColorScheme.Pink.argb,
+        MochaColorScheme.Teal.argb,
+        MochaColorScheme.Red.argb,
+        MochaColorScheme.Yellow.argb,
+        MochaColorScheme.Sky.argb,
+        MochaColorScheme.Lavender.argb,
     )
 
     init {
@@ -256,16 +256,21 @@ object SlotBinds : Module(
                 val b = slots.getOrNull(e.intValue) ?: continue
                 val c = m2.get(e.intKey)
 
-                graphics.stroke(a.x + 8f, a.y + 8f, b.x + 8f, b.y + 8f, c, 1f, false, pose, scissor)
+                val x0 = a.x.toFloat()
+                val y0 = a.y.toFloat()
+                val x1 = b.x.toFloat()
+                val y1 = b.y.toFloat()
 
-                graphics.outline(a.x, a.y, 16, 16, 1, c, true)
-                graphics.outline(b.x, b.y, 16, 16, 1, c, true)
+                graphics.stroke(x0 + 8f, y0 + 8f, x1 + 8f, y1 + 8f, c, 1f, false, pose, scissor)
+
+                graphics.hollowRectangle(x0, y0, 16f, 16f, 1f, c, pose = pose, scissor = scissor)
+                graphics.hollowRectangle(x1, y1, 16f, 16f, 1f, c, pose = pose, scissor = scissor)
             }
 
             val l = last0 ?: return@on
             val a = slots.getOrNull(l) ?: return@on
 
-            graphics.outline(a.x, a.y, 16, 16, 1, inset = true)
+            graphics.hollowRectangle(a.x.toFloat(), a.y.toFloat(), 16f, 16f, 1f, CascadeGeometricColor.WHITE)
         }
 
         on<PlayerEvent.Drop> {

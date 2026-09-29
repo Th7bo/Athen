@@ -4,10 +4,10 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigHudElementData
+import foo.starred.athen.config.hud.ui.HudElementEditorUI
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
-import foo.starred.athen.hud.HUDEditor
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -16,18 +16,21 @@ import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive
 import foo.starred.cascade.primitives.impl.ImagePrimitive.Companion.image
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive.Companion.roundedRectangle
 import foo.starred.snowbird.utils.open
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigHUDElement(
     private val config: ConfigHudElementData
 ) : ContainerPrimitive() {
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(46f, 14f)
         interact = false
 
@@ -35,30 +38,34 @@ class ConfigHUDElement(
             position = FixedPositionConstraint(0f, 0f)
             size = FixedSizeConstraint(14f, 14f)
             radius = CascadeGeometricRadius(4f)
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 inset = false
             })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
                 cancel()
-                HUDEditor.open()
+                HudElementEditorUI.open()
             }
 
             on<MouseEvent.Move.Enter> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+                animate(150.milliseconds) {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+                }
             }
 
             on<MouseEvent.Move.Exit> {
-                animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+                animate(150.milliseconds) {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+                }
             }
 
             adopt(image {
                 location = ResourceAPI.identify("textures/gui/move.png")
-                color = CascadeGeometricColor(Catppuccin.Mocha.Subtext0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
                 position = CenterPositionConstraint()
                 size = FixedSizeConstraint(12f, 12f)
                 interact = false
@@ -67,13 +74,14 @@ class ConfigHUDElement(
 
         adopt(ConfigSwitchElement().apply {
             position = FixedPositionConstraint(18f, 0f)
+            offset = CascadeGeometricOffset.ZERO
 
             val bool = ConfigManager.get(config.key) as? Boolean ?: config.default
-            config.hud.enabled = bool
+            config.hud.state.value = bool
             set(bool, false)
 
             update {
-                config.hud.enabled = it
+                config.hud.state.value = it
                 ConfigManager.update(config.key, it)
             }
         })

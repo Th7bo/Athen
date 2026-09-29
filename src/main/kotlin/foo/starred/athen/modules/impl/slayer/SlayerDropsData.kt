@@ -12,13 +12,13 @@ import foo.starred.athen.api.slayers.enums.drop.impl.*
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.api.storage.JsonStore
-import foo.starred.athen.config.Category
 import foo.starred.athen.config.ConfigManager
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.SlayerEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.text.parser.impl.parse
@@ -33,17 +33,15 @@ import kotlin.math.min
 object SlayerDropsData : Module(
     "Slayer drops data",
     "Shows useful data about your slayer drop chances!",
-    Category.SLAYER
+    ConfigCategory.SLAYER
 ) {
-    private val last by config.switch("Show chance on boss kill", true)
-    private val _unused by config.information("This uses the last magic find from a boss drop to calculate the chances!")
+    private val last by config.switch("Show chance on boss kill", true).description("This uses the last magic find from a boss drop to calculate the chances!")
 
     private val sinceLast by config.switch("Bosses since last drop", true)
     private val types by config.multiSelector("Stored types", SlayerDropGrade.entries.map { a -> a.name.lowercase().replaceFirstChar { it.uppercase() } })
 
     private val _filter by config.group("Filter")
-    private val auto = _filter.switch("Detect automatically").unique("auto")
-    private val _unused0 by _filter.information("You will need to change your selected RNG Meter item for it to be automatically detected.")
+    private val auto = _filter.switch("Detect automatically").description("You will need to change your RNG Meter item for it to be detected.").unique("auto")
     private val rev by _filter.selector("Revenant", RevenantDrops.entries.map { it.display })
     private val tara by _filter.selector("Tarantula", TarantulaDrops.entries.map { it.display })
     private val sven by _filter.selector("Sven", SvenDrops.entries.map { it.display })
@@ -107,7 +105,7 @@ object SlayerDropsData : Module(
             val i1 = xp ?: return@on
             val i2 = l.drop.xp ?: return@on
             val c0 = fn(i1, i2, l.drop.chance)
-            "   <dark-gray>- <${Catppuccin.Mocha.Green.argb}>${l.display} <r>chance: <${Catppuccin.Mocha.Sky.argb}>${"%.5f".format(c0)} <dark_gray>[✯$mf]".parse().lie()
+            "   <dark-gray>- <${MochaColorScheme.Green.argb}>${l.display} <r>chance: <${MochaColorScheme.Sky.argb}>${"%.5f".format(c0)} <dark_gray>[✯$mf]".parse().lie()
         }
 
         on<MessageEvent.Chat.Intercept> {
@@ -129,7 +127,7 @@ object SlayerDropsData : Module(
 
             if (!last) return@on
             val c = fn(i1, i2, l.drop.chance)
-            "   <dark_gray>- <${Catppuccin.Mocha.Green.argb}>${l.display} <r>chance: <${Catppuccin.Mocha.Sky.argb}>${"%.5f".format(c)}% <dark_gray>[✯$mf]".parse().lie()
+            "   <dark_gray>- <${MochaColorScheme.Green.argb}>${l.display} <r>chance: <${MochaColorScheme.Sky.argb}>${"%.5f".format(c)}% <dark_gray>[✯$mf]".parse().lie()
         }
     }
 

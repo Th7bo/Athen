@@ -1,7 +1,7 @@
 package foo.starred.athen.events
 
-import foo.starred.athen.events.core.CancellableEvent
-import foo.starred.athen.events.core.Event
+import foo.starred.athen.events.core.AthenEvent
+import foo.starred.kbus.data.event.traits.KBusCancellableTrait
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -17,38 +17,38 @@ sealed class GuiEvent {
         sealed class Any {
             data class Pre(
                 val graphics: GuiGraphicsExtractor
-            ) : Event()
+            ) : AthenEvent()
 
             data class Main(
                 val graphics: GuiGraphicsExtractor
-            ) : Event()
+            ) : AthenEvent()
 
             data class Post(
                 val graphics: GuiGraphicsExtractor
-            ) : Event()
+            ) : AthenEvent()
         }
 
         sealed class Screen {
             data class Pre(
                 val graphics: GuiGraphicsExtractor
-            ) : CancellableEvent()
+            ) : AthenEvent(), KBusCancellableTrait
 
             data class Post(
                 val graphics: GuiGraphicsExtractor
-            ) : Event()
+            ) : AthenEvent()
         }
     }
 
     sealed class Open {
         data class Container(
             val screen: AbstractContainerScreen<*>
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped = screen.title.stripped()
         }
 
         data class Any(
             val screen: net.minecraft.client.gui.screens.Screen
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped = screen.title.stripped()
         }
     }
@@ -56,13 +56,13 @@ sealed class GuiEvent {
     sealed class Close {
         data class Container(
             val screen: AbstractContainerScreen<*>
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped = screen.title.stripped()
         }
 
         data class Any(
             val screen: net.minecraft.client.gui.screens.Screen
-        ) : Event() {
+        ) : AthenEvent() {
             val stripped = screen.title.stripped()
         }
     }
@@ -73,22 +73,22 @@ sealed class GuiEvent {
                 data class Pre(
                     val graphics: GuiGraphicsExtractor,
                     val slot: Slot
-                ) : CancellableEvent()
+                ) : AthenEvent(), KBusCancellableTrait
 
                 data class Post(
                     val graphics: GuiGraphicsExtractor,
                     val slot: Slot
-                ) : Event()
+                ) : AthenEvent()
             }
 
             sealed class Menu {
                 data class Start(
                     val graphics: GuiGraphicsExtractor
-                ) : CancellableEvent()
+                ) : AthenEvent(), KBusCancellableTrait
 
                 data class End(
                     val graphics: GuiGraphicsExtractor
-                ) : Event()
+                ) : AthenEvent()
             }
 
             sealed class Hotbar {
@@ -97,14 +97,14 @@ sealed class GuiEvent {
                     val item: ItemStack,
                     val x: Int,
                     val y: Int
-                ) : CancellableEvent()
+                ) : AthenEvent(), KBusCancellableTrait
 
                 data class Post(
                     val graphics: GuiGraphicsExtractor,
                     val item: ItemStack,
                     val x: Int,
                     val y: Int
-                ) : Event()
+                ) : AthenEvent()
             }
         }
 
@@ -114,15 +114,15 @@ sealed class GuiEvent {
                 val slotId: Int,
                 val mouseButton: Int,
                 val clickType: ContainerInput
-            ) : CancellableEvent()
+            ) : AthenEvent(), KBusCancellableTrait
 
             data class Hover(
                 val slot: Slot
-            ) : Event()
+            ) : AthenEvent()
 
             data class Unhover(
                 val slot: Slot
-            ) : Event()
+            ) : AthenEvent()
         }
     }
 
@@ -133,14 +133,14 @@ sealed class GuiEvent {
                 val item: ItemStack,
                 val x: Int,
                 val y: Int
-            ) : Event()
+            ) : AthenEvent()
 
             data class Post(
                 val graphics: GuiGraphicsExtractor,
                 val item: ItemStack,
                 val x: Int,
                 val y: Int
-            ) : Event()
+            ) : AthenEvent()
         }
     }
 
@@ -148,37 +148,37 @@ sealed class GuiEvent {
         data class Render(
             val item: ItemStack,
             val tooltip: MutableList<Component>
-        ) : Event()
+        ) : AthenEvent()
 
         data class Update(
             val item: ItemStack,
             val tooltip: MutableList<Component>
-        ) : Event()
+        ) : AthenEvent()
     }
 
     sealed class Input {
         sealed class Key {
             data class Press(
                 val keyEvent: KeyEvent
-            ) : CancellableEvent()
+            ) : AthenEvent(), KBusCancellableTrait
 
             data class Release(
                 val keyEvent: KeyEvent
-            ) : Event()
+            ) : AthenEvent()
         }
 
         sealed class Mouse {
             data class Press(
                 val keyEvent: MouseButtonEvent
-            ) : CancellableEvent()
+            ) : AthenEvent(), KBusCancellableTrait
 
             data class Release(
                 val keyEvent: MouseButtonEvent
-            ) : Event()
+            ) : AthenEvent()
 
             data class Scroll(
                 val amount: Double
-            ) : CancellableEvent()
+            ) : AthenEvent(), KBusCancellableTrait
         }
     }
 }

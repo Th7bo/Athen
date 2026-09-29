@@ -2,28 +2,28 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.attachedStripped
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.ui.themes.Catppuccin
 import foo.starred.snowbird.utils.withAlpha
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.world.entity.Entity
 
 @Load
-@OnlyIn(islands = [SkyBlockIsland.THE_END])
+@OnlyIn(islands = [PresetSkyBlockIsland.THE_END])
 object EndermanPhaseColor : Module(
     "Enderman phase color",
     "Changes the color of the boss based on it's current phase.",
-    Category.SLAYER,
+    ConfigCategory.SLAYER,
 ) {
     private val all by config.switch("Change for all bosses")
-    private val normal by config.colorPicker("Normal", Catppuccin.Mocha.Text.argb)
-    private val hits by config.colorPicker("Hit phase", Catppuccin.Mocha.Lavender.argb.withAlpha(0.5f))
+    private val normal by config.colorPicker("Normal", MochaColorScheme.Text.argb)
+    private val hits by config.colorPicker("Hit phase", MochaColorScheme.Lavender.argb.withAlpha(0.5f))
 
     private val map: Object2IntOpenHashMap<Entity> = Object2IntOpenHashMap<Entity>().apply {
         defaultReturnValue(-1)

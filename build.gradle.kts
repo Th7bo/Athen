@@ -42,6 +42,7 @@ dependencies {
 
     shadow(libs.classgraph)
     shadow(libs.kommand)
+    shadow(libs.kbus)
     shadow(libs.snowbird.find())
     shadow(libs.cascade.find())
     shadow(libs.updater.find())

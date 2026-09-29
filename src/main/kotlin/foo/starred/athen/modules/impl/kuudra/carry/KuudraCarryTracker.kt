@@ -2,28 +2,27 @@
 
 package foo.starred.athen.modules.impl.kuudra.carry
 
-import foo.starred.athen.Athen
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraTier
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
 import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.sizedText
 import foo.starred.athen.api.scheduling.Ticking
-import foo.starred.athen.config.Category
-import foo.starred.athen.config.dsl.impl.builders.hud.ConfigHudBuilder
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.KuudraEvent
 import foo.starred.athen.events.WorldRenderEvent
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.modules.Module
 import foo.starred.athen.modules.impl.kuudra.carry.KuudraCarryStateTracker.tracked
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.lie
@@ -39,7 +38,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 object KuudraCarryTracker : Module(
     "Kuudra carry tracker",
     "Track kuudra carries and display progress.",
-    Category.KUUDRA
+    ConfigCategory.KUUDRA
 ) {
     private val announceInParty by config.switch("Announce in party", true)
     private val showStartMessage by config.switch("Show start message", true)
@@ -47,18 +46,27 @@ object KuudraCarryTracker : Module(
     private val _webhook by config.group("Discord webhook")
     private val webhook by _webhook.switch("Send to webhook")
     private val webhookEach by _webhook.switch("Send on each kill", true)
-    private val webhookUrl by _webhook.input("Webhook URL")
-    private val _webhookUrl by _webhook.information("Requires you to add your own webhook URL!")
+    private val webhookUrl by _webhook.input("Webhook URL").description("Requires you to add your own webhook URL!")
 
     private val highlights by config.group("Highlights")
     private val highlightPlayer by highlights.switch("Highlight player", true)
-    private val playerColor by highlights.colorPicker("Player color", Mocha.Blue.argb)
+    private val playerColor by highlights.colorPicker("Player color", MochaColorScheme.Blue.argb)
     private val playerLineWidth by highlights.slider("Player line width", 2f, 0f, 10f)
 
-    private val ex0 = listOf("§f§lKuudra Carries:", "§7> §bExample §8[§7Infernal§8]§f: §b3§f/§b10 §7(5m 30s | 12/hr)").fcs
-    private val hud: ConfigHudBuilder = config.hud("Kuudra carry display") {
-        if (it) return@hud sizedText(ex0)
-        sizedText(display.value ?: return@hud null)
+    private val hud by config.hud("Kuudra carry display") {
+        val example = listOf("§f§lKuudra Carries:", "§7> §bExample §8[§7Infernal§8]§f: §b3§f/§b10 §7(5m 30s | 12/hr)").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
     }
 
     private val `hud$kuudra` by config.switch("Only in Kuudra", true)
@@ -78,7 +86,7 @@ object KuudraCarryTracker : Module(
 
     private val display = Ticking {
         if (tracked.isEmpty()) return@Ticking null
-        if (`hud$kuudra` && !SkyBlockIsland.KUUDRA.inIsland.value) return@Ticking null
+        if (`hud$kuudra` && !PresetSkyBlockIsland.KUUDRA.state.value) return@Ticking null
 
         buildString {
             append("§f§lKuudra Carries:")
@@ -161,7 +169,7 @@ object KuudraCarryTracker : Module(
 
                 if (result.completed) {
                     val time = result.totalTime.toDuration()
-                    "<${Mocha.Green.argb}>Completed carries for <aqua>${teammate.name} <gray>[${tier.str}] <r>in <yellow>$time".mod()
+                    "<${MochaColorScheme.Green.argb}>Completed carries for <aqua>${teammate.name} <gray>[${tier.str}] <r>in <yellow>$time".mod()
 
                     if (webhook) {
                         webhookUrl.request(HttpRequest.POST) {
@@ -187,17 +195,17 @@ object KuudraCarryTracker : Module(
                 val e = teammate.entity ?: continue
                 extractFrameBox(e.renderBoundingBox, playerColor, playerLineWidth, false)
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
     }
 
     private fun showHelp() {
         val commands = listOf(
-            "/${Athen.modId} kcarry" to "Open the kuudra carry tracker GUI",
-            "/${Athen.modId} kcarry add <player> <amount> <tier>" to "Add kuudra carries to track",
-            "/${Athen.modId} kcarry remove <player>" to "Remove a tracked player",
-            "/${Athen.modId} kcarry list" to "List players being tracked",
-            "/${Athen.modId} kcarry list clear" to "Clear the active list",
-            "/${Athen.modId} kcarry history [page=1]" to "Show tracked history"
+            "/athen kcarry" to "Open the kuudra carry tracker GUI",
+            "/athen kcarry add <player> <amount> <tier>" to "Add kuudra carries to track",
+            "/athen kcarry remove <player>" to "Remove a tracked player",
+            "/athen kcarry list" to "List players being tracked",
+            "/athen kcarry list clear" to "Clear the active list",
+            "/athen kcarry history [page=1]" to "Show tracked history"
         )
 
         val divider = ("§8§m" + ("-".repeat())).literal()
@@ -206,7 +214,7 @@ object KuudraCarryTracker : Module(
         "§bAthen Kuudra Carry Commands".center().lie()
         divider.lie()
 
-        for ((c, d) in commands) "  <${Mocha.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
+        for ((c, d) in commands) "  <${MochaColorScheme.Green.argb}>$c <dark_gray>- <gray>$d".parse().lie()
 
         divider.lie()
     }

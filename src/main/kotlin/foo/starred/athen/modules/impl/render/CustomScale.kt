@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.config.Category
+import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import net.minecraft.client.player.LocalPlayer
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player
 object CustomScale : Module(
     "Custom scale",
     "Changes the scale for players!",
-    Category.RENDER
+    ConfigCategory.RENDER
 ) {
     private val scales by config.multiSelector("Scale", listOf("Self", "Others", "NPCs", "Nametags", "Shadow"), listOf(0, 1, 2, 3, 4))
     val scale by config.slider("Scale", 1f, 0.1f, 5f, double = true)

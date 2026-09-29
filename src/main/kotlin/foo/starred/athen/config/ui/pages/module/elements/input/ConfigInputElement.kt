@@ -3,10 +3,10 @@ package foo.starred.athen.config.ui.pages.module.elements.input
 import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigTextInputElementData
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputExpandElement.Companion.configExpandButtonElement
 import foo.starred.athen.config.ui.pages.module.elements.input.ConfigInputPreviewElement.Companion.configPreviewButtonElement
-import foo.starred.athen.ui.themes.Catppuccin
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
@@ -18,18 +18,19 @@ import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.cascade.graphics.extensions.scissor.scissor
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
 import foo.starred.snowbird.api.ZERO_PAIR
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.KeyboardInputState
-import foo.starred.snowbird.utils.brighten
 import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 open class ConfigInputElement : RoundedRectanglePrimitive() {
     private var update: ((String) -> Unit)? = null
@@ -69,33 +70,48 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
         private set
 
     init {
-        color = CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
         radius = CascadeGeometricRadius(4f)
 
-        var outline: OutlineEffect
         effect(OutlineEffect {
-            color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
-        }.also { outline = it })
+        })
 
         on<FocusEvent.Gain> {
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Lavender.argb.brighten(0.6f))
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+
+                effect<OutlineEffect> {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Lavender.argb)
+                }
+            }
         }
 
         on<FocusEvent.Lose> {
-            animateColor(CascadeGeometricColor(if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb), 0.15f)
-            outline.color = CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb)
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+
+                effect<OutlineEffect> {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+                }
+            }
         }
 
         on<MouseEvent.Move.Enter> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface1.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
         }
 
         on<MouseEvent.Move.Exit> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(Catppuccin.Mocha.Surface0.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            }
         }
 
         on<MouseEvent.Press> {
@@ -296,14 +312,14 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
                 val i1 = max(_selection0, _selection1)
                 val width = i1 - i0
 
-                graphics.rectangle(x1 + i0, y1, width, height0, Catppuccin.Mocha.Base.argb.withAlpha(0.5f))
+                graphics.rectangle(x1 + i0, y1, width, height0, MochaColorScheme.Base.argb.withAlpha(0.5f))
             }
 
             val bool1 = value.isEmpty() && bool0
-            font.extract(graphics, if (bool1) placeholder else value, x1, y1, if (bool1) Catppuccin.Mocha.Overlay0.argb else Catppuccin.Mocha.Text.argb, false)
+            font.extract(graphics, if (bool1) placeholder else value, x1, y1, if (bool1) MochaColorScheme.Overlay0.argb else MochaColorScheme.Text.argb, false)
 
             if (!bool0 && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, Catppuccin.Mocha.Lavender.argb, false)
+                font.extract(graphics, "|", x1 + _cursor - 1f, y1 - 1f, MochaColorScheme.Lavender.argb, false)
             }
         }
     }
@@ -354,7 +370,8 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
 
         fun of(parent: IPrimitiveElement<*>, config: ConfigTextInputElementData): ConfigInputElement {
             return ConfigInputElement().apply {
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -44f, 0f)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(-44f, 0f)
                 size = FixedSizeConstraint(84f, 14f)
                 placeholder = config.placeholder
                 value = ConfigManager.get(config.key) as? String ?: config.default
@@ -375,11 +392,13 @@ open class ConfigInputElement : RoundedRectanglePrimitive() {
 
                 attach(parent)
                 parent.adopt(configExpandButtonElement(this, config) {
-                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -26f, 0f)
+                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                    offset = CascadeGeometricOffset(-26f, 0f)
                 })
 
                 parent.adopt(configPreviewButtonElement({ value }) {
-                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                    offset = CascadeGeometricOffset(-8f, 0f)
                 })
             }
         }

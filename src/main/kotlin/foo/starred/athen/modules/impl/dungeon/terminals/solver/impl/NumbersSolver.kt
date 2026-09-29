@@ -1,10 +1,10 @@
 package foo.starred.athen.modules.impl.dungeon.terminals.solver.impl
 
 import foo.starred.athen.api.dungeon.terminals.TerminalType
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.TerminalSolvers
-import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.athen.modules.impl.dungeon.terminals.solver.base.ITerminalSolver
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
+import foo.starred.athen.modules.impl.dungeon.terminals.solver.data.TerminalClick
 import foo.starred.cascade.graphics.font.CascadeFonts
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
@@ -35,7 +35,7 @@ object NumbersSolver : ITerminalSolver(TerminalType.NUMBERS) {
             val a = counts[c.slot]?.toString() ?: continue
             val b = 11f * scale
             val d = font.width(a, b)
-            font.extract(this, a, x + 8f * scale - d / 2, y + 3f * scale, Mocha.Text.rgba, false, b)
+            font.extract(this, a, x + 8f * scale - d / 2, y + 3f * scale, MochaColorScheme.Text.rgba, false, b)
         }
     }
 

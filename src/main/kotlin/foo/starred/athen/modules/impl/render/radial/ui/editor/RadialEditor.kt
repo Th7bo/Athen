@@ -2,6 +2,7 @@
 
 package foo.starred.athen.modules.impl.render.radial.ui.editor
 
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.modules.impl.render.radial.RadialMenu
 import foo.starred.athen.modules.impl.render.radial.actions.IAction
 import foo.starred.athen.modules.impl.render.radial.data.RadialSlot
@@ -9,7 +10,6 @@ import foo.starred.athen.modules.impl.render.radial.ui.components.RadialForm
 import foo.starred.athen.modules.impl.render.radial.ui.components.RadialHeader
 import foo.starred.athen.modules.impl.render.radial.ui.components.RadialPreview
 import foo.starred.athen.modules.impl.render.radial.ui.components.RadialTree
-import foo.starred.athen.ui.themes.Catppuccin.Mocha
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
@@ -68,10 +68,10 @@ object RadialEditor : CascadeScreen("Radial Menu Editor [Athen]", CascadeGeometr
         val side = rectangle {
             size = FixedSizeConstraint(130, 320)
             position = FixedPositionConstraint(0, 0)
-            color = CascadeGeometricColor(Mocha.Base.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Base.argb)
 
             effect(OutlineEffect {
-                color = CascadeGeometricColor(Mocha.Surface0.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             })
 
             attach(main)

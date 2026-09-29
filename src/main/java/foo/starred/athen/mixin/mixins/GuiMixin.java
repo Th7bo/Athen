@@ -61,7 +61,7 @@ public abstract class GuiMixin {
     @Inject(method = "extractSelectedItemName", at = @At("HEAD"), cancellable = true)
     private void athen$renderSelectedItemName$0(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (!ItemNamePosition.INSTANCE.getEnabled()) return;
-        if (ItemNamePosition.INSTANCE.getHud().getEnabled()) return;
+        if (ItemNamePosition.INSTANCE.getHud().getState().getValue()) return;
 
         ci.cancel();
     }

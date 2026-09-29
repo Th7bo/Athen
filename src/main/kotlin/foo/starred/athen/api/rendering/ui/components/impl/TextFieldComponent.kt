@@ -1,12 +1,13 @@
 package foo.starred.athen.api.rendering.ui.components.impl
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.api.rendering.ui.effects.outline.outline
-import foo.starred.athen.api.rendering.ui.shapes.rectangle.rectangle
-import foo.starred.athen.api.rendering.ui.text.vanilla.extensions.extractText
-import foo.starred.athen.ui.themes.Catppuccin
+import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
+import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
+import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.cascade.events.impl.KeyEvent
 import foo.starred.cascade.events.impl.MouseEvent
+import foo.starred.cascade.graphics.extensions.rectangle.hollow.hollowRectangle
+import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.cascade.graphics.extensions.scissor.scissor
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
@@ -51,8 +52,6 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
 
     init {
         on<MouseEvent.Press> {
-            val font = client.font ?: return@on
-
             root.focused = self
             cancel()
 
@@ -61,7 +60,7 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
             var i1 = Int.MAX_VALUE
 
             for (i in 0..value.length) {
-                val a = font.width(value.substring(0, i))
+                val a = VanillaFontMeasurer.width(value.substring(0, i))
                 val b = abs(a - x).takeIf { it < i1 }?.toInt() ?: continue
 
                 i1 = b
@@ -222,42 +221,36 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
     }
 
     override fun draw(graphics: GuiGraphicsExtractor) {
-        val f = client.font ?: return
         val b = root.focused == this
 
-        val x = x.toInt()
-        val y = y.toInt()
-        val width = width.toInt()
-        val height = height.toInt()
-
-        graphics.rectangle(x, y, width, height, if (b) Catppuccin.Mocha.Surface2.argb else if (hovered) Catppuccin.Mocha.Surface1.argb else Catppuccin.Mocha.Surface0.argb)
-        graphics.outline(x, y, width, height, 1, if (b) Catppuccin.Mocha.Lavender.argb else Catppuccin.Mocha.Overlay0.argb)
+        graphics.rectangle(x, y, width, height, if (b) MochaColorScheme.Surface2.argb else if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        graphics.hollowRectangle(x, y, width, height, 1f, if (b) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb, inset = false)
 
         graphics.scissor(x + 2, y, width - 2, height) {
             run {
                 if (!b) return@run ::scroll.set(0)
                 val i0 = width - 6
-                while (f.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
-                while (f.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
+                while (VanillaFontMeasurer.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
+                while (VanillaFontMeasurer.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
             }
 
             val x0 = x + 3 - scroll
 
             if (selected && b) {
                 val (s, e) = range
-                val s1 = f.width(value.substring(0, s))
-                val s2 = f.width(value.substring(0, e))
-                graphics.rectangle(x0 + s1, y + 2, s2 - s1, height - 4, Catppuccin.Mocha.Lavender.withAlpha(0.5f))
+                val s1 = VanillaFontMeasurer.width(value.substring(0, s))
+                val s2 = VanillaFontMeasurer.width(value.substring(0, e))
+                graphics.rectangle(x0 + s1, y + 2, (s2 - s1).toFloat(), height - 4, MochaColorScheme.Lavender.alpha(0.5f))
             }
 
             val c = value.isEmpty() && !b
             val str = if (c) placeholder else value
-            val color = if (c) Catppuccin.Mocha.Subtext0.argb else Catppuccin.Mocha.Text.argb
-            graphics.extractText(str, x0, y + (height - f.lineHeight) / 2 + 1, false, color)
+            val color = if (c) MochaColorScheme.Subtext0.argb else MochaColorScheme.Text.argb
+            VanillaFontRenderer.extract(graphics, str, x0, y + (height - VanillaFontMeasurer.height) / 2 + 1, false, color)
 
             if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                val x1 = client.font.width(value.substring(0, cursor))
-                graphics.rectangle(x0 + x1, y + 2, 1, height - 4, Catppuccin.Mocha.Lavender.argb)
+                val x1 = VanillaFontMeasurer.width(value.substring(0, cursor))
+                graphics.rectangle(x0 + x1, y + 2, 1f, height - 4, MochaColorScheme.Lavender.argb)
             }
         }
     }

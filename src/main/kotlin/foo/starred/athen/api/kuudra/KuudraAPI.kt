@@ -2,11 +2,11 @@ package foo.starred.athen.api.kuudra
 
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.kuudra.enums.*
-import foo.starred.athen.api.location.SkyBlockIsland
+import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.events.*
 import foo.starred.athen.events.core.on
-import foo.starred.athen.events.core.runWhen
 import foo.starred.athen.utils.texture
+import foo.starred.kbus.extensions.runWhen
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.data.Observable
 import foo.starred.snowbird.api.lazy.RefreshableLazy
@@ -15,13 +15,14 @@ import foo.starred.snowbird.api.name
 import foo.starred.snowbird.api.player
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.world.entity.monster.Giant
-//~ if >= 26.2 'monster.MagmaCube' -> 'monster.cubemob.MagmaCube'
-import net.minecraft.world.entity.monster.MagmaCube
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.extentions.serverMaxHealth
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.anyMatch
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findThenNull
+
+//~ if >= 26.2 'monster.MagmaCube' -> 'monster.cubemob.MagmaCube'
+import net.minecraft.world.entity.monster.MagmaCube
 
 @Priority
 object KuudraAPI {
@@ -105,7 +106,7 @@ object KuudraAPI {
 
             if (phase == KuudraPhase.Supply) for (s in supplies) s.nearby = players.any { s.radAABB.contains(it.position()) }
             else if (phase == KuudraPhase.Fuel) for (f in fuels) f.nearby = players.any { f.radAABB.contains(it.position()) }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         // Elle sometimes does not send the end dialogue if another dialogue sequence is active,
         // that is when she is eaten by Kuudra and the run ends. Love hypixel and their bugs.
@@ -115,7 +116,7 @@ object KuudraAPI {
             if (phase != KuudraPhase.DPS) return@on
             if (entity != kuudra) return@on
             if (new <= 2f) phase = KuudraPhase.Kill.start()
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<EntityEvent.Update.Equipment> {
             if (!inRun) return@on
@@ -131,7 +132,7 @@ object KuudraAPI {
             val s = AbstractSupply(e)
             if (phase == KuudraPhase.Supply) supplies += s
             else fuels += s
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<EntityEvent.Unload> {
             if (!inRun) return@on
@@ -140,7 +141,7 @@ object KuudraAPI {
 
             if (phase == KuudraPhase.Supply) supplies.removeIf { it.entity == e }
             else fuels.removeIf { it.entity == e }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<EntityEvent.Update.Named> {
             if (!inRun) return@on
@@ -180,7 +181,7 @@ object KuudraAPI {
 
                 else -> {}
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<ScoreboardEvent.Update> {
             if (tier != null) return@on
@@ -188,7 +189,7 @@ object KuudraAPI {
             tierRegex.anyMatch(added, "t") { (t) ->
                 tier = KuudraTier.get(t.toInt())
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<MessageEvent.Chat.Receive>(Int.MIN_VALUE) {
             when {
@@ -259,7 +260,7 @@ object KuudraAPI {
                     }
                 }
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
 
         on<MessageEvent.Title.Main> {
             if (phase !in set) return@on
@@ -268,7 +269,7 @@ object KuudraAPI {
             supplyProgressRegex.findOrNull(message, "progress") { (progress) ->
                 if (KuudraEvent.Supply.Progress(progress.toInt(), message).post()) cancel()
             }
-        }.runWhen(SkyBlockIsland.KUUDRA.inIsland)
+        }.runWhen(PresetSkyBlockIsland.KUUDRA.state)
     }
 
     private fun fn(): MagmaCube? =
