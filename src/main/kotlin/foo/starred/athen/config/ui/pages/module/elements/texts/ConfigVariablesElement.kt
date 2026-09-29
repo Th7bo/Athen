@@ -5,7 +5,7 @@ import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.data.impl.ConfigVariablesElementData
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -15,6 +15,7 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.*
@@ -25,6 +26,7 @@ import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.utils.literal
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigVariablesElement(
     private val config: ConfigVariablesElementData
@@ -41,7 +43,8 @@ class ConfigVariablesElement(
     private var chevron1: ImagePrimitive? = null
 
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(if (total > 1) 140f else 114f, 14f)
         radius = CascadeGeometricRadius(4f)
         color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
@@ -91,7 +94,7 @@ class ConfigVariablesElement(
             adopt(rectangle {
                 position = FixedPositionConstraint((i + 1) * 38f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             }.also { slot1.add(it) })
         }
@@ -100,7 +103,7 @@ class ConfigVariablesElement(
             adopt(rectangle {
                 position = FixedPositionConstraint(114f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             })
 
@@ -129,7 +132,10 @@ class ConfigVariablesElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page <= 0) return@on
-                    chevron0?.animateColor(CascadeGeometricColor(MochaColorScheme.Text.argb), 0.1f)
+
+                    chevron0?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {
@@ -140,7 +146,7 @@ class ConfigVariablesElement(
             adopt(rectangle {
                 position = FixedPositionConstraint(127f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             })
 
@@ -170,7 +176,10 @@ class ConfigVariablesElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page >= total - 1) return@on
-                    chevron1?.animateColor(CascadeGeometricColor(MochaColorScheme.Text.argb), 0.1f)
+
+                    chevron1?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {

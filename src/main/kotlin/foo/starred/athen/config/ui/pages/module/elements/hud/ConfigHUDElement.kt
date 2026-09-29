@@ -7,7 +7,7 @@ import foo.starred.athen.config.data.impl.ConfigHudElementData
 import foo.starred.athen.config.hud.ui.HudElementEditorUI
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.pages.module.elements.toggle.ConfigSwitchElement
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -16,18 +16,21 @@ import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive
 import foo.starred.cascade.primitives.impl.ImagePrimitive.Companion.image
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive.Companion.roundedRectangle
 import foo.starred.snowbird.utils.open
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigHUDElement(
     private val config: ConfigHudElementData
 ) : ContainerPrimitive() {
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(46f, 14f)
         interact = false
 
@@ -49,11 +52,15 @@ class ConfigHUDElement(
             }
 
             on<MouseEvent.Move.Enter> {
-                animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+                animate(150.milliseconds) {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+                }
             }
 
             on<MouseEvent.Move.Exit> {
-                animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
+                animate(150.milliseconds) {
+                    ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+                }
             }
 
             adopt(image {
@@ -67,6 +74,7 @@ class ConfigHUDElement(
 
         adopt(ConfigSwitchElement().apply {
             position = FixedPositionConstraint(18f, 0f)
+            offset = CascadeGeometricOffset.ZERO
 
             val bool = ConfigManager.get(config.key) as? Boolean ?: config.default
             config.hud.state.value = bool

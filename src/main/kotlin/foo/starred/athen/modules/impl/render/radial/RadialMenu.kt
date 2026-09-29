@@ -44,8 +44,7 @@ object RadialMenu : Module(
 ) {
     private val keybind by config.keybind("Keybind", InputConstants.KEY_R)
     private val releaseClose by config.switch("Release to close", true)
-    val direction by config.switch("General direction click")
-    private val _unused by config.information("Enabling this will make your clicks be on the slot closest to the cursor.")
+    val direction by config.switch("General direction click").description("Enabling this will make your clicks be on the slot closest to the cursor.")
     val type by config.selector("Sub menu type", listOf("Full", "Mini", "Mini extended"))
     val radius1 by config.slider("Inner radius", 50f, 20f, 120f, "pixels")
     val radius2 by config.slider("Outer radius", 80f, 40f, 180f, "pixels")
@@ -58,7 +57,7 @@ object RadialMenu : Module(
         RadialEditor.open()
     }
 
-    private val _unused1 by config.information("View all commands using <red>\"/athen radial help\"<r>!")
+    private val _unused1 by config.information("Command: <red>/athen radial help")
 
     private val json = JsonStore("features/radialMenu")
     private val stack = ArrayDeque<List<RadialSlot>>()

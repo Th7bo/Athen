@@ -52,7 +52,7 @@ object MobHighlight : Module(
     private val key by config.switch("Highlight key", true)
     private val keybind by config.keybind("Key to add entity")
     private val _unused by config.button("Open manager") { MobHighlightGUI.open() }
-    private val _unused0 by config.information("You can use the command <red>\"/athen highlight help\"<r> to view all commands!")
+    private val _unused0 by config.information("Command: <red>/athen highlight help")
 
     private var wow: Long = -1
     private val int: MutableList<Int> = mutableListOf()

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSliderElementData
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
@@ -14,6 +14,7 @@ import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.extensions.rectangle.rounded.roundedRectangle
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
@@ -24,6 +25,7 @@ import org.joml.Matrix3x2f
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 open class ConfigSliderElement : RoundedRectanglePrimitive() {
     private var update: (Double) -> Unit = {}
@@ -61,20 +63,25 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         radius = CascadeGeometricRadius(4f)
         unfocus = false
 
-        var outline: OutlineEffect
         effect(OutlineEffect {
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
-        }.also { outline = it })
+        })
 
         on<FocusEvent.Gain> {
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
-            outline.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb.brighten(0.6f))
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
+
+            effect<OutlineEffect>()?.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
         }
 
         on<FocusEvent.Lose> {
-            animateColor(CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb), 0.15f)
-            outline.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+            }
+
+            effect<OutlineEffect>()?.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
         }
 
         on<MouseEvent.Press> {
@@ -99,12 +106,18 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
 
         on<MouseEvent.Move.Enter> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
         }
 
         on<MouseEvent.Move.Exit> {
             if (root.focused == self) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            }
         }
     }
 
@@ -116,7 +129,7 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
         if (value0 > 0f) {
             val pose = Matrix3x2f(graphics.pose())
             val scissor = graphics.scissorStack.peek()
-            graphics.roundedRectangle(x, y, width * value0, height, MochaColorScheme.Lavender.argb.brighten(0.6f), radius, pose, scissor)
+            graphics.roundedRectangle(x, y, width * value0, height, MochaColorScheme.Lavender.argb.brighten(0.75f), radius, pose, scissor)
         }
 
         val font = CascadeFonts.sans
@@ -148,7 +161,8 @@ open class ConfigSliderElement : RoundedRectanglePrimitive() {
     companion object {
         fun of(parent: IPrimitiveElement<*>, config: ConfigSliderElementData) {
             ConfigSliderElement().apply {
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(-8f, 0f)
                 size = FixedSizeConstraint(100f, 14f)
                 min = config.min
                 max = config.max

@@ -30,8 +30,7 @@ object WardrobeKeybinds : Module(
     private val cancelAll by config.switch("Cancel all other clicks")
     private val override by config.keybind("Key override", InputConstants.KEY_LCONTROL)
     private val cancelRender = config.switch("Cancel gui render").unique("cancelRender")
-    private val ping by config.slider("Ping", 250, 10, 1000, "ms")
-    private val _unused by config.information("Ping is used to estimate internal calculations.")
+    private val ping by config.slider("Ping", 250, 10, 1000, "ms").description("Ping is used to estimate internal calculations.")
 
     private val keybinds by config.group("General keybinds")
     private val useHotbar by keybinds.switch("Use hotbar binds", true)

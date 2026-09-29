@@ -38,7 +38,7 @@ object ProtectItems : Module(
     "Protects any item!",
     ConfigCategory.GENERAL
 ) {
-    private val _unused by config.information("Use command <red>\"/athen protect [add|remove|list]\"<r> to manage items!")
+    private val _unused by config.information("Command: <red>/athen protect [add|remove|list]")
     private val move by config.switch("Allowing moving items")
 
     private val render = config.switch("Render protected").unique("render")

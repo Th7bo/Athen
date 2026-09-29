@@ -12,8 +12,8 @@ classgraph = "4.8.184"
 
 kommand = "2026.09.1"
 snowbird = "2026.09.2"
-cascade = "2026.09.4"
-updater = "2026.09.1"
+cascade = "2026.09.6"
+updater = "2026.09.2"
 
 hypixel-modapi = "1.0.2"
 hypixel-modapi-fabric = "1.0.2+build.1+mc26.1"

@@ -23,15 +23,13 @@ object MinibossAlert : Module(
     "Shows an alert for you when a miniboss spawns nearby.",
     ConfigCategory.SLAYER
 ) {
-    private val detection = config.selector("Detection type", listOf("Chat based", "Event based"), 1).unique("detection")
-    private val _unused by config.information("Chat based detection type only works for your minibosses. Event based detection type works for all minibosses near you.")
+    private val detection = config.selector("Detection type", listOf("Chat based", "Event based"), 1).unique("detection").description("Chat based for your minibosses. Event based for all minibosses near you.")
     private val sendMessage by config.switch("Send message", true)
     private val vanillaMessage by config.switch("Use mc message")
     private val showTitle by config.switch("Show title", true)
     private val maxDistance by config.slider("Maximum distance", 10, 1, 15, "blocks")
     private val alertText by config.input("Alert text", "<aqua>Miniboss spawned!")
-    private val bigBoiText by config.input("Big boi text", "<red>Big boi spawned!")
-    private val _unused0 by config.information("The same text will be used for both title and message. <gray>Big boi = Big miniboss")
+    private val bigBoiText by config.input("Special text", "<red>Big boi spawned!")
 
     private val bigBoys = SlayerMini.entries.filter { it.special }.map { it.name }
     private val regex = Regex("^SLAYER MINI-BOSS (?<name>.+?) has spawned!$")

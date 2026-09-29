@@ -30,7 +30,7 @@ object VisualWords : Module(
 ) {
     private const val SKIP = "\u0000vw_bypass"
 
-    private val unused by config.information("Use the command \"/athen visuals help\" to learn more about the available commands!")
+    private val unused by config.information("Command: <red>/athen visuals help")
     private val nameChanger = config.switch("Name changer").unique("nameChanger")
     private val nickname = config.input("Nickname", "cooluser4").unique("nickname")
 

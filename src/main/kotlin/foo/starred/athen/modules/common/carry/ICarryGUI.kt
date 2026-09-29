@@ -14,6 +14,7 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
 import foo.starred.cascade.primitives.impl.ScrollablePrimitive
@@ -67,7 +68,8 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 text = screenName.literal()
                 textSize = 10f
                 color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 14, 0)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(14f, 0f)
             })
 
             adopt(text {
@@ -75,7 +77,8 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 text = "".literal()
                 textSize = 8f
                 color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -14, 0)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(-14f, 0f)
             }.also { badge = it })
         }
 
@@ -113,7 +116,8 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 text = "Left click +1/-1 for completed  •  Right click for total".literal()
                 textSize = 8f
                 color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 14, 0)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(14f, 0f)
             }.also { tip = it })
         }
 
@@ -169,14 +173,16 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 text = carry.player.literal()
                 textSize = 9f
                 color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 12, -7)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(12f, -7f)
                 attach(row)
             }
 
             rectangle {
                 val width = CascadeFonts.sans.width(carry.short, 7.5f) + 10f
                 size = FixedSizeConstraint(width, 14f)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, (CascadeFonts.sans.width(carry.player, 9f) + 18f).toInt(), -7)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(CascadeFonts.sans.width(carry.player, 9f) + 18f, -7f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -202,14 +208,16 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 text = "${carry.completed}/${carry.total} completed  •  $time  •  $rate".literal()
                 textSize = 7.5f
                 color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 12, 9)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(12f, 9f)
                 attach(row)
             }
 
-            var offset = -12f
+            var x0 = -12f
             rectangle {
                 size = FixedSizeConstraint(22f, 22f)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset.toInt(), 0)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -243,11 +251,11 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 })
             }
 
-            offset -= 28f
-
+            x0 -= 28f
             rectangle {
                 size = FixedSizeConstraint(22f, 22f)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset.toInt(), 0)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -290,11 +298,11 @@ abstract class ICarryGUI<T : ITrackedCarry>(val screenName: String) : CascadeScr
                 })
             }
 
-            offset -= 28f
-
+            x0 -= 28f
             rectangle {
                 size = FixedSizeConstraint(22f, 22f)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset.toInt(), 0)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {

@@ -41,7 +41,7 @@ object SlayerStats : Module(
     private var `start$quest` = 0L
     private var total = 0.0
 
-    private val _unused by config.information("Use <red>/athen reset slayerStats<r> to reset.")
+    private val _unused by config.information("Reset command: <red>/athen reset slayerStats")
     private val displayOptions by config.multiSelector("Display options", listOf("Bosses killed", "Bosses/hr", "XP/hr", "Avg kill time", "Session time"), listOf(0, 1, 2, 3, 4))
     private val styleType by config.selector("Styling type", listOf("General", "Advanced"))
 

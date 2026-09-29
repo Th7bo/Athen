@@ -1,5 +1,3 @@
-@file:Suppress("Unused")
-
 package foo.starred.athen.modules.impl.general
 
 import com.google.gson.JsonObject
@@ -27,8 +25,7 @@ object MissingEnchants : Module(
     "Shows missing enchants on the item you hover over.",
     ConfigCategory.GENERAL
 ) {
-    private val keybind by config.keybind("Keybind", InputConstants.KEY_LSHIFT).`watch$tooltip`()
-    private val _unused by config.information("You can unbind the keybind to always show.")
+    private val keybind by config.keybind("Keybind", InputConstants.KEY_LSHIFT).`watch$tooltip`().description("You can unbind the keybind to always show.")
 
     private val typeRegex = Regex("""\b(?:COMMON|UNCOMMON|RARE|EPIC|LEGENDARY|MYTHIC|DIVINE|SPECIAL|VERY SPECIAL)\b\s+(?:DUNGEON\s+)?([A-Z]+(?: [A-Z]+)*)""") // https://regex101.com/r/MOQHMf/1
     private val romans = setOf("I","II","III","IV","V","VI","VII","VIII","IX","X")

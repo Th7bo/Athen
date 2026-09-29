@@ -6,7 +6,7 @@ import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigMultiSelectorElementData
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.CenterPositionConstraint
@@ -16,6 +16,7 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.*
@@ -26,17 +27,18 @@ import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.utils.literal
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigMultiSelectorElement(
     private val config: ConfigMultiSelectorElementData
 ) : RoundedRectanglePrimitive() {
+    private val selected: MutableList<Int> = get(ConfigManager.get(config.key))
     private val labels = mutableListOf<TextPrimitive>()
     private val slot0 = mutableListOf<ContainerPrimitive>()
     private val slot1 = mutableListOf<RectanglePrimitive>()
-    private val total: Int = maxOf(1, (config.options.size + 2) / 3)
+    private val total: Int = (config.options.size + 2) / 3
 
     private var page: Int = 0
-    private var selected: MutableList<Int> = get(ConfigManager.get(config.key))
 
     private var chevron0: ImagePrimitive? = null
     private var chevron1: ImagePrimitive? = null
@@ -55,11 +57,11 @@ class ConfigMultiSelectorElement(
         }
     }.apply {
         radius = CascadeGeometricRadius(4f)
-        color = CascadeGeometricColor(MochaColorScheme.Base.argb)
+        color = CascadeGeometricColor(MochaColorScheme.Mantle.argb)
         visible = false
 
         effect(OutlineEffect {
-            color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+            color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
             inset = false
         })
 
@@ -68,7 +70,8 @@ class ConfigMultiSelectorElement(
     }
 
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(if (total > 1) 140f else 114f, 14f)
         radius = CascadeGeometricRadius(4f)
         color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
@@ -132,7 +135,7 @@ class ConfigMultiSelectorElement(
             adopt(rectangle {
                 position = FixedPositionConstraint((i + 1) * 38f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             }.also { slot1.add(it) })
         }
@@ -141,7 +144,7 @@ class ConfigMultiSelectorElement(
             adopt(rectangle {
                 position = FixedPositionConstraint(114f, 3f)
                 size = FixedSizeConstraint(1f, 8f)
-                color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
+                color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
                 interact = false
             })
 
@@ -169,7 +172,9 @@ class ConfigMultiSelectorElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page <= 0) return@on
-                    chevron0?.animateColor(CascadeGeometricColor(MochaColorScheme.Text.argb), 0.1f)
+                    chevron0?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {
@@ -209,7 +214,9 @@ class ConfigMultiSelectorElement(
 
                 on<MouseEvent.Move.Enter> {
                     if (page >= total - 1) return@on
-                    chevron1?.animateColor(CascadeGeometricColor(MochaColorScheme.Text.argb), 0.1f)
+                    chevron1?.animate(100.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    }
                 }
 
                 on<MouseEvent.Move.Exit> {

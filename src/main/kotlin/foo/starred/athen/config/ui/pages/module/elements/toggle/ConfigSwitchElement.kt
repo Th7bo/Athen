@@ -4,28 +4,37 @@ import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigSwitchElementData
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
-import foo.starred.cascade.animation.data.AnimatableFloat
-import foo.starred.cascade.animation.enums.CascadeAnimations
-import foo.starred.cascade.constraints.base.IPositionConstraint
+import foo.starred.cascade.animation.extension.impl.animate
+import foo.starred.cascade.animation.interpolator.easing.impl.EaseOutEasingInterpolator
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.size.FixedSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive
 import foo.starred.snowbird.utils.brighten
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigSwitchElement : RoundedRectanglePrimitive() {
-    private val knob = AnimatableFloat(2f)
     private var update: (Boolean) -> Unit = {}
     private var active: Boolean = false
 
+    private val knob = roundedRectangle {
+        position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+        size = FixedSizeConstraint(10f, 10f)
+        radius = CascadeGeometricRadius(4f)
+        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
+        offset = CascadeGeometricOffset(2f, 0f)
+        interact = false
+    }
+
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(28f, 14f)
         radius = CascadeGeometricRadius(4f)
         color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
@@ -45,39 +54,44 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
 
         on<MouseEvent.Move.Enter> {
             if (active) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
         }
 
         on<MouseEvent.Move.Exit> {
             if (active) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            }
         }
 
-        adopt(roundedRectangle {
-            position = object : IPositionConstraint {
-                override fun x(element: IPrimitiveElement<*>, parent: IPrimitiveElement<*>): Float = parent.x + knob.value
-                override fun y(element: IPrimitiveElement<*>, parent: IPrimitiveElement<*>): Float = parent.y + 2f
-            }
-            size = FixedSizeConstraint(10f, 10f)
-            radius = CascadeGeometricRadius(4f)
-            color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-            interact = false
-        })
+        adopt(knob)
     }
 
     fun set(state: Boolean, animated: Boolean = true) {
         if (active == state) return
         active = state
 
+        val color1 = CascadeGeometricColor(if (active) MochaColorScheme.Lavender.argb.brighten(0.75f) else MochaColorScheme.Surface0.argb)
+        val offset1 = if (active) CascadeGeometricOffset(16f, 0f) else CascadeGeometricOffset(2f, 0f)
+
         if (animated) {
-            animateColor(CascadeGeometricColor(if (active) MochaColorScheme.Lavender.argb.brighten(0.75f) else MochaColorScheme.Surface0.argb), 0.25f, CascadeAnimations.EASE_OUT)
-            val manager = root.animations
-            if (manager != null) knob.animate(manager, if (active) 16f else 2f, 0.25f, CascadeAnimations.EASE_OUT) else knob.snap(if (active) 16f else 2f)
+            animate(250.milliseconds, EaseOutEasingInterpolator) {
+                ::color to color1
+            }
+
+            knob.animate(250.milliseconds, EaseOutEasingInterpolator) {
+                knob::offset to offset1
+            }
+
             return
         }
 
-        color = CascadeGeometricColor(if (active) MochaColorScheme.Lavender.argb.brighten(0.75f) else MochaColorScheme.Surface0.argb)
-        knob.snap(if (active) 16f else 2f)
+        color = color1
+        knob.offset = offset1
     }
 
     fun update(block: (Boolean) -> Unit) {

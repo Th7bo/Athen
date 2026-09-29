@@ -60,8 +60,7 @@ object SlayerCarryTracker : Module(
     private val _webhook by config.group("Discord webhook")
     private val webhook by _webhook.switch("Send to webhook")
     private val `webhook$each` by _webhook.switch("Send on each kill", true)
-    private val `webhook$url` by _webhook.input("Webhook URL")
-    private val `webhook$url$desc` by _webhook.information("Requires you to add your own webhook URL!")
+    private val `webhook$url` by _webhook.input("Webhook URL").description("Requires you to add your own webhook URL!")
 
     private val _void by config.group("Voidgloom Prices")
     private val `price$void$3` by _void.input("T3 Price (M)", "0.8, 0.65")

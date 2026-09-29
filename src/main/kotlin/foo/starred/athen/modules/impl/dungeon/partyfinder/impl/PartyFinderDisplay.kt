@@ -59,7 +59,7 @@ object PartyFinderDisplay : Module(
     val `color$vc` by config.colorPicker("VC color", 0xFF7300FF)
     val `color$perm` by config.colorPicker("Perm color", 0xFF00FFFF)
     val `color$carry` by config.colorPicker("Carry color", 0xFF640000)
-    private val _unused by config.information("Want to hide a color? You can set it's opacity to 0!")
+    private val _unused by config.information("Set opacity to 0 to hide color!")
 
     private val noteRegex = Regex("^Note: (?<note>.+)")
     private val floorRegex = Regex("^Floor: Floor (?<floor>[IV]+)$")

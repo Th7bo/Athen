@@ -32,8 +32,7 @@ object ScrollableTooltip : Module(
 
     private val scale by config.switch("Scale tooltip")
     private val `scale$key` by config.keybind("Scale keybind", InputConstants.KEY_LCONTROL)
-    private val `scale$dynamic` by config.switch("Dynamic scale", true)
-    private val `scale$dynamic$text` by config.information("Dynamic scale automatically scales the tooltip to fit on your screen!")
+    private val `scale$dynamic` by config.switch("Dynamic scale", true).description("Dynamic scale automatically scales the tooltip to fit on your screen!")
 
     private val reset by config.switch("Reset on hover")
 

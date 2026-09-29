@@ -1,5 +1,6 @@
 package foo.starred.athen.config.ui.pages.module
 
+import com.mojang.blaze3d.platform.InputConstants
 import foo.starred.athen.api.storage.ResourceAPI
 import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.feature.ConfigFeatureData
@@ -8,7 +9,7 @@ import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
 import foo.starred.athen.config.ui.pages.main.ConfigCategories
 import foo.starred.athen.config.ui.pages.main.ConfigInfoPage
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.data.PositionAnchor
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
@@ -20,189 +21,241 @@ import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.font.CascadeFonts
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.ImagePrimitive.Companion.image
-import foo.starred.cascade.primitives.impl.RectanglePrimitive
-import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
 import foo.starred.cascade.primitives.impl.RoundedRectanglePrimitive.Companion.roundedRectangle
+import foo.starred.cascade.primitives.impl.TextPrimitive
 import foo.starred.cascade.primitives.impl.TextPrimitive.Companion.text
 import foo.starred.cascade.wrappers.text.impl.CascadeTextWrapper
 import foo.starred.snowbird.api.text.parser.impl.parse
-import foo.starred.snowbird.utils.brighten
-import foo.starred.snowbird.utils.withAlpha
-import net.minecraft.client.gui.GuiGraphicsExtractor
-import kotlin.math.abs
+import foo.starred.snowbird.utils.literal
+import kotlin.time.Duration.Companion.milliseconds
 
 object ConfigModules {
     var active: ConfigFeatureData? = null
 
     fun fn() {
-        for (child in ConfigUI.right0.children.filter { it != ConfigUI.right }) child.forEach { it.detach() }
-        for (child in ConfigUI.right.children) child.forEach { it.detach() }
+        ConfigUI.hide()
 
-        ConfigUI.headerText.text = "<bold><#FDCCDA>A<#FCDDD3>t<#FAEDCB>h<#F0E2D7>e<#E5D8E4>n<#DBCDF0>".parse()
-        if (active != null) return ConfigModuleSettingsPage.fn(active!!)
-        if (ConfigCategories.active == ConfigCategory.INFO) return ConfigInfoPage.fn()
+        if (ConfigCategories.active == ConfigCategory.INFO) {
+            ConfigUI.modules.visible = false
+            ConfigUI.divider.visible = false
+            ConfigUI.modules.children.clear()
 
-        val query = ConfigUI.searchBar.value.trim()
+            ConfigUI.right.visible = true
+            ConfigUI.right.position = FixedPositionConstraint(0f, 0f)
+            ConfigUI.right.size = FixedSizeConstraint(502f, 310f)
+            for (child in ConfigUI.right.children) child.detach()
+
+            return ConfigInfoPage.fn()
+        }
+
+        ConfigUI.modules.visible = true
+        ConfigUI.divider.visible = true
+        ConfigUI.right.visible = true
+        ConfigUI.right.position = FixedPositionConstraint(206f, 0f)
+        ConfigUI.right.size = FixedSizeConstraint(296f, 310f)
+
+        list()
+        settings()
+    }
+
+    private fun list() {
+        ConfigUI.modules.children.clear()
+
+        val query = ConfigUI.search.value.trim()
         val features = (ConfigManager.features[ConfigCategories.active] ?: return).filter { it.matches(query) }.sortedWith(compareByDescending<ConfigFeatureData> { it.name.startsWith(query, true) }.thenBy { it.name })
-        var first: IPrimitiveElement<*>? = null
         var last: IPrimitiveElement<*>? = null
 
-        for ((i, v) in features.withIndex()) {
-            val first0 = first
-            val last0 = last
-            val options = v.options.isNotEmpty()
+        for (v in features) {
+            val above = last
+            val selected = active == v
+            var enabled = ConfigManager.get(v.configKey) as? Boolean ?: (v.default as? Boolean ?: false)
 
-            val rect = roundedRectangle {
-                position =
-                    if (i == 0) FixedPositionConstraint(14f, 14f)
-                    else if (i % 3 == 0) AnchorPositionConstraint({ first0!! }, PositionAnchor.BELOW, 0f, 10f)
-                    else AnchorPositionConstraint({ last0!! }, PositionAnchor.RIGHT, 10f, 0f)
-
-                size = FixedSizeConstraint(154f, 28f)
-                color = CascadeGeometricColor.TRANSPARENT
+            val row = roundedRectangle {
+                position = if (above == null) FixedPositionConstraint(6f, 6f) else AnchorPositionConstraint({ above }, PositionAnchor.BELOW)
+                offset = if (above == null) CascadeGeometricOffset.ZERO else CascadeGeometricOffset(0f, 6f)
+                size = FixedSizeConstraint(193f, 26f)
                 radius = CascadeGeometricRadius(4f)
+                color = CascadeGeometricColor(if (selected) MochaColorScheme.Base.alpha(0.70f) else MochaColorScheme.Crust.alpha(0.55f))
 
                 effect(OutlineEffect {
-                    color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+                    color = CascadeGeometricColor(if (selected) MochaColorScheme.Lavender.alpha(0.60f) else MochaColorScheme.Surface1.alpha(0.35f))
                     inset = false
                 })
 
-                attach(ConfigUI.right)
+                attach(ConfigUI.modules)
+
+                var name: TextPrimitive
+                adopt(text {
+                    wrapper = CascadeTextWrapper
+                    text = CascadeFonts.sans.truncate(v.name, 11f, 138f).parse()
+                    textSize = 11f
+                    color = CascadeGeometricColor(if (selected) MochaColorScheme.Lavender.argb else if (enabled) MochaColorScheme.Text.argb else MochaColorScheme.Subtext0.alpha(0.60f))
+                    position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                    offset = CascadeGeometricOffset(9f, 0f)
+                }.also { name = it })
+
                 adopt(roundedRectangle {
-                    position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 0f, 0f)
-                    size = FixedSizeConstraint(127f, 28f)
-                    radius = CascadeGeometricRadius(4f, 0f, 4f, 0f)
+                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                    offset = CascadeGeometricOffset(-8f, 0f)
+                    size = FixedSizeConstraint(28f, 15f)
+                    radius = CascadeGeometricRadius(3.5f)
+                    color = CascadeGeometricColor(if (enabled) MochaColorScheme.Lavender.alpha(0.20f) else MochaColorScheme.Crust.alpha(0.70f))
 
-                    fun colors(bool: Boolean) {
-                        val enabled = ConfigManager.get(v.configKey) as? Boolean ?: (v.default as? Boolean ?: false)
+                    effect(OutlineEffect {
+                        color = CascadeGeometricColor(if (enabled) MochaColorScheme.Lavender.alpha(0.75f) else MochaColorScheme.Surface1.alpha(0.35f))
+                        inset = false
+                    })
 
-                        animateColor(CascadeGeometricColor(when {
-                            enabled && bool -> MochaColorScheme.Lavender.argb.brighten(0.65f)
-                            enabled -> MochaColorScheme.Lavender.argb.brighten(0.55f)
-                            bool -> MochaColorScheme.Surface0.argb
-                            else -> MochaColorScheme.Base.argb
-                        }), 0.15f)
+                    var label: TextPrimitive
+                    adopt(text {
+                        wrapper = CascadeTextWrapper
+                        text = (if (enabled) "<bold><#B4BEFE>ON" else "<bold><#6C7086>OFF").parse()
+                        textSize = 8.5f
+                        position = CenterPositionConstraint()
+                    }.also { label = it })
+
+                    on<MouseEvent.Press> {
+                        if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
+                        cancel()
+
+                        enabled = !enabled
+                        ConfigManager.update(v.configKey, enabled)
+
+                        if (!selected) {
+                            name.animate(150.milliseconds) {
+                                ::color to CascadeGeometricColor(if (enabled) MochaColorScheme.Text.argb else MochaColorScheme.Subtext0.alpha(0.60f))
+                            }
+                        }
+
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(if (enabled) MochaColorScheme.Lavender.alpha(0.20f) else MochaColorScheme.Crust.alpha(0.70f))
+
+                            effect<OutlineEffect> {
+                                ::color to CascadeGeometricColor(if (enabled) MochaColorScheme.Lavender.alpha(0.75f) else MochaColorScheme.Surface1.alpha(0.35f))
+                            }
+                        }
+
+                        label.text = (if (enabled) "<bold><#B4BEFE>ON" else "<bold><#6C7086>OFF").parse()
+                        if (selected) settings()
                     }
 
-                    colors(false)
-
                     on<MouseEvent.Move.Enter> {
-                        colors(true)
+                        if (enabled) return@on
+
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(MochaColorScheme.Surface0.alpha(0.80f))
+
+                            effect<OutlineEffect> {
+                                ::color to CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.40f))
+                            }
+                        }
                     }
 
                     on<MouseEvent.Move.Exit> {
-                        colors(false)
+                        if (enabled) return@on
+
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(MochaColorScheme.Crust.alpha(0.70f))
+
+                            effect<OutlineEffect> {
+                                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.alpha(0.35f))
+                            }
+                        }
+                    }
+                })
+
+                on<MouseEvent.Move.Any> {
+                    if (!hovered) return@on
+                    if (v.description.isEmpty()) return@on
+
+                    ConfigUI.show(v.description, x, y)
+                }
+
+                on<MouseEvent.Press> {
+                    if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
+
+                    cancel()
+                    ConfigModulesNavigationState.navigate(ConfigCategories.active, v.takeUnless { active == it })
+                }
+
+                if (selected) {
+                    on<MouseEvent.Move.Exit> {
                         ConfigUI.hide()
                     }
 
-                    on<MouseEvent.Move.Any> {
-                        if (!hovered) return@on
-                        ConfigUI.show(v.description, x, y)
-                    }
-
-                    on<MouseEvent.Press> {
-                        cancel()
-
-                        val bool = ConfigManager.get(v.configKey) as? Boolean ?: (v.default as? Boolean ?: false)
-                        ConfigManager.update(v.configKey, !bool)
-                        colors(hovered)
-                    }
-
-                    adopt(text {
-                        wrapper = CascadeTextWrapper
-                        text = CascadeFonts.sans.truncate(v.name, 12f, 115f).parse()
-                        textSize = 12f
-                        color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                        position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 10f, 0f)
-                    })
-                })
-
-                adopt(rectangle {
-                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -27f, 0f)
-                    size = FixedSizeConstraint(1f, 28f)
-                    color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
-                    interact = false
-                })
-
-                adopt(roundedRectangle {
-                    position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0f, 0f)
-                    size = FixedSizeConstraint(27f, 28f)
-                    radius = CascadeGeometricRadius(0f, 4f, 0f, 4f)
-                    color = CascadeGeometricColor(MochaColorScheme.Base.argb)
-
-                    adopt(image {
-                        location = ResourceAPI.identify("textures/gui/gear.png")
-                        color = CascadeGeometricColor(if (options) MochaColorScheme.Text.argb else MochaColorScheme.Surface1.argb)
-                        position = CenterPositionConstraint()
-                        size = FixedSizeConstraint(14f, 14f)
-                        interact = false
-                    })
-
-                    if (!options) return@roundedRectangle
-                    on<MouseEvent.Move.Enter> {
-                        animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
-                    }
-
-                    on<MouseEvent.Move.Exit> {
-                        animateColor(CascadeGeometricColor(MochaColorScheme.Base.argb), 0.15f)
-                    }
-
-                    on<MouseEvent.Press> {
-                        active = v
-                        fn()
-                        cancel()
-                    }
-                })
-            }
-
-            if (i % 3 == 0) first = rect
-            last = rect
-        }
-
-        if (first != null) {
-            container {
-                position = AnchorPositionConstraint({ first }, PositionAnchor.BELOW, 0f, 14f)
-                size = FixedSizeConstraint(1f, 1f)
-                interact = false
-                attach(ConfigUI.right)
-            }
-        }
-
-        val total = (features.size + 2) / 3
-        val max = (28f * total + 10f * (total - 1).coerceAtLeast(0) + 28f) - 318f
-        if (max <= 0f) return
-
-        object : RectanglePrimitive() {
-            override fun draw(graphics: GuiGraphicsExtractor) {
-                val parent = parent ?: return
-                val scroll = abs(ConfigUI.right.scroll)
-                val remaining = (max - scroll).coerceAtLeast(0f)
-                val base = MochaColorScheme.Crust.argb
-                val x = parent.x.toInt()
-                val y = parent.y.toInt()
-                val w = parent.width.toInt()
-                val h = parent.height.toInt()
-
-                if (scroll > 1f) {
-                    val alpha = (scroll / 24f).coerceIn(0f, 1f)
-                    graphics.fillGradient(x, y, x + w, y + 23, base.withAlpha(alpha), base.withAlpha(alpha * 0.667f))
-                    graphics.fillGradient(x, y + 23, x + w, y + 46, base.withAlpha(alpha * 0.667f), base.withAlpha(0f))
+                    return@roundedRectangle
                 }
 
-                if (remaining > 1f) {
-                    val alpha = (remaining / 24f).coerceIn(0f, 1f)
-                    graphics.fillGradient(x, y + h - 46, x + w, y + h - 23, base.withAlpha(0f), base.withAlpha(alpha * 0.667f))
-                    graphics.fillGradient(x, y + h - 23, x + w, y + h, base.withAlpha(alpha * 0.667f), base.withAlpha(alpha))
+                on<MouseEvent.Move.Enter> {
+                    animate(150.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Base.alpha(0.60f))
+                    }
+                }
+
+                on<MouseEvent.Move.Exit> {
+                    animate(150.milliseconds) {
+                        ::color to CascadeGeometricColor(MochaColorScheme.Crust.alpha(0.55f))
+                    }
+
+                    ConfigUI.hide()
                 }
             }
-        }.apply {
-            color = CascadeGeometricColor.TRANSPARENT
-            interact = false
-            attach(ConfigUI.right0)
+
+            last = row
+        }
+
+        if (last == null) return
+        container {
+            position = AnchorPositionConstraint({ last }, PositionAnchor.BELOW)
+            offset = CascadeGeometricOffset(0f, 8f)
+            size = FixedSizeConstraint(1f, 1f)
+            attach(ConfigUI.modules)
+        }
+    }
+
+    private fun settings() {
+        for (child in ConfigUI.right.children) child.detach()
+
+        val feature = active
+        if (feature != null) {
+            ConfigModuleSettingsPage.fn(feature)
+            return
+        }
+
+        container {
+            position = CenterPositionConstraint()
+            size = FixedSizeConstraint(200f, 80f)
+            attach(ConfigUI.right)
+
+            adopt(image {
+                location = ResourceAPI.identify("textures/gui/gear.png")
+                color = CascadeGeometricColor(MochaColorScheme.Lavender.alpha(0.25f))
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                size = FixedSizeConstraint(24f, 24f)
+            })
+
+            adopt(text {
+                wrapper = CascadeTextWrapper
+                text = "Select a Module".literal()
+                textSize = 11.5f
+                color = CascadeGeometricColor(MochaColorScheme.Subtext0.alpha(0.8f))
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, 30f)
+            })
+
+            adopt(text {
+                wrapper = CascadeTextWrapper
+                text = "Choose a module to configure its settings".literal()
+                textSize = 9f
+                color = CascadeGeometricColor(MochaColorScheme.Overlay0.alpha(0.6f))
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, 46f)
+            })
         }
     }
 

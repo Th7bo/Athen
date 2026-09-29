@@ -17,6 +17,7 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
 import foo.starred.cascade.primitives.impl.RectanglePrimitive
 import foo.starred.cascade.primitives.impl.RectanglePrimitive.Companion.rectangle
@@ -38,16 +39,13 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
     private var footer: RectanglePrimitive
     private var `carry$complete`: RectanglePrimitive
     private var `carry$delete`: RectanglePrimitive
-    private lateinit var `carry$complete$outline`: OutlineEffect
-    private lateinit var `carry$delete$outline`: OutlineEffect
     private lateinit var `carry$complete$text`: TextPrimitive
     private lateinit var `carry$delete$text`: TextPrimitive
 
     private data class FilterRow(val row: RectanglePrimitive, val label: TextPrimitive)
-    private data class CarryRow(val row: RectanglePrimitive, val outline: OutlineEffect)
 
     private val rows0 = LinkedHashMap<SlayerBoss?, FilterRow>()
-    private val rows1 = LinkedHashMap<Int, CarryRow>()
+    private val rows1 = LinkedHashMap<Int, RectanglePrimitive>()
 
     init {
         container {
@@ -116,12 +114,13 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
 
         `carry$complete` = rectangle {
             size = PercentSizeConstraint(49f, 78f)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
                 color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
-            }.also { `carry$complete$outline` = it })
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -154,12 +153,13 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
 
         `carry$delete` = rectangle {
             size = PercentSizeConstraint(49f, 78f)
-            position = AnchorPositionConstraint({ `carry$complete` }, PositionAnchor.RIGHT, 3)
+            position = AnchorPositionConstraint({ `carry$complete` }, PositionAnchor.RIGHT)
+            offset = CascadeGeometricOffset(3f, 0f)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
             effect(OutlineEffect {
                 color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
-            }.also { `carry$delete$outline` = it })
+            })
 
             on<MouseEvent.Press> {
                 if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -218,7 +218,8 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(95f, 0f), FixedSizeConstraint(0, 20))
-                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START, 0, cy)
+                position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.START)
+                offset = CascadeGeometricOffset(0f, cy.toFloat())
                 color = CascadeGeometricColor(if (b0) MochaColorScheme.Surface0.argb else MochaColorScheme.Base.argb)
 
                 on<MouseEvent.Press> {
@@ -250,7 +251,8 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
             val label = text {
                 text = v.literal()
                 color = CascadeGeometricColor(if (b0) MochaColorScheme.Lavender.argb else MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(4f, 0f)
                 attach(row)
             }
 
@@ -280,7 +282,6 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
         var cy = 0
         for ((index, carry) in kv) {
             val b1 = selected == index
-            lateinit var outline: OutlineEffect
 
             val row = rectangle {
                 size = MixedSizeConstraint(PercentSizeConstraint(100f, 0f), FixedSizeConstraint(0, 28))
@@ -289,7 +290,7 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
 
                 effect(OutlineEffect {
                     color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
-                }.also { outline = it })
+                })
 
                 on<MouseEvent.Press> {
                     if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -314,7 +315,8 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 val w = VanillaFontMeasurer.width(s) + 8
 
                 size = FixedSizeConstraint(w, 16)
-                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 8)
+                position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(8f, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface2.argb)
                 interact = false
 
@@ -332,15 +334,17 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 adopt(text {
                     text = carry.name.literal()
                     color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                    position = MixedPositionConstraint(AnchorPositionConstraint({ this@rectangle }, PositionAnchor.RIGHT, 8), CenterPositionConstraint())
+                    position = MixedPositionConstraint(AnchorPositionConstraint({ this@rectangle }, PositionAnchor.RIGHT), CenterPositionConstraint())
+                    offset = CascadeGeometricOffset(8f, 0f)
                     attach(row)
                 })
             }
 
-            var offset = -8
+            var x0 = -8
             rectangle {
                 size = FixedSizeConstraint(16, 16)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -371,19 +375,21 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 })
             }
 
-            offset -= 20
+            x0 -= 20
             val s0 = carry.max.toString()
             text {
                 text = s0.literal()
                 color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 attach(row)
             }
 
-            offset -= VanillaFontMeasurer.width(s0) + 4
+            x0 -= VanillaFontMeasurer.width(s0) + 4
             rectangle {
                 size = FixedSizeConstraint(16, 16)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -415,18 +421,20 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 })
             }
 
-            offset -= 20
+            x0 -= 20
             text {
                 text = "Total:".literal()
                 color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 attach(row)
             }
 
-            offset -= VanillaFontMeasurer.width("Total:") + 12
+            x0 -= VanillaFontMeasurer.width("Total:") + 12
             rectangle {
                 size = FixedSizeConstraint(16, 16)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -457,19 +465,21 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 })
             }
 
-            offset -= 20
+            x0 -= 20
             val s1 = carry.done.toString()
             text {
                 text = s1.literal()
                 color = CascadeGeometricColor(MochaColorScheme.Text.argb)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 attach(row)
             }
 
-            offset -= VanillaFontMeasurer.width(s1) + 4
+            x0 -= VanillaFontMeasurer.width(s1) + 4
             rectangle {
                 size = FixedSizeConstraint(16, 16)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
 
                 effect(OutlineEffect {
@@ -501,15 +511,16 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
                 })
             }
 
-            offset -= 20
+            x0 -= 20
             text {
                 text = "Done:".literal()
                 color = CascadeGeometricColor(MochaColorScheme.Subtext0.argb)
-                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, offset)
+                position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+                offset = CascadeGeometricOffset(x0, 0f)
                 attach(row)
             }
 
-            rows1[index] = CarryRow(row, outline)
+            rows1[index] = row
             cy += 32
         }
     }
@@ -526,8 +537,8 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
         val row = rows1[index] ?: return
         val b1 = selected == index
 
-        row.row.color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
-        row.outline.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
+        row.color = CascadeGeometricColor(if (b1) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        row.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b1) MochaColorScheme.Lavender.argb else MochaColorScheme.Overlay0.argb)
     }
 
     private fun footer() {
@@ -535,11 +546,11 @@ object SlayerCarryGUI : CascadeScreen("Slayer Carries [Athen]") {
         val b2 = b && deleting == selected
 
         `carry$complete`.color = CascadeGeometricColor(if (b) MochaColorScheme.Green.argb.brighten(0.8f) else MochaColorScheme.Surface1.argb)
-        `carry$complete$outline`.color = CascadeGeometricColor(if (b) MochaColorScheme.Green.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
+        `carry$complete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (b) MochaColorScheme.Green.argb.brighten(0.5f) else MochaColorScheme.Surface0.argb)
         `carry$complete$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
 
         `carry$delete`.color = CascadeGeometricColor(if (!b) MochaColorScheme.Surface1.argb else if (b2) MochaColorScheme.Red.argb.brighten(0.9f) else MochaColorScheme.Red.argb.brighten(0.8f))
-        `carry$delete$outline`.color = CascadeGeometricColor(if (!b) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
+        `carry$delete`.effect<OutlineEffect>()?.color = CascadeGeometricColor(if (!b) MochaColorScheme.Surface0.argb else MochaColorScheme.Red.argb.brighten(0.5f))
         `carry$delete$text`.color = CascadeGeometricColor(if (b) MochaColorScheme.Base.argb else MochaColorScheme.Overlay0.argb)
         `carry$delete$text`.text = (if (b2) "Confirm?" else "Delete").literal()
     }

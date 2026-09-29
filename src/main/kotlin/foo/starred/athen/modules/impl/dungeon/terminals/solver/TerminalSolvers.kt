@@ -30,8 +30,7 @@ object TerminalSolvers : Module(
 ) {
     private val settings by config.group("Settings")
     val firstClick by settings.slider("First click delay", 350, 150, 1000, "ms")
-    val clickDelay by settings.slider("Click delay", 100, 0, 500, "ms")
-    private val info by settings.information("Click delay only affects \"Panes\" terminal type.")
+    val clickDelay by settings.slider("Click delay", 100, 0, 500, "ms").description(("Click delay only affects \"Panes\" terminal type."))
     val resync by settings.slider("Resync timeout", 800, 0, 2000, "ms")
     val dropKey by settings.switch("Allow using drop key", true)
     val keybindL by settings.keybind("Keybind left click")

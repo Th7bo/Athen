@@ -20,6 +20,7 @@ import foo.starred.cascade.constraints.impl.size.PercentSizeConstraint
 import foo.starred.cascade.effects.impl.OutlineEffect
 import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
@@ -49,7 +50,8 @@ class RadialHeader(side: IPrimitiveElement<*>) {
 
         roundedRectangle {
             size = FixedSizeConstraint(12, 12)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 4)
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(4f, 0f)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             radius = CascadeGeometricRadius(2.5f)
 
@@ -100,14 +102,15 @@ class RadialHeader(side: IPrimitiveElement<*>) {
 
         val box1 = container {
             size = FixedSizeConstraint(40, 14)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -4)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+            offset = CascadeGeometricOffset(-4f, 0f)
 
             attach(head)
         }
 
         roundedRectangle {
             size = FixedSizeConstraint(12, 12)
-            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER, 0)
+            position = AlignPositionConstraint(PositionAlignment.START, PositionAlignment.CENTER)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             radius = CascadeGeometricRadius(2.5f)
 
@@ -137,7 +140,7 @@ class RadialHeader(side: IPrimitiveElement<*>) {
 
         roundedRectangle {
             size = FixedSizeConstraint(12, 12)
-            position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.CENTER, 0)
+            position = AlignPositionConstraint(PositionAlignment.CENTER, PositionAlignment.CENTER)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             radius = CascadeGeometricRadius(2.5f)
 
@@ -175,7 +178,7 @@ class RadialHeader(side: IPrimitiveElement<*>) {
 
         roundedRectangle {
             size = FixedSizeConstraint(12, 12)
-            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, 0)
+            position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             radius = CascadeGeometricRadius(2.5f)
 

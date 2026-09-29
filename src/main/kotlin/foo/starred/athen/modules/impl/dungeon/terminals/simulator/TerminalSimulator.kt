@@ -1,5 +1,3 @@
-@file:Suppress("Unused")
-
 package foo.starred.athen.modules.impl.dungeon.terminals.simulator
 
 import foo.starred.athen.annotations.Load
@@ -22,8 +20,7 @@ object TerminalSimulator : Module(
     "Simulator terminal, terminal simulators?",
     ConfigCategory.DUNGEONS
 ) {
-    private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org")
-    private val _unused0 by config.information("The simulator server IP is optional. You can still do <red>\"/athen simulate terminals\"<r> to simulate.")
+    private val ipInput by config.input("Simulator server IP", "hypixelp3sim.zapto.org").description("Optional")
     private val pingInput = config.input("Ping", "0", "0").unique("ping")
 
     var ping = 0
@@ -41,10 +38,10 @@ object TerminalSimulator : Module(
 
         observable.onChange {
             SimulatorMenu.a()
-            if (it) {
-                "Run \"/athen simulate terminals ping <ping>\" to change ping!".mod()
-                ConfigManager.update(configKey ?: return@onChange, false)
-            }
+            if (!it) return@onChange
+
+            "Run \"/athen simulate terminals ping <ping>\" to change ping!".mod()
+            ConfigManager.update(configKey, false)
         }
 
         command {

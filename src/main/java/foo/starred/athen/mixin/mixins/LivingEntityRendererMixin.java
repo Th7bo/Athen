@@ -1,7 +1,5 @@
 package foo.starred.athen.mixin.mixins;
 
-//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import foo.starred.athen.api.storage.ResourceAPI;
 import foo.starred.athen.ducks.entity.EntityRenderStateDuck;
@@ -19,6 +17,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+//~ if >= 26.3 'blaze3d' -> 'renderpearl.api'
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 //? if <= 26.1
 import com.mojang.blaze3d.vertex.VertexFormat;

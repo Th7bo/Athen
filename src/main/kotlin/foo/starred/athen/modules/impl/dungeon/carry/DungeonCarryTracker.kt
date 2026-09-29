@@ -46,8 +46,7 @@ object DungeonCarryTracker : Module(
     private val _webhook by config.group("Discord webhook")
     private val webhook by _webhook.switch("Send to webhook")
     private val webhookEach by _webhook.switch("Send on each kill", true)
-    private val webhookUrl by _webhook.input("Webhook URL")
-    private val _webhookUrl by _webhook.information("Requires you to add your own webhook URL!")
+    private val webhookUrl by _webhook.input("Webhook URL").description("Requires you to add your own webhook URL!")
 
     private val highlights by config.group("Highlights")
     private val highlightPlayer by highlights.switch("Highlight player", true)

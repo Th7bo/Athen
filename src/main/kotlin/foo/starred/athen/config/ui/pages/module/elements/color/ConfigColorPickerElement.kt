@@ -6,7 +6,7 @@ import foo.starred.athen.config.ConfigManager
 import foo.starred.athen.config.data.impl.ConfigColorPickerElementData
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.config.ui.ConfigUI
-import foo.starred.cascade.animation.data.AnimatableColor.Companion.animateColor
+import foo.starred.cascade.animation.extension.impl.animate
 import foo.starred.cascade.constraints.impl.data.PositionAlignment
 import foo.starred.cascade.constraints.impl.position.AlignPositionConstraint
 import foo.starred.cascade.constraints.impl.position.FixedPositionConstraint
@@ -17,6 +17,7 @@ import foo.starred.cascade.events.impl.MouseEvent
 import foo.starred.cascade.graphics.extensions.circle.circle
 import foo.starred.cascade.graphics.extensions.rectangle.solid.rectangle
 import foo.starred.cascade.graphics.geometry.CascadeGeometricColor
+import foo.starred.cascade.graphics.geometry.CascadeGeometricOffset
 import foo.starred.cascade.graphics.geometry.CascadeGeometricRadius
 import foo.starred.cascade.primitives.base.impl.IPrimitiveElement
 import foo.starred.cascade.primitives.impl.ContainerPrimitive.Companion.container
@@ -26,6 +27,7 @@ import foo.starred.snowbird.utils.*
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import org.joml.Matrix3x2f
 import java.awt.Color
+import kotlin.time.Duration.Companion.milliseconds
 
 class ConfigColorPickerElement(
     private val config: ConfigColorPickerElementData
@@ -38,8 +40,6 @@ class ConfigColorPickerElement(
     private var saturation: Float = 1f
     private var brightness: Float = 1f
     private var alpha: Float = 1f
-
-    private var outline: OutlineEffect
 
     private val swatch = roundedRectangle {
         position = FixedPositionConstraint(0f, 0f)
@@ -65,7 +65,7 @@ class ConfigColorPickerElement(
         commit {
             parse(it)?.let { c ->
                 this@ConfigColorPickerElement.value = c
-                color(c)
+                color0(c)
                 swatch.color = CascadeGeometricColor(c)
                 ConfigManager.update(config.key, c)
             }
@@ -179,18 +179,22 @@ class ConfigColorPickerElement(
 
                         cancel()
                         value = color0
-                        color(color0)
+                        color0(color0)
                         swatch.color = CascadeGeometricColor(value)
                         hex.value = value.hex()
                         ConfigManager.update(config.key, value)
                     }
 
                     on<MouseEvent.Move.Enter> {
-                        animateColor(CascadeGeometricColor(color0.brighten(1.2f)), 0.15f)
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(color0.brighten(1.2f))
+                        }
                     }
 
                     on<MouseEvent.Move.Exit> {
-                        animateColor(CascadeGeometricColor(color0), 0.15f)
+                        animate(150.milliseconds) {
+                            ::color to CascadeGeometricColor(color0)
+                        }
                     }
                 })
 
@@ -206,7 +210,8 @@ class ConfigColorPickerElement(
     }
 
     init {
-        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER, -8f, 0f)
+        position = AlignPositionConstraint(PositionAlignment.END, PositionAlignment.CENTER)
+        offset = CascadeGeometricOffset(-8f, 0f)
         size = FixedSizeConstraint(84f, 14f)
         radius = CascadeGeometricRadius(4f)
         color = CascadeGeometricColor(MochaColorScheme.Surface0.argb)
@@ -214,7 +219,7 @@ class ConfigColorPickerElement(
         effect(OutlineEffect {
             color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
             inset = false
-        }.also { outline = it })
+        })
 
         on<MouseEvent.Press> {
             if (button != InputConstants.MOUSE_BUTTON_LEFT) return@on
@@ -224,15 +229,21 @@ class ConfigColorPickerElement(
 
         on<MouseEvent.Move.Enter> {
             if (expanded) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
         }
 
         on<MouseEvent.Move.Exit> {
             if (expanded) return@on
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface0.argb), 0.15f)
+
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface0.argb)
+            }
         }
 
-        color(value)
+        color0(value)
         adopt(swatch)
 
         adopt(rectangle {
@@ -250,8 +261,12 @@ class ConfigColorPickerElement(
         expanded = false
         box.visible = false
         box.detach()
-        animateColor(CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb), 0.15f)
-        outline.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+
+        effect<OutlineEffect>()?.color = CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+        animate(150.milliseconds) {
+            ::color to CascadeGeometricColor(if (hovered) MochaColorScheme.Surface1.argb else MochaColorScheme.Surface0.argb)
+        }
+
         if (active === this) active = null
     }
 
@@ -267,8 +282,11 @@ class ConfigColorPickerElement(
             expanded = true
             box.visible = true
             box.attach(ConfigUI.scene)
-            animateColor(CascadeGeometricColor(MochaColorScheme.Surface1.argb), 0.15f)
-            outline.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
+
+            effect<OutlineEffect>()?.color = CascadeGeometricColor(MochaColorScheme.Lavender.argb)
+            animate(150.milliseconds) {
+                ::color to CascadeGeometricColor(MochaColorScheme.Surface1.argb)
+            }
 
             val y0 = y - ConfigUI.right.scroll
             box.position = FixedPositionConstraint(x + width - 140f, if (y0 + 146f > ConfigUI.scene.height) y0 - 132f else y0 + 18f)
@@ -294,7 +312,7 @@ class ConfigColorPickerElement(
         commit()
     }
 
-    private fun color(argb: Int) {
+    private fun color0(argb: Int) {
         val hsb = Color.RGBtoHSB(argb.red, argb.green, argb.blue, null)
         hue = hsb[0]
         saturation = hsb[1]

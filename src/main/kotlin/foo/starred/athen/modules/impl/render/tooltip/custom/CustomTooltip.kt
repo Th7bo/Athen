@@ -29,8 +29,6 @@ object CustomTooltip : Module(
     "Custom tooltip rendering!",
     ConfigCategory.RENDER
 ) {
-    private val unused by config.information("This feature does not break any other mod's tooltip changes. It only changes the rendering.")
-
     private val customisation by config.group("Tooltip customisation")
     val `scroll$infinite` by customisation.switch("Infinite scroll")
     val `scroll$horizontal` by customisation.switch("Horizontal scroll", true)

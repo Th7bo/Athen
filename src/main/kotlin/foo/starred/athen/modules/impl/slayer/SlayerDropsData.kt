@@ -35,15 +35,13 @@ object SlayerDropsData : Module(
     "Shows useful data about your slayer drop chances!",
     ConfigCategory.SLAYER
 ) {
-    private val last by config.switch("Show chance on boss kill", true)
-    private val _unused by config.information("This uses the last magic find from a boss drop to calculate the chances!")
+    private val last by config.switch("Show chance on boss kill", true).description("This uses the last magic find from a boss drop to calculate the chances!")
 
     private val sinceLast by config.switch("Bosses since last drop", true)
     private val types by config.multiSelector("Stored types", SlayerDropGrade.entries.map { a -> a.name.lowercase().replaceFirstChar { it.uppercase() } })
 
     private val _filter by config.group("Filter")
-    private val auto = _filter.switch("Detect automatically").unique("auto")
-    private val _unused0 by _filter.information("You will need to change your selected RNG Meter item for it to be automatically detected.")
+    private val auto = _filter.switch("Detect automatically").description("You will need to change your RNG Meter item for it to be detected.").unique("auto")
     private val rev by _filter.selector("Revenant", RevenantDrops.entries.map { it.display })
     private val tara by _filter.selector("Tarantula", TarantulaDrops.entries.map { it.display })
     private val sven by _filter.selector("Sven", SvenDrops.entries.map { it.display })
