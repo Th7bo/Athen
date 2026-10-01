@@ -5,17 +5,18 @@ import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractStyledCircle
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.MessageEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
+import foo.starred.parallax.api.primitives.ParallaxCircle
+import foo.starred.parallax.api.primitives.ParallaxText
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.utils.toDurationFromMillis
+import foo.starred.snowbird.utils.withAlpha
 import net.minecraft.world.phys.Vec3
 import tech.thatgravyboat.skyblockapi.api.profile.party.PartyAPI
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findOrNull
@@ -32,7 +33,6 @@ object IchorPool : Module(
     private val prio by config.switch("Prioritize own", true)
     private val textColor by config.colorPicker("Text color", MochaColorScheme.Teal.argb)
     private val color by config.colorPicker("Circle color", MochaColorScheme.Sapphire.argb)
-    private val style by config.selector("Circle style", listOf("Outline", "Filled", "Both"), 2)
 
     private val messageRegex = Regex("^Party > (?:\\[[^]]*?] )?\\w{1,16}(?: [ቾ⚒])?: Ichor pool casted at (?<x>-?\\d+) (?<y>-?\\d+) (?<z>-?\\d+)")
     private var pos: Vec3? = null
@@ -70,8 +70,9 @@ object IchorPool : Module(
             val center = pos ?: return@on
             val t = (20100 - (System.currentTimeMillis() - time)).takeIf { it > 0 } ?: return@on reset()
 
-            extractStyledCircle(center, 8.0, color, style)
-            extractText(t.toDurationFromMillis(), center, textColor, depth = false, increase = true)
+            ParallaxCircle.frame(center, 8.0, color)
+            ParallaxCircle.fill(center, 8.0, color.withAlpha(0.5f))
+            ParallaxText.string(t.toDurationFromMillis(), center, textColor, depth = false, increase = true)
         }
     }
 

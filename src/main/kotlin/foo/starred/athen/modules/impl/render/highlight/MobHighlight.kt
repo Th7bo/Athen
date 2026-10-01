@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.storage.JsonStore
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -21,6 +20,7 @@ import foo.starred.athen.modules.impl.render.highlight.ui.MobHighlightGUI
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.name
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lie
@@ -265,7 +265,7 @@ object MobHighlight : Module(
     private fun fn1(aabb: AABB, color: Int) {
         val depth = true
 
-        extractFrameBox(aabb, color, depth = depth)
+        ParallaxBox.frame(aabb, color, depth = depth)
     }
 
     data class EntityNamed(

@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.attachedStripped
@@ -16,6 +15,7 @@ import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderPos
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxText
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.abbreviate
@@ -136,7 +136,9 @@ object SlayerInfo : Module(
                 val l = i.renderText
                 val b = e.renderPos.add(0.0, 0.5 + (l.size - 1) * 0.25 / 2, 0.0)
 
-                for (a in l.indices) extractText(l[a], b.add(0.0, -a * 0.25, 0.0), depth = !i.visible, increase = increase)
+                for (a in l.indices) {
+                    ParallaxText.component(l[a], b.add(0.0, -a * 0.25, 0.0), depth = !i.visible, increase = increase)
+                }
             }
         }
     }

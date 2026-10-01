@@ -7,13 +7,13 @@ import foo.starred.athen.api.kuudra.enums.KuudraPod
 import foo.starred.athen.api.kuudra.enums.KuudraTier
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.*
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderPos
 import foo.starred.kbus.data.event.traits.KBusCancellableTrait
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.inputs.impl.GenericInputState
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket
@@ -119,7 +119,7 @@ object StunHelper : Module(
                 else null
 
             for (p in KuudraPod.entries) {
-                if (highlightPod && belly) extractFrameBox(p.aabb, boxColor, depth = depthTest)
+                if (highlightPod && belly) ParallaxBox.frame(p.aabb, boxColor, depth = depthTest)
 
                 if (!highlightSpecific) continue
                 if (p != selected) continue
@@ -128,7 +128,7 @@ object StunHelper : Module(
                     if (offset != null) p.aabb0.move(offset.x, offset.y, offset.z)
                     else p.aabb0
 
-                extractFrameBox(aabb, boxColor, depth = false)
+                ParallaxBox.frame(aabb, boxColor, depth = false)
             }
         }
     }

@@ -4,12 +4,12 @@ import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.name
 
 @Load
@@ -28,7 +28,7 @@ object TeammateHighlight : Module(
                 if (p.name == name) continue
                 val e = p.entity ?: continue
 
-                extractFrameBox(e.renderBoundingBox, color, lineWidth)
+                ParallaxBox.frame(e.renderBoundingBox, color, lineWidth)
             }
         }
     }

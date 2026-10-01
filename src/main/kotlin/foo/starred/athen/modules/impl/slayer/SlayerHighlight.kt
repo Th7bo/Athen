@@ -5,7 +5,6 @@ package foo.starred.athen.modules.impl.slayer
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -13,6 +12,7 @@ import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
 import foo.starred.athen.events.*
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.parallax.api.primitives.ParallaxBox
 import net.minecraft.world.entity.Entity
 import tech.thatgravyboat.skyblockapi.utils.regex.RegexUtils.findGroup
 import java.util.concurrent.ConcurrentHashMap
@@ -128,7 +128,7 @@ object SlayerHighlight : Module(
         val map = this
         for ((k, v) in map) {
             if (!k.isAlive) continue
-            extractFrameBox(k.renderBoundingBox, v, width)
+            ParallaxBox.frame(k.renderBoundingBox, v, width)
         }
     }
 }

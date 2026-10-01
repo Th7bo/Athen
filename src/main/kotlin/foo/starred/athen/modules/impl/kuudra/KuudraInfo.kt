@@ -7,8 +7,6 @@ import foo.starred.athen.api.kuudra.enums.KuudraTier
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.EntityEvent
@@ -16,11 +14,14 @@ import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
-import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.athen.utils.render.renderPos
+import foo.starred.parallax.api.primitives.ParallaxBox
+import foo.starred.parallax.api.primitives.ParallaxText
 import foo.starred.snowbird.api.client
+import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.abbreviate
+import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.entity.LivingEntity
 import kotlin.math.abs
 
@@ -36,11 +37,11 @@ object KuudraInfo : Module(
     private val color by config.colorPicker("Color", MochaColorScheme.Peach.argb)
     private val hpOnKuudra by config.switch("Draw hp on boss", true)
 
-    private var display: String? = null
+    private var display: FormattedCharSequence? = null
     private var health: Float = 0f
 
     private val hud by config.hud("Kuudra HP") {
-        val example = "§a46.5m§7/§4240m §c❤".fcs
+        val example = "<green>46.5m<gray>/<dark_red>240m <red>❤".parse().visualOrderText
 
         constrain {
             VanillaFontMeasurer.constrain(example)
@@ -87,7 +88,7 @@ object KuudraInfo : Module(
         }
     }
 
-    private fun LivingEntity.str(): String {
+    private fun LivingEntity.str(): FormattedCharSequence {
         val s = health
         val bool = KuudraAPI.tier == KuudraTier.INFERNAL && s <= 25_000
         val m = if (bool) 240_000_000f else 100_000f
@@ -95,13 +96,13 @@ object KuudraInfo : Module(
         val m0 = if (bool) "240M" else "100K"
 
         val color = when (h / m) {
-            in 0.7..1.0 -> "§4"
-            in 0.5..0.7 -> "§c"
-            in 0.3..0.5 -> "§a"
-            else -> "§2"
+            in 0.7..1.0 -> "<dark_red>"
+            in 0.5..0.7 -> "<red>"
+            in 0.3..0.5 -> "<green>"
+            else -> "<dark_green>"
         }
 
-        return "$color${h.abbreviate()}§7/§4$m0 §c❤"
+        return "$color${h.abbreviate()}<gray>/<dark_red>$m0 <red>❤".parse().visualOrderText
     }
 
     private fun render() {
@@ -109,7 +110,7 @@ object KuudraInfo : Module(
         val k = KuudraAPI.kuudra ?: return
 
         if (highlight) {
-            extractFrameBox(k.renderBoundingBox, color, lineWidth)
+            ParallaxBox.frame(k.renderBoundingBox, color, lineWidth)
         }
 
         if (hpOnKuudra) {
@@ -123,10 +124,11 @@ object KuudraInfo : Module(
 
             val t = minOf(fn(d.x, hw), fn(d.y, hh), fn(d.z, hw))
 
-            extractText(text, c.add(d.scale(t + 0.1)), increase = true)
+            ParallaxText.formatted(text, c.add(d.scale(t + 0.1)), increase = true)
         }
     }
 
-    private fun fn(d: Double, b: Double) =
-        if (d == 0.0) Double.POSITIVE_INFINITY else b / abs(d)
+    private fun fn(d: Double, b: Double): Double {
+        return if (d == 0.0) Double.POSITIVE_INFINITY else b / abs(d)
+    }
 }
