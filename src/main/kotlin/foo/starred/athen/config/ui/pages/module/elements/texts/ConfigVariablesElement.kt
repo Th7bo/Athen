@@ -133,8 +133,10 @@ class ConfigVariablesElement(
                 on<MouseEvent.Move.Enter> {
                     if (page <= 0) return@on
 
-                    chevron0?.animate(100.milliseconds) {
-                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    chevron0?.let {
+                        animate(100.milliseconds) {
+                            it::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                        }
                     }
                 }
 
@@ -177,8 +179,10 @@ class ConfigVariablesElement(
                 on<MouseEvent.Move.Enter> {
                     if (page >= total - 1) return@on
 
-                    chevron1?.animate(100.milliseconds) {
-                        ::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                    chevron1?.let {
+                        animate(100.milliseconds) {
+                            it::color to CascadeGeometricColor(MochaColorScheme.Text.argb)
+                        }
                     }
                 }
 

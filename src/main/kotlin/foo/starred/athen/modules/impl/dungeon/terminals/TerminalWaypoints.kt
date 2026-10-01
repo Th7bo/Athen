@@ -3,8 +3,6 @@ package foo.starred.athen.modules.impl.dungeon.terminals
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.DungeonAPI
 import foo.starred.athen.api.dungeon.enums.DungeonClass
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractStyledBox
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractText
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
@@ -12,6 +10,8 @@ import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.markerAABB
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxBox
+import foo.starred.parallax.api.primitives.ParallaxText
 import foo.starred.snowbird.api.data.Observable
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.AABB
@@ -70,7 +70,6 @@ object TerminalWaypoints : Module(
     private val checkClass by config.switch("Check dungeon class")
     private val showText by config.switch("Render text", true)
     private val depthTest by config.switch("Depth test", false)
-    private val highlightStyle by config.selector("Highlight style", listOf("Outline", "Filled", "Both"))
     private val terminalColor by config.colorPicker("Terminal color", MochaColorScheme.Blue.argb)
     private val leverColor by config.colorPicker("Lever color", MochaColorScheme.Yellow.argb)
 
@@ -128,9 +127,9 @@ object TerminalWaypoints : Module(
                 val color = if (t is Node.Lever) leverColor else terminalColor
                 val aabb = t.aabb1
 
-                extractStyledBox(aabb, color, highlightStyle, 2f, depthTest)
+                ParallaxBox.frame(aabb, color, depth = depthTest)
                 //~ if >= 26.2 't.positions.last().center' -> 'Vec3.atCenterOf(t.positions.last())'
-                if (showText) extractText(t.defaultClass.str(), t.positions.last().center, depth = depthTest)
+                if (showText) ParallaxText.string(t.defaultClass.str(), t.positions.last().center, depth = depthTest)
             }
         }.runWhen(r)
 

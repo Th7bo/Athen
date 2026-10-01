@@ -1,12 +1,12 @@
 package foo.starred.athen.modules.impl.render
 
 import foo.starred.athen.annotations.Load
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.renderBoundingBox
+import foo.starred.parallax.api.primitives.ParallaxBox
 import net.minecraft.client.renderer.entity.state.ArrowRenderState
 
 @Load
@@ -23,7 +23,7 @@ object ArrowHitboxes : Module(
             if (renderState !is ArrowRenderState) return@on
             val entity = entity ?: return@on
 
-            extractFrameBox(entity.renderBoundingBox, color, thickness)
+            ParallaxBox.frame(entity.renderBoundingBox, color, thickness)
         }
     }
 }

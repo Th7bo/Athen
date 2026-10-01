@@ -81,9 +81,6 @@ class ConfigSwitchElement : RoundedRectanglePrimitive() {
         if (animated) {
             animate(250.milliseconds, EaseOutEasingInterpolator) {
                 ::color to color1
-            }
-
-            knob.animate(250.milliseconds, EaseOutEasingInterpolator) {
                 knob::offset to offset1
             }
 

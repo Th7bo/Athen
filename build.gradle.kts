@@ -45,6 +45,7 @@ dependencies {
     shadow(libs.kbus)
     shadow(libs.snowbird.find())
     shadow(libs.cascade.find())
+    shadow(libs.parallax.find())
     shadow(libs.updater.find())
 
     shadow(libs.skyblock.api) {

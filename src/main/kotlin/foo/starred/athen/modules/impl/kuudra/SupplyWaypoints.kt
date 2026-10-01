@@ -8,9 +8,6 @@ import foo.starred.athen.api.kuudra.KuudraAPI
 import foo.starred.athen.api.kuudra.enums.KuudraPhase
 import foo.starred.athen.api.kuudra.enums.KuudraSupply
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractBeam
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFilledBox
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.MessageEvent
@@ -18,6 +15,8 @@ import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.markerAABB
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxBeam
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.lie
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.toDurationFromMillis
@@ -74,14 +73,17 @@ object SupplyWaypoints : Module(
             when (phase) {
                 KuudraPhase.Supply if (dropOff || pickup) -> {
                     if (dropOff) {
-                        for (b in KuudraSupply.every) if (!b.active) extractFilledBox(b.buildAABB, dropOffColor, false)
+                        for (b in KuudraSupply.every) {
+                            if (b.active) continue
+                            ParallaxBox.fill(b.buildAABB, dropOffColor, false)
+                        }
                     }
 
                     if (pickup) {
                         for (s in KuudraAPI.supplies) {
                             val color = if (changeColor && s.nearby) playerColor else pickupColor
-                            extractFrameBox(s.blockPos.markerAABB(), color, depth = false)
-                            extractBeam(s.blockPos, color)
+                            ParallaxBox.frame(s.blockPos.markerAABB(), color, depth = false)
+                            ParallaxBeam.extract(s.blockPos, color)
                         }
                     }
                 }
@@ -89,8 +91,8 @@ object SupplyWaypoints : Module(
                 KuudraPhase.Fuel if fuel -> {
                     for (s in KuudraAPI.fuels) {
                         val color = if (changeColor && s.nearby) playerColor else fuelColor
-                        extractFrameBox(s.blockPos.markerAABB(), color, depth = false)
-                        extractBeam(s.blockPos, color)
+                        ParallaxBox.frame(s.blockPos.markerAABB(), color, depth = false)
+                        ParallaxBeam.extract(s.blockPos, color)
                     }
                 }
 

@@ -8,7 +8,6 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
@@ -29,6 +28,7 @@ import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.lie
@@ -362,13 +362,13 @@ object SlayerCarryTracker : Module(
             val e = entity as? LivingEntity ?: return@on
             if (e.carry == null) return@on
 
-            extractFrameBox(e.renderBoundingBox, `highlight$boss$color`, `highlight$boss$width`)
+            ParallaxBox.frame(e.renderBoundingBox, `highlight$boss$color`, `highlight$boss$width`)
         }.runWhen(`highlight$boss`.state)
 
         on<WorldRenderEvent.Extract> {
             for (p in tracked.value) {
                 val p = p.entity.value ?: continue
-                extractFrameBox(p.renderBoundingBox, `highlight$player$color`, `highlight$player$width`)
+                ParallaxBox.frame(p.renderBoundingBox, `highlight$player$color`, `highlight$player$width`)
             }
         }.runWhen(`highlight$player`.state)
 

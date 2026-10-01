@@ -127,8 +127,8 @@ object ConfigModules {
                         ConfigManager.update(v.configKey, enabled)
 
                         if (!selected) {
-                            name.animate(150.milliseconds) {
-                                ::color to CascadeGeometricColor(if (enabled) MochaColorScheme.Text.argb else MochaColorScheme.Subtext0.alpha(0.60f))
+                            animate(150.milliseconds) {
+                                name::color to CascadeGeometricColor(if (enabled) MochaColorScheme.Text.argb else MochaColorScheme.Subtext0.alpha(0.60f))
                             }
                         }
 

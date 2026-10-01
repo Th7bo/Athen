@@ -274,6 +274,10 @@ object ConfigUI : CascadeScreen("Config UI [Athen]", CascadeGeometricResolution.
         tooltip.visible = false
     }
 
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
+        graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), 0x40000000)
+    }
+
     override fun onClose() {
         hide()
         super.onClose()

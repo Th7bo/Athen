@@ -10,7 +10,6 @@ import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
 import foo.starred.athen.api.network.http.WebAPI.request
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -22,6 +21,7 @@ import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
 import foo.starred.athen.utils.render.renderBoundingBox
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.center
 import foo.starred.snowbird.api.command
 import foo.starred.snowbird.api.lie
@@ -197,7 +197,7 @@ object DungeonCarryTracker : Module(
             for (teammate in DungeonAPI.teammates) {
                 if (teammate.name !in tracked) continue
                 val e = teammate.entity ?: continue
-                extractFrameBox(e.renderBoundingBox, playerColor, playerLineWidth, false)
+                ParallaxBox.frame(e.renderBoundingBox, playerColor, playerLineWidth, false)
             }
         }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
     }

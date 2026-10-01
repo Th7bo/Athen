@@ -46,7 +46,7 @@ object ConfigGroupElement {
                 expanded = !expanded
                 ConfigManager.update(config.key, expanded)
 
-                image.animate(250.milliseconds, EaseOutEasingInterpolator) {
+                animate(250.milliseconds, EaseOutEasingInterpolator) {
                     image::rotation to (if (expanded) -180f else -90f)
                 }
 

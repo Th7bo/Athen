@@ -2,6 +2,7 @@ package foo.starred.athen.events.dispatcher
 
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.events.*
+import foo.starred.parallax.api.events.ParallaxEvents
 import foo.starred.snowbird.api.client
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -52,11 +53,12 @@ object FabricEventDispatcher {
             if (client.isSingleplayer) TickEvent.Server.post()
         }
 
-        //~ if >= 26.2 'AFTER_TRANSLUCENT_TERRAIN' -> 'COLLECT_SUBMITS'
-        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register { context ->
+        ParallaxEvents.EXTRACT.register {
             WorldRenderEvent.Extract.post()
-            //~ if >= 26.2 'bufferSource' -> 'submitNodeCollector'
-            WorldRenderEvent.Render(context.poseStack(), context.bufferSource()).post()
+        }
+
+        LevelRenderEvents.COLLECT_SUBMITS.register { context ->
+            WorldRenderEvent.Render(context.poseStack(), context.submitNodeCollector()).post()
         }
 
         ClientReceiveMessageEvents.ALLOW_GAME.register { component, bool ->

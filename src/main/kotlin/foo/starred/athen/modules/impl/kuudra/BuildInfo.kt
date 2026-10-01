@@ -11,7 +11,6 @@ import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.minecraft.text.renderer.VanillaFontRenderer
-import foo.starred.athen.api.rendering.level.impl.extensions.impl.extractFrameBox
 import foo.starred.athen.api.scheduling.Ticking
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
@@ -20,6 +19,7 @@ import foo.starred.athen.events.WorldRenderEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.render.fcs
 import foo.starred.kbus.extensions.runWhen
+import foo.starred.parallax.api.primitives.ParallaxBox
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.alert
 
@@ -82,7 +82,10 @@ object BuildInfo : Module(
         on<WorldRenderEvent.Extract> {
             if (!render) return@on
 
-            for (e in KuudraSupply.every) if (!e.built) extractFrameBox(e.buildAABB, color, depth = false)
+            for (e in KuudraSupply.every) {
+                if (e.built) continue
+                ParallaxBox.frame(e.buildAABB, color, depth = false)
+            }
         }.runWhen(waypoints.state)
     }
 }
