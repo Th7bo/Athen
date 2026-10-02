@@ -26,6 +26,9 @@ object SlayerHighlight : Module(
 ) {
     private val regex = Regex("^(?<attunement>[A-Z]+) ♨(\\d+) \\d\\d:\\d\\d$")
 
+    private val fill by config.switch("Filled outline")
+    private val expand by config.slider("Expand outline", 0.0, 1.0, 2.0)
+
     private val _boss by config.group("Boss highlight")
     private val boss by _boss.switch("Highlight boss")
     private val `boss$mine` by _boss.switch("Only for mine", true)
@@ -126,9 +129,14 @@ object SlayerHighlight : Module(
 
     private fun Map<Entity, Int>.fn(width: Float) {
         val map = this
+        val inflate = expand
+        val fill = fill
+
         for ((k, v) in map) {
             if (!k.isAlive) continue
-            ParallaxBox.frame(k.renderBoundingBox, v, width)
+            val aabb = k.renderBoundingBox.inflate(inflate, 0.0, inflate)
+
+            if (fill) ParallaxBox.fill(aabb, v) else ParallaxBox.frame(aabb, v, width)
         }
     }
 }
