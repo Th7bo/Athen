@@ -131,13 +131,16 @@ object SlayerInfo : Module(
 
         on<WorldRenderEvent.Extract> {
             if (entities.isEmpty()) return@on
+            //~ if >= 26.2 'mainCamera' -> 'mainCamera()'
+            val camera = client.gameRenderer.mainCamera.position()
 
             for ((e, i) in entities) {
                 val l = i.renderText
-                val b = e.renderPos.add(0.0, 0.5 + (l.size - 1) * 0.25 / 2, 0.0)
+                val spacing = if (increase) 0.25 * camera.distanceTo(e.renderPos) / 3f else 0.25
+                val position = e.renderPos.add(0.0, 0.5 + (l.size - 1) * spacing / 2, 0.0)
 
                 for (a in l.indices) {
-                    ParallaxText.component(l[a], b.add(0.0, -a * 0.25, 0.0), depth = !i.visible, increase = increase)
+                    ParallaxText.component(l[a], position.add(0.0, -a * spacing, 0.0), depth = !i.visible, increase = increase)
                 }
             }
         }
