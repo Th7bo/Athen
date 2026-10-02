@@ -3,41 +3,35 @@ package foo.starred.athen.annotations
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.core.on
 import foo.starred.athen.modules.Module
+import foo.starred.klassgraph.KlassGraph
 import foo.starred.snowbird.utils.safely
-import io.github.classgraph.ClassGraph
 
 object AnnotationLoader {
     fun load(load: String = "foo.starred.athen") {
-        ClassGraph()
-            .enableClassInfo()
-            .enableAnnotationInfo()
-            .acceptPackages(load)
-            .scan()
-            .use { s ->
-                val a = s.getClassesWithAnnotation(Priority::class.java.name).loadClasses().sortedBy { it.getAnnotation(Priority::class.java)?.value ?: 0 }
-                val b = s.getClassesWithAnnotation(Load::class.java.name).loadClasses()
+        KlassGraph.scan(AnnotationLoader::class.java, load).use { result ->
+            val list0 = result.annotated<Priority>().sortedBy { it.getAnnotation(Priority::class.java)?.value ?: 0 }
+            val list1 = result.annotated<Load>()
 
-                loop@ for (k in a) {
-                    safely {
-                        Class.forName(k.name)
-                    }
+            for (klass in list0) {
+                safely {
+                    Class.forName(klass.name)
                 }
-
-                loop@ for (k in b) {
-                    safely {
-                        Class.forName(k.name)
-                    }
-                }
-
-                val d = s.getSubclasses(Module::class.java.name)
-
-                on<GameEvent.Start> {
-                    for (m in d) {
-                        safely {
-                            (m.loadClass().kotlin.objectInstance as? Module)?.observable
-                        }
-                    }
-                }.once()
             }
+
+            for (klass in list1) {
+                safely {
+                    Class.forName(klass.name)
+                }
+            }
+
+            val modules = result.subtypes<Module>()
+            on<GameEvent.Start> {
+                for (module in modules) {
+                    safely {
+                        module.kotlin.objectInstance?.observable
+                    }
+                }
+            }.once()
+        }
     }
 }

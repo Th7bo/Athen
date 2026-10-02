@@ -40,9 +40,9 @@ dependencies {
     implementation(libs.hypixel.modapi)
     implementation(libs.hypixel.modapi.fabric)
 
-    shadow(libs.classgraph)
-    shadow(libs.kommand)
     shadow(libs.kbus)
+    shadow(libs.kommand)
+    shadow(libs.klassgraph)
     shadow(libs.snowbird.find())
     shadow(libs.cascade.find())
     shadow(libs.parallax.find())
