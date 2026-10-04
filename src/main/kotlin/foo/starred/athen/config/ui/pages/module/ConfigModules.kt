@@ -38,6 +38,8 @@ object ConfigModules {
     var active: ConfigFeatureData? = null
 
     fun fn() {
+        for (child in ConfigUI.right.children) child.iterateChildren { it.detach() }
+
         ConfigUI.hide()
 
         if (ConfigCategories.active == ConfigCategory.INFO) {
