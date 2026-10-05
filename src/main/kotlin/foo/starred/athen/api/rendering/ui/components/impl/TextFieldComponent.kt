@@ -30,7 +30,7 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
     var value: String = ""
     var scroll: Int = 0
 
-    var cursor: Int = 0
+    var block: Int = 0
         set(value) {
             if (field == value) return
             field = value
@@ -67,8 +67,8 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                 i0 = i
             }
 
-            anchor = if (KeyboardInputState.States.shift()) anchor.takeIf { it != -1 } ?: cursor else -1
-            cursor = i0
+            anchor = if (KeyboardInputState.States.shift()) anchor.takeIf { it != -1 } ?: block else -1
+            block = i0
         }
 
         on<KeyEvent.Press> {
@@ -78,52 +78,52 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
             when (key) {
                 InputConstants.KEY_LEFT -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift && selected) {
-                        cursor = range.first
+                        block = range.first
                         anchor = -1
                         cancel()
                         return@on
                     }
 
-                    cursor = max(0, cursor - 1)
+                    block = max(0, block - 1)
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_RIGHT -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift && selected) {
-                        cursor = range.second
+                        block = range.second
                         anchor = -1
                         cancel()
                         return@on
                     }
 
-                    cursor = min(value.length, cursor + 1)
+                    block = min(value.length, block + 1)
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_HOME -> {
-                    if (shift && anchor == -1) anchor = cursor
+                    if (shift && anchor == -1) anchor = block
                     if (!shift) anchor = -1
 
-                    cursor = 0
+                    block = 0
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_END -> {
-                    if (shift && anchor == -1) anchor = cursor
+                    if (shift && anchor == -1) anchor = block
                     if (!shift) anchor = -1
 
-                    cursor = value.length
+                    block = value.length
                     cancel()
                     return@on
                 }
@@ -135,9 +135,9 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                         return@on
                     }
 
-                    if (cursor > 0) {
-                        value = value.substring(0, cursor - 1) + value.substring(cursor)
-                        cursor--
+                    if (block > 0) {
+                        value = value.substring(0, block - 1) + value.substring(block)
+                        block--
                     }
 
                     cancel()
@@ -151,8 +151,8 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                         return@on
                     }
 
-                    if (cursor < value.length) {
-                        value = value.substring(0, cursor) + value.substring(cursor + 1)
+                    if (block < value.length) {
+                        value = value.substring(0, block) + value.substring(block + 1)
                     }
 
                     cancel()
@@ -169,7 +169,7 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
                     if (!ctrl) return@on
 
                     anchor = 0
-                    cursor = value.length
+                    block = value.length
                     cancel()
                     return@on
                 }
@@ -200,8 +200,8 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
 
                     delete()
                     val clip = client.keyboardHandler.clipboard
-                    value = value.substring(0, cursor) + clip + value.substring(cursor)
-                    cursor += clip.length
+                    value = value.substring(0, block) + clip + value.substring(block)
+                    block += clip.length
                     cancel()
                     return@on
                 }
@@ -213,8 +213,8 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
             if (char.code == 127) return@on
 
             delete()
-            value = value.substring(0, cursor) + char + value.substring(cursor)
-            cursor++
+            value = value.substring(0, block) + char + value.substring(block)
+            block++
 
             cancel()
         }
@@ -230,8 +230,8 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
             run {
                 if (!b) return@run ::scroll.set(0)
                 val i0 = width - 6
-                while (VanillaFontMeasurer.width(value.substring(0, cursor)) - scroll > i0) scroll += 10
-                while (VanillaFontMeasurer.width(value.substring(0, cursor)) - scroll < 0) scroll = max(0, scroll - 10)
+                while (VanillaFontMeasurer.width(value.substring(0, block)) - scroll > i0) scroll += 10
+                while (VanillaFontMeasurer.width(value.substring(0, block)) - scroll < 0) scroll = max(0, scroll - 10)
             }
 
             val x0 = x + 3 - scroll
@@ -249,7 +249,7 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
             VanillaFontRenderer.extract(graphics, str, x0, y + (height - VanillaFontMeasurer.height) / 2 + 1, false, color)
 
             if (b && (System.currentTimeMillis() / 500) % 2 == 0L) {
-                val x1 = VanillaFontMeasurer.width(value.substring(0, cursor))
+                val x1 = VanillaFontMeasurer.width(value.substring(0, block))
                 graphics.rectangle(x0 + x1, y + 2, 1f, height - 4, MochaColorScheme.Lavender.argb)
             }
         }
@@ -257,22 +257,22 @@ open class TextFieldComponent : IPrimitiveElement<TextFieldComponent>() {
 
     fun reset(v: Boolean = false) {
         if (v) value = ""
-        cursor = 0
+        block = 0
         anchor = -1
         scroll = 0
         root.focused = null
     }
 
     private fun fn() {
-        selected = anchor != -1 && anchor != cursor
-        range = if (anchor == -1) cursor to cursor else min(anchor, cursor) to max(anchor, cursor)
+        selected = anchor != -1 && anchor != block
+        range = if (anchor == -1) block to block else min(anchor, block) to max(anchor, block)
     }
 
     private fun delete(): Boolean {
         if (!selected) return false
         val (s, e) = range
         value = value.substring(0, s) + value.substring(e)
-        cursor = s
+        block = s
         anchor = -1
         return true
     }

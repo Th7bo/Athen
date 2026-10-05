@@ -50,7 +50,7 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
             fn0()
         }
 
-    var cursor: Int = 0
+    var block: Int = 0
         set(v) {
             if (field == v) return
             field = v
@@ -88,7 +88,7 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
             }
 
             if (!bool) {
-                cursor = value.length
+                block = value.length
                 anchor = -1
                 return@on
             }
@@ -110,8 +110,8 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
                 i0 = i
             }
 
-            anchor = if (KeyboardInputState.States.shift()) anchor.takeIf { it != -1 } ?: cursor else -1
-            cursor = i0
+            anchor = if (KeyboardInputState.States.shift()) anchor.takeIf { it != -1 } ?: block else -1
+            block = i0
         }
 
         on<KeyEvent.Press> {
@@ -139,62 +139,62 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
 
                 InputConstants.KEY_LEFT -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift && selected) {
-                        cursor = range.first
+                        block = range.first
                         anchor = -1
                         cancel()
                         return@on
                     }
 
-                    cursor = max(0, cursor - 1)
+                    block = max(0, block - 1)
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_RIGHT -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift && selected) {
-                        cursor = range.second
+                        block = range.second
                         anchor = -1
                         cancel()
                         return@on
                     }
 
-                    cursor = min(value.length, cursor + 1)
+                    block = min(value.length, block + 1)
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_HOME -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift) {
                         anchor = -1
                     }
 
-                    cursor = 0
+                    block = 0
                     cancel()
                     return@on
                 }
 
                 InputConstants.KEY_END -> {
                     if (shift && anchor == -1) {
-                        anchor = cursor
+                        anchor = block
                     }
 
                     if (!shift) {
                         anchor = -1
                     }
 
-                    cursor = value.length
+                    block = value.length
                     cancel()
                 }
 
@@ -205,9 +205,9 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
                         return@on
                     }
 
-                    if (cursor > 0) {
-                        value = value.substring(0, cursor - 1) + value.substring(cursor)
-                        cursor--
+                    if (block > 0) {
+                        value = value.substring(0, block - 1) + value.substring(block)
+                        block--
                     }
 
                     cancel()
@@ -220,8 +220,8 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
                         return@on
                     }
 
-                    if (cursor < value.length) {
-                        value = value.substring(0, cursor) + value.substring(cursor + 1)
+                    if (block < value.length) {
+                        value = value.substring(0, block) + value.substring(block + 1)
                     }
 
                     cancel()
@@ -231,7 +231,7 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
                     if (!ctrl) return@on
 
                     anchor = 0
-                    cursor = value.length
+                    block = value.length
                     cancel()
                 }
 
@@ -257,8 +257,8 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
 
                     delete()
                     val clip = client.keyboardHandler.clipboard
-                    value = value.substring(0, cursor) + clip + value.substring(cursor)
-                    cursor += clip.length
+                    value = value.substring(0, block) + clip + value.substring(block)
+                    block += clip.length
 
                     cancel()
                 }
@@ -271,8 +271,8 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
             if (char.code == 127) return@on
 
             delete()
-            value = value.substring(0, cursor) + char + value.substring(cursor)
-            cursor++
+            value = value.substring(0, block) + char + value.substring(block)
+            block++
             cancel()
         }
     }
@@ -306,14 +306,14 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
     }
 
     private fun fn() {
-        selected = anchor != -1 && anchor != cursor
-        range = if (anchor == -1) cursor to cursor else min(anchor, cursor) to max(anchor, cursor)
+        selected = anchor != -1 && anchor != block
+        range = if (anchor == -1) block to block else min(anchor, block) to max(anchor, block)
         fn0()
     }
 
     private fun fn0() {
         val font = CascadeFonts.sans
-        _cursor = font.width(value.substring(0, min(cursor, value.length)), textSize)
+        _cursor = font.width(value.substring(0, min(block, value.length)), textSize)
 
         if (!selected) return
         _selection0 = font.width(value.substring(0, min(range.first, value.length)), textSize)
@@ -330,7 +330,7 @@ open class EditableTextComponent : IPrimitiveElement<EditableTextComponent>() {
     private fun delete(): Boolean {
         if (!selected) return false
         value = value.substring(0, range.first) + value.substring(range.second)
-        cursor = range.first
+        block = range.first
         anchor = -1
         return true
     }

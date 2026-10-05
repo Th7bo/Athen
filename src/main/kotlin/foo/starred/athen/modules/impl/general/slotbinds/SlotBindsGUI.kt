@@ -162,7 +162,7 @@ object SlotBindsGUI : CascadeScreen("Slot Binds Editor [Athen]") {
                 `profile$new`.visible = false
                 `profile$delete`.visible = false
                 `profile$field`.value = SlotBinds.active
-                `profile$field`.cursor = SlotBinds.active.length
+                `profile$field`.block = SlotBinds.active.length
                 `profile$field`.visible = true
                 scene.focused = `profile$field`
 

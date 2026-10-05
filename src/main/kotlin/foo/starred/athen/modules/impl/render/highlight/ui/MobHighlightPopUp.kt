@@ -322,16 +322,16 @@ class MobHighlightPopUp(
 
         if (entry == null) {
             `color$field`.value = "ff0000"
-            `color$field`.cursor = 6
+            `color$field`.block = 6
             `maxHp$field`.value = "-1"
-            `maxHp$field`.cursor = 2
+            `maxHp$field`.block = 2
         } else {
             `target$field`.value = if (typed) BuiltInRegistries.ENTITY_TYPE.getKey((entry as MobHighlight.EntityTyped).type).toString() else (entry as MobHighlight.EntityNamed).name
             `color$field`.value = "%06x".format(entry.color and 0xFFFFFF)
             `maxHp$field`.value = entry.max.toString()
-            `target$field`.cursor = `target$field`.value.length
-            `color$field`.cursor = `color$field`.value.length
-            `maxHp$field`.cursor = `maxHp$field`.value.length
+            `target$field`.block = `target$field`.value.length
+            `color$field`.block = `color$field`.value.length
+            `maxHp$field`.block = `maxHp$field`.value.length
         }
 
         color()
@@ -348,15 +348,15 @@ class MobHighlightPopUp(
 
         `target$field`.reset(true)
         `target$field`.value = if (typed && type != null) BuiltInRegistries.ENTITY_TYPE.getKey(type).toString() else name ?: ""
-        `target$field`.cursor = `target$field`.value.length
+        `target$field`.block = `target$field`.value.length
 
         `color$field`.reset(true)
         `color$field`.value = "ff0000"
-        `color$field`.cursor = 6
+        `color$field`.block = 6
 
         `maxHp$field`.reset(true)
         `maxHp$field`.value = max.toString()
-        `maxHp$field`.cursor = `maxHp$field`.value.length
+        `maxHp$field`.block = `maxHp$field`.value.length
 
         color()
         visible = true
