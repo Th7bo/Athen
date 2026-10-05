@@ -155,7 +155,7 @@ class ConfigInputExpandElement(
                 val value0 = value
                 if (value0.length > config.max) {
                     value = value0.substring(0, config.max)
-                    cursor = min(cursor, config.max)
+                    block = min(block, config.max)
                 }
 
                 input.value = value

@@ -420,13 +420,13 @@ class MessageActionsPopUp(
         this.entry = entry
 
         pattern.value = entry?.entry?.pattern ?: ""
-        pattern.cursor = pattern.value.length
+        pattern.block = pattern.value.length
         match = entry?.entry?.match ?: CONTAINS
         action = entry?.entry?.action?.id ?: 0
         cancel = entry?.entry?.cancel ?: false
         category = entry?.entry?.category ?: selectedCategory ?: ""
         delay.value = entry?.entry?.delay?.takeIf { it > 0.0 }?.toString() ?: ""
-        delay.cursor = delay.value.length
+        delay.block = delay.value.length
 
         title.text = (if (entry == null) "Create Action" else "Edit Action").literal()
 
@@ -503,7 +503,7 @@ class MessageActionsPopUp(
                 position = FixedPositionConstraint(x0, y0 + 10)
                 placeholder = holder.ifEmpty { label }
                 value = map?.get(key) ?: default
-                cursor = value.length
+                block = value.length
 
                 attach(panel)
 
