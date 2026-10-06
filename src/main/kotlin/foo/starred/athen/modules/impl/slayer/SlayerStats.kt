@@ -17,10 +17,8 @@ import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.modules.Module
 import foo.starred.athen.utils.command
 import foo.starred.athen.utils.render.fcs
-import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.text.parser.impl.parse
 import foo.starred.snowbird.utils.formatted
-import foo.starred.snowbird.utils.stripped
 import foo.starred.snowbird.utils.toDuration
 import net.minecraft.util.FormattedCharSequence
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
@@ -87,24 +85,24 @@ object SlayerStats : Module(
         }
     }
 
-    init {
-        config.hud("Stats display") {
-            val example = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
+    private val hud by config.hud("Stats display") {
+        val example = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
 
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0)
-            }
-
-            render {
-                if (kills <= 0) return@render
-                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
-            }
+        constrain {
+            VanillaFontMeasurer.constrain(example)
         }
 
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (kills <= 0) return@render
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
+    }
+
+    init {
         on<SlayerEvent.Quest.Start> {
             if (start == 0L) start = System.currentTimeMillis()
             `start$quest` = System.currentTimeMillis()
@@ -112,7 +110,7 @@ object SlayerStats : Module(
 
         on<SlayerEvent.Boss.Death> {
             if (!slayerInfo.owned) return@on
-            if (slayerInfo.type == SlayerBoss.Tarantula && slayerInfo.tier == SlayerTier.Five && client.level?.getEntity(entity.id + 1)?.customName?.stripped()?.contains("Conjoined Brood") != true) return@on
+            if (slayerInfo.type == SlayerBoss.Tarantula && slayerInfo.tier == SlayerTier.Five && slayerInfo.phase != 2) return@on
 
             kills++
             total += entity.tickCount / 20.0

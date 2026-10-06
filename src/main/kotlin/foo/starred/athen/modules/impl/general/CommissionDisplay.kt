@@ -44,25 +44,25 @@ object CommissionDisplay : Module(
         }
     }
 
+    private val hud by config.hud("Commission display") {
+        val example = listOf("§cCommissions:", "§7- §fExample: §640%", "§7- §fExample: §e70%", "§7- §fExample: §c7%").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics,example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
+    }
+
     init {
         noneStyle.state.observe { fcs0 = it.parse().visualOrderText }
         titleStyle.state.observe { fcs1 = it.parse().visualOrderText }
-
-        config.hud("Commission display") {
-            val example = listOf("§cCommissions:", "§7- §fExample: §640%", "§7- §fExample: §e70%", "§7- §fExample: §c7%").fcs
-
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics,example, 0, 0)
-            }
-
-            render {
-                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
-            }
-        }
     }
 
     private fun Commission.prs(): FormattedCharSequence {

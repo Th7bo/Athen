@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 package foo.starred.athen.modules.impl.general
 
 import foo.starred.athen.annotations.Load
@@ -26,32 +28,32 @@ object LagDetector : Module(
     private val party by config.switch("Notify party")
     private val text by config.input("Message", "Lag detected!")
 
+    private val hud by config.hud("Lag display") {
+        val example = "§c67ms".fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (last == 0L) return@render
+            if (player == null) return@render
+
+            val t = System.currentTimeMillis() - last
+            if (t <= threshold) return@render
+
+            VanillaFontRenderer.extract(graphics, "§c${t}ms", 0, 0)
+        }
+    }
+
     private var last = 0L
     private var bool = false
 
     init {
-        config.hud("Lag display") {
-            val example = "§c67ms".fcs
-
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0)
-            }
-
-            render {
-                if (last == 0L) return@render
-                if (player == null) return@render
-
-                val t = System.currentTimeMillis() - last
-                if (t <= threshold) return@render
-
-                VanillaFontRenderer.extract(graphics, "§c${t}ms", 0, 0)
-            }
-        }
-
         on<TickEvent.Client.End> {
             if (last == 0L) return@on
             if (player == null) return@on

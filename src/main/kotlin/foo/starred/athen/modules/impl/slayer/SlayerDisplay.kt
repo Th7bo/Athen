@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
@@ -41,21 +43,19 @@ object SlayerDisplay : Module(
         listOfNotNull(colon, name)
     }
 
-    init {
-        config.hud("Display HUD") {
-            val example = listOf("§c02:46", "§c☠ §bRevenant Horror I §a500§c❤").fcs
+    private val hud by config.hud("Display HUD") {
+        val example = listOf("§c02:46", "§c☠ §bRevenant Horror I §a500§c❤").fcs
 
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
 
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0, center = listOf(0))
-            }
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0, center = listOf(0))
+        }
 
-            render {
-                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0, center = listOf(0))
-            }
+        render {
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0, center = listOf(0))
         }
     }
 }
