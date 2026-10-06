@@ -11,6 +11,8 @@ sealed class InternalEvent {
             val channel: String?,
             val name: String?
         ) : AthenEvent()
+
+        data object Auth : AthenEvent()
     }
 
     sealed class Mod {

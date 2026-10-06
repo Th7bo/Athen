@@ -24,4 +24,7 @@ object ModSettings : Module(
 
     @JvmStatic
     val calculator by config.switch("Enable \"/calc\"", true).description("You will need to restart your game after toggling this option!")
+
+    @JvmStatic
+    val shareSlayer by config.switch("Share slayer bosses", true).description("Share spawned slayer bosses with nearby players using Athen via WebSocket.")
 }

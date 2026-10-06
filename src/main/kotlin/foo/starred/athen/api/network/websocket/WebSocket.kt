@@ -7,6 +7,7 @@ import foo.starred.athen.Athen.SCOPE
 import foo.starred.athen.annotations.Priority
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
+import foo.starred.athen.api.network.websocket.data.SocketPacket
 import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.events.GameEvent
 import foo.starred.athen.events.InternalEvent
@@ -31,10 +32,12 @@ import java.net.http.WebSocket as JavaWebSocket
 object WebSocket {
     private val http = HttpClient.newHttpClient()
 
-    private var ws: JavaWebSocket? = null
-    private var rc: SchedulerTask? = null
+    private var socket: JavaWebSocket? = null
+    private var scheduler: SchedulerTask? = null
+
     private val out: Channel<JsonObject> = Channel(Channel.UNLIMITED)
     private val inn: Channel<String> = Channel(Channel.UNLIMITED)
+
     private val buffer = StringBuilder()
 
     @Volatile
@@ -61,7 +64,7 @@ object WebSocket {
         SCOPE.launch {
             for (c in out) {
                 c.addProperty("n", name)
-                ws?.sendText(c.toString(), true)
+                socket?.sendText(c.toString(), true)
             }
         }
 
@@ -130,16 +133,16 @@ object WebSocket {
                     fail(err.message)
                     return@whenComplete
                 }
-                ws = socket
+                WebSocket.socket = socket
             }
     }
 
     fun close() {
         manual = true
-        rc?.cancel()
+        scheduler?.cancel()
         auth = false
-        ws?.sendClose(JavaWebSocket.NORMAL_CLOSURE, "Closed by client")
-        ws = null
+        socket?.sendClose(JavaWebSocket.NORMAL_CLOSURE, "Closed by client")
+        socket = null
     }
 
     fun send(json: JsonObject) {
@@ -156,6 +159,7 @@ object WebSocket {
         when (t) {
             SocketPacket.WebSocket.ClientBound.AuthSuccess.id -> {
                 auth = true
+                InternalEvent.WebSocket.Auth.post()
                 Athen.LOGGER.info("Websocket authenticated as $n")
                 if (Dev.debug) "<green>Connected to Websocket as <white>$n".mod()
             }
@@ -185,7 +189,7 @@ object WebSocket {
         if (manual) return
 
         Athen.LOGGER.error("Websocket connection failed/closed: $reason")
-        rc?.cancel()
-        rc = Scheduler.repeat(15.seconds) { connect() }
+        scheduler?.cancel()
+        scheduler = Scheduler.repeat(15.seconds) { connect() }
     }
 }
