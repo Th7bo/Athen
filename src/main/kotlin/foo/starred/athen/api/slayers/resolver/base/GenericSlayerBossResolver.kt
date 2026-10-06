@@ -4,6 +4,7 @@ package foo.starred.athen.api.slayers.resolver.base
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
+import foo.starred.athen.api.network.websocket.helpers.WebSocketLocationResolver
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.api.slayers.data.SlayerInfo
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
@@ -13,11 +14,13 @@ import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.SlayerEvent
 import foo.starred.athen.events.TickEvent
 import foo.starred.athen.events.core.on
+import foo.starred.athen.modules.impl.ModSettings
 import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.mainThread
 import foo.starred.snowbird.utils.stripped
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket
+import net.minecraft.world.entity.Entity
 //~ if >= 26.2 'EntityType' -> 'EntityTypes'
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -80,7 +83,7 @@ object GenericSlayerBossResolver {
         if (info.phase == 2 && info.entity.tickCount > 15) return
 
         val living = info.entity as? LivingEntity ?: return
-        val looked = living.looking() ?: return
+        val looked = living.looking(info.phase == 2) ?: return
 
         info.owner = looked.gameProfile.name()
         spawn(info)
@@ -97,12 +100,11 @@ object GenericSlayerBossResolver {
         }
     }
 
-    private fun LivingEntity.looking(distance: Double = 15.0): Player? {
+    private fun LivingEntity.looking(p2: Boolean = false, distance: Double = 15.0): Player? {
         val level = client.level ?: return null
-        val player = client.player ?: return null
         val distance = distance * distance
         val active = SlayerAPI.bosses.values.filter { it.entity.isAlive && (it.type != SlayerBoss.Tarantula || it.phase != 1) }.mapNotNull { it.owner }
-        val players = level.players().filter { it != player && it.uuid.version() == 4 && it.gameProfile.name() !in active && it.distanceToSqr(this) <= distance }.takeIf { it.isNotEmpty() } ?: return null
+        val players = level.players().filter { it.valid(this, distance, active, p2) }
 
         return players.minByOrNull {
             val distance = it.distanceTo(this)
@@ -110,6 +112,17 @@ object GenericSlayerBossResolver {
 
             distance + (angle / 90.0) * 2.0
         }
+    }
+
+    private fun Player.valid(boss: Entity, distance: Double, active: List<String>, p2: Boolean = false): Boolean {
+        if (this == client.player && !p2) return false
+        if (uuid.version() != 4) return false
+
+        val name = gameProfile.name()
+        if (name in active) return false
+        if (ModSettings.shareSlayer.value && name in WebSocketLocationResolver.users) return false
+
+        return distanceToSqr(boss) <= distance
     }
 
     private fun LivingEntity.angle(player: Player): Double {

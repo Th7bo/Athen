@@ -12,7 +12,8 @@ object SocketPacket {
             AuthError(501),
 
             Error(502),
-            Warn(503)
+            Warn(503),
+            Lobby(511)
         }
     }
 

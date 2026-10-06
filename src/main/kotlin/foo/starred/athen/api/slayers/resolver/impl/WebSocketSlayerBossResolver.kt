@@ -19,7 +19,7 @@ import foo.starred.snowbird.api.mainThread
 object WebSocketSlayerBossResolver : IWebSocket {
     init {
         on<SlayerEvent.Boss.Spawn> {
-            if (!ModSettings.shareSlayer) return@on
+            if (!ModSettings.shareSlayer.value) return@on
             if (!slayerInfo.owned) return@on
             if (!auth) return@on
 
@@ -31,7 +31,7 @@ object WebSocketSlayerBossResolver : IWebSocket {
         }
 
         on<SlayerEvent.Boss.Death> {
-            if (!ModSettings.shareSlayer) return@on
+            if (!ModSettings.shareSlayer.value) return@on
             if (!slayerInfo.owned) return@on
             if (!auth) return@on
 
@@ -39,7 +39,7 @@ object WebSocketSlayerBossResolver : IWebSocket {
         }
 
         on<InternalEvent.WebSocket.Message> {
-            if (!ModSettings.shareSlayer) return@on
+            if (!ModSettings.shareSlayer.value) return@on
 
             when (id) {
                 SocketPacket.Slayer.ClientBound.Spawn.id -> {
