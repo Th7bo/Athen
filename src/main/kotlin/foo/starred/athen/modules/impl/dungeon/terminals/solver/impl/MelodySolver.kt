@@ -14,10 +14,8 @@ import net.minecraft.world.item.Items
 import org.joml.Matrix3x2f
 
 object MelodySolver : ITerminalSolver(TerminalType.MELODY) {
-    // private val slots = setOf(16, 25, 34)
-    // override val int2: Int = 3
-    private val slots = setOf(16, 25, 34, 43)
-    override val int2: Int = 4
+    private val slots = setOf(16, 25, 34)
+    override val int2: Int = 3
 
     override val float: Float
         get() = 16f + TerminalSolvers.`ui$melodyGap`
@@ -27,8 +25,7 @@ object MelodySolver : ITerminalSolver(TerminalType.MELODY) {
     var correct: Int? = null
 
     fun click(int: Int) {
-        // if (int !in 1..3) return
-        if (int !in 1..4) return
+        if (int !in 1..3) return
         val b = button ?: return
         if (TerminalSolvers.`melody$prevent` && (b != int - 1 || current == null || current != correct)) return
         click(16 + (int - 1) * 9, 0)
@@ -71,8 +68,7 @@ object MelodySolver : ITerminalSolver(TerminalType.MELODY) {
             val i0 = slot / 9
             val i1 = slot % 9
 
-            // if (i0 !in 1..3) continue
-            if (i0 !in 1..4) continue
+            if (i0 !in 1..3) continue
             if (i1 == 0) continue
             if (i1 == 8) continue
 

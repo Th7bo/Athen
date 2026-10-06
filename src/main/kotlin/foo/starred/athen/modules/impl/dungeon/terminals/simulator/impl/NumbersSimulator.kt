@@ -11,8 +11,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 class NumbersSimulator : ITerminalSim(TerminalType.NUMBERS) {
-    // private val ints = (1..10).shuffled()
-    private val ints = (1..14).shuffled()
+    private val ints = (1..10).shuffled()
 
     override fun s(): Map<Int, ItemStack> {
         var i = 0
