@@ -327,6 +327,7 @@ object SlayerCarryTracker : Module(
             val carry = list.find { it.name == name } ?: return@on
             if (carry.type != type) return@on
             if (carry.tier != null && carry.tier != slayerInfo.tier) return@on
+            if (carry.type == SlayerBoss.Tarantula && carry.tier == SlayerTier.Five && slayerInfo.phase != 2) return@on
 
             val result = carry.die(entity) ?: return@on
             tracked.update {} // no-op, intended.
