@@ -87,24 +87,24 @@ object SlayerStats : Module(
         }
     }
 
-    init {
-        config.hud("Stats display") {
-            val example = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
+    private val hud by config.hud("Stats display") {
+        val example = listOf("§cSlayer Stats:", "Bosses: §c67", "Bosses/hr: §c104", "XP/hr: §c60,000", "Kill: §c23.4s", "Session: §c21m 24s").fcs
 
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0)
-            }
-
-            render {
-                if (kills <= 0) return@render
-                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
-            }
+        constrain {
+            VanillaFontMeasurer.constrain(example)
         }
 
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (kills <= 0) return@render
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
+    }
+
+    init {
         on<SlayerEvent.Quest.Start> {
             if (start == 0L) start = System.currentTimeMillis()
             `start$quest` = System.currentTimeMillis()

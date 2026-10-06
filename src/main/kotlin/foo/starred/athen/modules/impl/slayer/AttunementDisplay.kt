@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED")
+
 package foo.starred.athen.modules.impl.slayer
 
 import foo.starred.athen.annotations.Load
@@ -24,26 +26,26 @@ object AttunementDisplay : Module(
     ConfigCategory.SLAYER
 ) {
     private val count by config.switch("Display count")
+    private val hud by config.hud("Attunement display") {
+        val example = "§l§eAURIC ♨5".fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            VanillaFontRenderer.extract(graphics, last ?: return@render, 0, 0)
+        }
+    }
+
     private val regex = Regex("^(?<attunement>[A-Z]+) ♨(?<count>\\d) \\d\\d:\\d\\d$")
     private var last: FormattedCharSequence? = null
 
     init {
-        config.hud("Attunement display") {
-            val example = "§l§eAURIC ♨5".fcs
-
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0)
-            }
-
-            render {
-                VanillaFontRenderer.extract(graphics, last ?: return@render, 0, 0)
-            }
-        }
-
         on<EntityEvent.Update.Named> {
             val e = entity.parent ?: return@on
             val s = SlayerAPI.bosses[e] ?: return@on

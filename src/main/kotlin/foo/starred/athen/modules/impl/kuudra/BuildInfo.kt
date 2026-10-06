@@ -1,4 +1,4 @@
-@file:Suppress("ObjectPrivatePropertyName")
+@file:Suppress("Unused", "ObjectPrivatePropertyName")
 
 package foo.starred.athen.modules.impl.kuudra
 
@@ -40,6 +40,25 @@ object BuildInfo : Module(
         listOf("§7Builders: §c${KuudraAPI.buildPlayers}", "§7Progress: §c${KuudraAPI.buildProgress.value}%").fcs
     }
 
+    private val hud by config.hud("Build info") {
+        val example = listOf("§7Builders: §c3", "§7Progress: §c47%").fcs
+
+        constrain {
+            VanillaFontMeasurer.constrain(example)
+        }
+
+        preview {
+            VanillaFontRenderer.extract(graphics, example, 0, 0)
+        }
+
+        render {
+            if (!render) return@render
+
+            VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
+        }
+    }
+
+
     private val render: Boolean
         get() = KuudraAPI.inRun && KuudraAPI.phase == KuudraPhase.Build
 
@@ -55,24 +74,6 @@ object BuildInfo : Module(
             prs.alert()
             prs.mod()
             sent = true
-        }
-
-        config.hud("Build info") {
-            val example = listOf("§7Builders: §c3", "§7Progress: §c47%").fcs
-
-            constrain {
-                VanillaFontMeasurer.constrain(example)
-            }
-
-            preview {
-                VanillaFontRenderer.extract(graphics, example, 0, 0)
-            }
-
-            render {
-                if (!render) return@render
-
-                VanillaFontRenderer.extract(graphics, display.value ?: return@render, 0, 0)
-            }
         }
 
         on<KuudraEvent.Start> {
