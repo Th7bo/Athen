@@ -6,7 +6,7 @@ import com.google.gson.JsonParser
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.messaging.enums.MessagePrefixType
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
-import foo.starred.athen.api.network.websocket.SocketPacket
+import foo.starred.athen.api.network.websocket.data.SocketPacket
 import foo.starred.athen.api.network.websocket.base.IWebSocket
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
