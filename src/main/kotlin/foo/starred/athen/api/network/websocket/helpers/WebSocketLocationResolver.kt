@@ -8,7 +8,9 @@ import foo.starred.athen.api.scheduling.Scheduler
 import foo.starred.athen.events.InternalEvent
 import foo.starred.athen.events.LocationEvent
 import foo.starred.athen.events.core.on
+import foo.starred.athen.modules.impl.ModSettings
 import foo.starred.snowbird.api.scheduling.scheduler.data.tasks.base.SchedulerTask
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.milliseconds
 
 @Load
@@ -17,24 +19,49 @@ object WebSocketLocationResolver : IWebSocket {
     private var task: SchedulerTask? = null
     private var last: Long = 0L
 
+    val users: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
     init {
+        ModSettings.shareSlayer.state.observe {
+            if (it) {
+                fn(LocationAPI.id ?: return@observe)
+                return@observe
+            }
+
+            users.clear()
+            task?.cancel()
+            task = null
+            pending = null
+            `socket$send`(SocketPacket.WebSocket.ServerBound.Location.id, "b" to "")
+        }
+
         on<InternalEvent.WebSocket.Auth> {
             fn(LocationAPI.id ?: return@on)
         }
 
         on<LocationEvent.Hypixel.Server> {
             fn(name)
+            users.clear()
         }
 
         on<LocationEvent.Server.Disconnect> {
             task?.cancel()
             task = null
             pending = null
+            users.clear()
+        }
+
+        on<InternalEvent.WebSocket.Message> {
+            if (id != SocketPacket.WebSocket.ClientBound.Lobby.id) return@on
+
+            users.clear()
+            body?.split(",")?.filter { it.isNotEmpty() }?.let(users::addAll)
         }
     }
 
     private fun fn(id: String) {
         if (!auth) return
+        if (!ModSettings.shareSlayer.value) return
 
         val now = System.currentTimeMillis()
         if (now - last >= 10_000) {
