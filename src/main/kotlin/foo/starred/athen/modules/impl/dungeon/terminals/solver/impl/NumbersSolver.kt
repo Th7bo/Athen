@@ -13,10 +13,8 @@ import net.minecraft.world.item.Items
 import org.joml.Matrix3x2f
 
 object NumbersSolver : ITerminalSolver(TerminalType.NUMBERS) {
-    // override val int0 = 5
-    // override val int1 = 2
-    override val int0 = 7
-    override val int1 = 1
+    override val int0 = 5
+    override val int1 = 2
 
     private val counts = mutableMapOf<Int, Int>()
 
