@@ -17,7 +17,7 @@ klassgraph = "2026.10.1"
 snowbird = "2026.09.4"
 cascade = "2026.10.1"
 parallax = "2026.10.1"
-updater = "2026.09.2"
+updater = "2026.10.1"
 
 [libraries]
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
