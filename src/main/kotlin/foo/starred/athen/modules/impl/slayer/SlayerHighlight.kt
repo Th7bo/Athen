@@ -27,7 +27,7 @@ object SlayerHighlight : Module(
     private val regex = Regex("^(?<attunement>[A-Z]+) ♨(\\d+) \\d\\d:\\d\\d$")
 
     private val fill by config.switch("Filled outline")
-    private val expand by config.slider("Expand outline", 0.0, 1.0, 2.0)
+    private val expand by config.slider("Expand outline", 0.0, 0.0, 2.0, double = true)
 
     private val _boss by config.group("Boss highlight")
     private val boss by _boss.switch("Highlight boss")
