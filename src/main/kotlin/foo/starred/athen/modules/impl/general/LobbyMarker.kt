@@ -15,16 +15,19 @@ object  LobbyMarker : Module(
     ConfigCategory.GENERAL
 ) {
     private val removeAfter by config.slider("Remove after", 5, 0, 60, "minutes")
-    private val onlyCrystalHollows by config.switch("Only in Crystal Hollows")
+    private val crystal by config.switch("Only in Crystal Hollows")
     private val kv: MutableMap<String, Long> = mutableMapOf()
 
     init {
-        Scheduler.repeat(removeAfter.minutes) {
+        Scheduler.repeat(1.minutes) {
+            val time = System.currentTimeMillis() - removeAfter.minutes.inWholeMilliseconds
+
+            kv.entries.removeIf { it.value < time }
         }
 
         on<LocationEvent.Hypixel.Server> {
             if (type?.name != "SkyBlock") return@on
-            if (mode != "crystal_hollows" && onlyCrystalHollows) return@on
+            if (mode != "crystal_hollows" && crystal) return@on
 
             if (name !in kv) {
                 kv[name] = System.currentTimeMillis()
