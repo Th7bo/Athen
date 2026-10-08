@@ -33,8 +33,8 @@
 package foo.starred.athen.api.dungeon
 
 import foo.starred.athen.annotations.Priority
-import foo.starred.athen.api.dungeon.enums.DungeonClass
-import foo.starred.athen.api.dungeon.enums.DungeonPlayer
+import foo.starred.athen.api.dungeon.data.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonPlayer
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.dev
 import foo.starred.athen.events.*
@@ -216,17 +216,16 @@ object DungeonAPI {
 
         on<TickEvent.Client.End> {
             if (ticks % 5 != 0) return@on
+            if (floor.value?.floorNumber != 7) return@on
+            if (!inBoss.value) return@on
 
-            if (floor.value?.floorNumber == 7 && inBoss.value) {
-                val y = player?.y ?: return@on
-
-                F7Phase.value = when {
-                    y > 210 -> 1
-                    y > 155 -> 2
-                    y > 100 -> 3
-                    y > 45 -> 4
-                    else -> 5
-                }
+            val y = player?.y ?: return@on
+            F7Phase.value = when {
+                y > 210 -> 1
+                y > 155 -> 2
+                y > 100 -> 3
+                y > 45 -> 4
+                else -> 5
             }
         }.runWhen(PresetSkyBlockIsland.THE_CATACOMBS.state)
     }

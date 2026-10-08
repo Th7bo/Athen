@@ -2,7 +2,7 @@ package foo.starred.athen.modules.impl.dungeon.terminals
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.api.dungeon.DungeonAPI
-import foo.starred.athen.api.dungeon.enums.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonClass
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.events.LocationEvent
@@ -34,34 +34,34 @@ object TerminalWaypoints : Module(
     }
 
     private val terminals = buildList {
-        add(Node.Terminal(listOf(BlockPos(111, 113, 73), BlockPos(110, 113, 73)), DungeonClass.TANK, 1, 1))
-        add(Node.Terminal(listOf(BlockPos(111, 119, 79), BlockPos(110, 119, 79)), DungeonClass.TANK, 2, 1))
-        add(Node.Terminal(listOf(BlockPos(89, 112, 92), BlockPos(90, 112, 92)), DungeonClass.MAGE, 3, 1))
-        add(Node.Terminal(listOf(BlockPos(89, 122, 101), BlockPos(90, 122, 101)), DungeonClass.MAGE, 4, 1))
-        add(Node.Lever(listOf(BlockPos(94, 124, 113), BlockPos(94, 125, 113)), DungeonClass.ARCHER, 5, 1))
-        add(Node.Lever(listOf(BlockPos(106, 124, 113), BlockPos(106, 125, 113)), DungeonClass.ARCHER, 6, 1))
+        add(Node.Terminal(listOf(BlockPos(111, 113, 73), BlockPos(110, 113, 73)), TANK, 1, 1))
+        add(Node.Terminal(listOf(BlockPos(111, 119, 79), BlockPos(110, 119, 79)), TANK, 2, 1))
+        add(Node.Terminal(listOf(BlockPos(89, 112, 92), BlockPos(90, 112, 92)), MAGE, 3, 1))
+        add(Node.Terminal(listOf(BlockPos(89, 122, 101), BlockPos(90, 122, 101)), MAGE, 4, 1))
+        add(Node.Lever(listOf(BlockPos(94, 124, 113), BlockPos(94, 125, 113)), ARCHER, 5, 1))
+        add(Node.Lever(listOf(BlockPos(106, 124, 113), BlockPos(106, 125, 113)), ARCHER, 6, 1))
 
-        add(Node.Terminal(listOf(BlockPos(68, 109, 121), BlockPos(68, 109, 122)), DungeonClass.TANK, 7, 2))
-        add(Node.Terminal(listOf(BlockPos(59, 120, 122), BlockPos(59, 119, 123)), DungeonClass.MAGE, 8, 2))
-        add(Node.Terminal(listOf(BlockPos(47, 109, 121), BlockPos(47, 109, 122)), DungeonClass.BERSERK, 9, 2))
-        add(Node.Terminal(listOf(BlockPos(39, 108, 143), BlockPos(39, 108, 142)), DungeonClass.ARCHER, 10, 2))
-        add(Node.Terminal(listOf(BlockPos(40, 124, 122), BlockPos(40, 124, 123)), DungeonClass.BERSERK, 11, 2))
-        add(Node.Lever(listOf(BlockPos(27, 124, 127), BlockPos(27, 125, 127)), DungeonClass.ARCHER, 12, 2))
-        add(Node.Lever(listOf(BlockPos(23, 132, 138), BlockPos(23, 133, 138)), DungeonClass.HEALER, 13, 2))
+        add(Node.Terminal(listOf(BlockPos(68, 109, 121), BlockPos(68, 109, 122)), TANK, 7, 2))
+        add(Node.Terminal(listOf(BlockPos(59, 120, 122), BlockPos(59, 119, 123)), MAGE, 8, 2))
+        add(Node.Terminal(listOf(BlockPos(47, 109, 121), BlockPos(47, 109, 122)), BERSERK, 9, 2))
+        add(Node.Terminal(listOf(BlockPos(39, 108, 143), BlockPos(39, 108, 142)), ARCHER, 10, 2))
+        add(Node.Terminal(listOf(BlockPos(40, 124, 122), BlockPos(40, 124, 123)), BERSERK, 11, 2))
+        add(Node.Lever(listOf(BlockPos(27, 124, 127), BlockPos(27, 125, 127)), ARCHER, 12, 2))
+        add(Node.Lever(listOf(BlockPos(23, 132, 138), BlockPos(23, 133, 138)), HEALER, 13, 2))
 
-        add(Node.Terminal(listOf(BlockPos(-3, 109, 112), BlockPos(-2, 109, 112)), DungeonClass.TANK, 14, 3))
-        add(Node.Terminal(listOf(BlockPos(-3, 119, 93), BlockPos(-2, 119, 93)), DungeonClass.HEALER, 15, 3))
-        add(Node.Terminal(listOf(BlockPos(19, 123, 93), BlockPos(18, 123, 93)), DungeonClass.BERSERK, 16, 3))
-        add(Node.Terminal(listOf(BlockPos(-3, 109, 77), BlockPos(-2, 109, 77)), DungeonClass.ARCHER, 17, 3))
-        add(Node.Lever(listOf(BlockPos(14, 122, 55), BlockPos(14, 123, 55)), DungeonClass.ARCHER, 18, 3))
-        add(Node.Lever(listOf(BlockPos(2, 122, 55), BlockPos(2, 123, 55)), DungeonClass.ARCHER, 19, 3))
+        add(Node.Terminal(listOf(BlockPos(-3, 109, 112), BlockPos(-2, 109, 112)), TANK, 14, 3))
+        add(Node.Terminal(listOf(BlockPos(-3, 119, 93), BlockPos(-2, 119, 93)), HEALER, 15, 3))
+        add(Node.Terminal(listOf(BlockPos(19, 123, 93), BlockPos(18, 123, 93)), BERSERK, 16, 3))
+        add(Node.Terminal(listOf(BlockPos(-3, 109, 77), BlockPos(-2, 109, 77)), ARCHER, 17, 3))
+        add(Node.Lever(listOf(BlockPos(14, 122, 55), BlockPos(14, 123, 55)), ARCHER, 18, 3))
+        add(Node.Lever(listOf(BlockPos(2, 122, 55), BlockPos(2, 123, 55)), ARCHER, 19, 3))
 
-        add(Node.Terminal(listOf(BlockPos(41, 109, 29), BlockPos(41, 109, 30)), DungeonClass.TANK, 20, 4))
-        add(Node.Terminal(listOf(BlockPos(44, 121, 29), BlockPos(44, 121, 30)), DungeonClass.ARCHER, 21, 4))
-        add(Node.Terminal(listOf(BlockPos(67, 109, 29), BlockPos(67, 109, 30)), DungeonClass.BERSERK, 22, 4))
-        add(Node.Terminal(listOf(BlockPos(72, 115, 48), BlockPos(72, 114, 47)), DungeonClass.HEALER, 23, 4))
-        add(Node.Lever(listOf(BlockPos(86, 128, 46), BlockPos(86, 129, 46)), DungeonClass.HEALER, 24, 4))
-        add(Node.Lever(listOf(BlockPos(84, 121, 34), BlockPos(84, 122, 34)), DungeonClass.HEALER, 25, 4))
+        add(Node.Terminal(listOf(BlockPos(41, 109, 29), BlockPos(41, 109, 30)), TANK, 20, 4))
+        add(Node.Terminal(listOf(BlockPos(44, 121, 29), BlockPos(44, 121, 30)), ARCHER, 21, 4))
+        add(Node.Terminal(listOf(BlockPos(67, 109, 29), BlockPos(67, 109, 30)), BERSERK, 22, 4))
+        add(Node.Terminal(listOf(BlockPos(72, 115, 48), BlockPos(72, 114, 47)), HEALER, 23, 4))
+        add(Node.Lever(listOf(BlockPos(86, 128, 46), BlockPos(86, 129, 46)), HEALER, 24, 4))
+        add(Node.Lever(listOf(BlockPos(84, 121, 34), BlockPos(84, 122, 34)), HEALER, 25, 4))
     }
 
     private val classMapping = mapOf(0 to DungeonClass.HEALER, 1 to DungeonClass.MAGE, 2 to DungeonClass.BERSERK, 3 to DungeonClass.ARCHER, 4 to DungeonClass.TANK)
@@ -144,10 +144,10 @@ object TerminalWaypoints : Module(
     }
 
     private fun DungeonClass.str() = when (this) {
-        DungeonClass.MAGE -> "§7[§bMage§7]"
-        DungeonClass.ARCHER -> "§7[§6Archer§7]"
-        DungeonClass.TANK -> "§7[§aTank§7]"
-        DungeonClass.HEALER -> "§7[§dHealer§7]"
-        DungeonClass.BERSERK -> "§7[§4Berserk§7]"
+        MAGE -> "§7[§bMage§7]"
+        ARCHER -> "§7[§6Archer§7]"
+        TANK -> "§7[§aTank§7]"
+        HEALER -> "§7[§dHealer§7]"
+        BERSERK -> "§7[§4Berserk§7]"
     }
 }

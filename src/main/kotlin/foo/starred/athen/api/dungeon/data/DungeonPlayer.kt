@@ -31,12 +31,11 @@
 
 @file:Suppress("PropertyName")
 
-package foo.starred.athen.api.dungeon.enums
+package foo.starred.athen.api.dungeon.data
 
 import foo.starred.athen.Athen
+import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lazy.RefreshableLazy
-import foo.starred.snowbird.api.level
-import foo.starred.snowbird.utils.stripped
 import net.minecraft.world.entity.Entity
 
 class DungeonPlayer(
@@ -54,9 +53,11 @@ class DungeonPlayer(
         Athen.LOGGER.debug("Created DungeonPlayer with entity: {}", entity)
     }
 
-    private fun d(): Entity? =
-        level?.players()?.find { it.uuid.version() == 4 && it.name.stripped() == name }
+    private fun d(): Entity? {
+        return client.level?.players()?.find { it.uuid.version() == 4 && it.gameProfile.name() == name }
+    }
 
-    override fun toString() =
-        "DungeonPlayer(name='$name, class=$dungeonClass)"
+    override fun toString(): String {
+        return "DungeonPlayer(name='$name, class=$dungeonClass)"
+    }
 }

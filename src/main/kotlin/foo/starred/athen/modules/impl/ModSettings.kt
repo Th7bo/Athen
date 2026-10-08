@@ -27,4 +27,7 @@ object ModSettings : Module(
 
     @JvmStatic
     val shareSlayer = config.switch("Share slayer bosses", true).description("Share spawned slayer bosses with nearby players using Athen via WebSocket.").unique("shareSlayer")
+
+    @JvmStatic
+    val tickBossCheck by config.switch("Check own boss every 10 ticks", true)
 }

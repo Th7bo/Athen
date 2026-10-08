@@ -1,7 +1,7 @@
 package foo.starred.athen.api.profile.utils
 
 import com.google.gson.JsonObject
-import foo.starred.athen.api.dungeon.enums.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonClass
 import foo.starred.athen.api.profile.data.PlayerProfileStats
 import foo.starred.athen.api.profile.data.dungeons.PlayerProfileDungeonStats
 import foo.starred.athen.api.profile.data.dungeons.PlayerProfileInventoryStats

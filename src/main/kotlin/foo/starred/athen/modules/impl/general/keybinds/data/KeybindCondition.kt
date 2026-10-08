@@ -3,7 +3,7 @@ package foo.starred.athen.modules.impl.general.keybinds.data
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import foo.starred.athen.api.dungeon.DungeonAPI
-import foo.starred.athen.api.dungeon.enums.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonClass
 import foo.starred.athen.api.location.LocationAPI
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.snowbird.api.client

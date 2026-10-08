@@ -45,6 +45,8 @@ enum class TerminalType(val slots: Int, val regex: Regex, val actual: String? = 
         }
 
     companion object {
-        fun get(windowTitle: String): TerminalType? = entries.firstOrNull { it.regex.matches(windowTitle) }
+        fun get(other: String): TerminalType? {
+            return entries.firstOrNull { it.regex.matches(other) }
+        }
     }
 }
