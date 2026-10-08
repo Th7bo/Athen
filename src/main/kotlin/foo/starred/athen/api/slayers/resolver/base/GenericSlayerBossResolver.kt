@@ -26,7 +26,6 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import kotlin.math.acos
-import kotlin.text.get
 
 @Load
 object GenericSlayerBossResolver {
@@ -34,7 +33,7 @@ object GenericSlayerBossResolver {
     //~ if >= 26.2 'EntityType' -> 'EntityTypes'
     private val set = setOf(EntityType.ZOMBIE, EntityType.ENDERMAN, EntityType.SPIDER, EntityType.BLAZE, EntityType.WOLF)
 
-    private var last: Int = 0
+    var last: Int = 0
 
     init {
         on<PacketEvent.Receive, ClientboundAddEntityPacket> {
@@ -72,18 +71,18 @@ object GenericSlayerBossResolver {
                 if (!info.entity.isAlive) continue
                 if (info.entity.tickCount > 20) continue
 
-                get(info)
+                get(info, ModSettings.tickBossCheck)
             }
         }
     }
 
-    fun get(info: SlayerInfo) {
+    fun get(info: SlayerInfo, tick: Boolean = false) {
         if (info.type !is SlayerBoss) return
         if (info.owner != null) return
         if (info.phase == 2 && info.entity.tickCount > 15) return
 
         val living = info.entity as? LivingEntity ?: return
-        val looked = living.looking(info.phase == 2) ?: return
+        val looked = living.looking(info.phase == 2, tick) ?: return
 
         info.owner = looked.gameProfile.name()
         spawn(info)
@@ -100,11 +99,11 @@ object GenericSlayerBossResolver {
         }
     }
 
-    private fun LivingEntity.looking(p2: Boolean = false, distance: Double = 15.0): Player? {
+    private fun LivingEntity.looking(p2: Boolean = false, tick: Boolean = false, distance: Double = 15.0): Player? {
         val level = client.level ?: return null
         val distance = distance * distance
         val active = SlayerAPI.bosses.values.filter { it.entity.isAlive && (it.type != SlayerBoss.Tarantula || it.phase != 1) }.mapNotNull { it.owner }
-        val players = level.players().filter { it.valid(this, distance, active, p2) }
+        val players = level.players().filter { it.valid(this, distance, active, p2, tick) }
 
         return players.minByOrNull {
             val distance = it.distanceTo(this)
@@ -114,8 +113,8 @@ object GenericSlayerBossResolver {
         }
     }
 
-    private fun Player.valid(boss: Entity, distance: Double, active: List<String>, p2: Boolean = false): Boolean {
-        if (this == client.player && !p2) return false
+    private fun Player.valid(boss: Entity, distance: Double, active: List<String>, p2: Boolean = false, tick: Boolean = false): Boolean {
+        if (this == client.player && !p2 && !tick) return false
         if (uuid.version() != 4) return false
 
         val name = gameProfile.name()
