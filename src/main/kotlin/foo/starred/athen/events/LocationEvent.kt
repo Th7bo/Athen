@@ -14,7 +14,7 @@ sealed class LocationEvent {
             val lobby: String?,
             val mode: String?,
             val map: String?,
-        ) : AthenEvent(), KBusUnconditionalTrait
+        ) : AthenEvent()
     }
 
     sealed class SkyBlock {
@@ -33,9 +33,9 @@ sealed class LocationEvent {
         data object Disconnect : AthenEvent()
     }
 
-    sealed class Server : AthenEvent() {
-        data object Connect : Server()
+    sealed class Server {
+        data object Connect : AthenEvent(), KBusUnconditionalTrait
 
-        data object Disconnect : Server()
+        data object Disconnect : AthenEvent(), KBusUnconditionalTrait
     }
 }
