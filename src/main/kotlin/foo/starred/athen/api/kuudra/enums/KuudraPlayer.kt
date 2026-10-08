@@ -1,9 +1,8 @@
 package foo.starred.athen.api.kuudra.enums
 
 import foo.starred.athen.Athen
+import foo.starred.snowbird.api.client
 import foo.starred.snowbird.api.lazy.RefreshableLazy
-import foo.starred.snowbird.api.level
-import foo.starred.snowbird.utils.stripped
 import net.minecraft.world.entity.Entity
 
 class KuudraPlayer(
@@ -18,9 +17,11 @@ class KuudraPlayer(
         Athen.LOGGER.debug("Created KuudraPlayer with entity: {}", entity)
     }
 
-    private fun d(): Entity? =
-        level?.players()?.find { it.uuid.version() == 4 && it.name.stripped() == name }
+    private fun d(): Entity? {
+        return client.level?.players()?.find { it.uuid.version() == 4 && it.gameProfile.name() == name }
+    }
 
-    override fun toString(): String =
-        "KuudraPlayer(n=$name, d=$deaths, entity: ${entity != null})"
+    override fun toString(): String {
+        return "KuudraPlayer(n=$name, d=$deaths, entity: ${entity != null})"
+    }
 }

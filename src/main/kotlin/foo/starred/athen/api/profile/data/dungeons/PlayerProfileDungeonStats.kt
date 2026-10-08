@@ -2,7 +2,7 @@
 
 package foo.starred.athen.api.profile.data.dungeons
 
-import foo.starred.athen.api.dungeon.enums.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonClass
 
 data class PlayerProfileDungeonStats(
     val catacombs: Int? = null,

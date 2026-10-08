@@ -4,7 +4,6 @@ package foo.starred.athen.modules.impl.dungeon.partyfinder.impl
 
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
-import foo.starred.athen.api.dungeon.enums.DungeonClass
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.messaging.impl.MessagingAPI.mod
 import foo.starred.athen.api.profile.ProfileAPI
@@ -160,7 +159,7 @@ object PartyFinderJoinStats : Module(
         "Stats for <aqua>$name<white>:".mod()
         divider.lie()
         " <dark_gray>📈 <$main>Dungeons level: <bold><$second>${dungeons?.catacombs}".parse().lie()
-        " <dark_gray>✦ <$main>Class levels: <orange>A${classes?.get(DungeonClass.ARCHER)} <dark_gray>| <red>B${classes?.get(DungeonClass.BERSERK)} <dark_gray>| <pink>H${classes?.get(DungeonClass.HEALER)} <dark_gray>| <aqua>M${classes?.get(DungeonClass.MAGE)} <dark_gray>| <dark_green>T${classes?.get(DungeonClass.TANK)}".parse().lie()
+        " <dark_gray>✦ <$main>Class levels: <orange>A${classes?.get(ARCHER)} <dark_gray>| <red>B${classes?.get(BERSERK)} <dark_gray>| <pink>H${classes?.get(HEALER)} <dark_gray>| <aqua>M${classes?.get(MAGE)} <dark_gray>| <dark_green>T${classes?.get(TANK)}".parse().lie()
         " <dark_gray>✪ <$main>Magical power: <bold><$second>${inventory?.mp?.formatted()}".parse().lie()
         " <dark_gray>⚔ <$main>Total runs: <bold><$second>${dungeons?.total?.formatted()}".parse().lie()
         " <dark_gray>✧ <$main>Secrets: <bold><$second>${dungeons?.secrets?.formatted()}</bold> [<hover:<$second>Secret average>${dungeons?.`secrets$average`?.formatted()}</hover>]".parse().lie()

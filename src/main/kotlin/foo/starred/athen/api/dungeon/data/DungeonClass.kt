@@ -29,7 +29,7 @@
  * The original MIT license applies to the portions derived from SkyblockAPI.
  */
 
-package foo.starred.athen.api.dungeon.enums
+package foo.starred.athen.api.dungeon.data
 
 enum class DungeonClass(val displayName: String) {
     HEALER("Healer"),
@@ -40,6 +40,8 @@ enum class DungeonClass(val displayName: String) {
     ;
 
     companion object {
-        fun get(name: String) = entries.firstOrNull { it.displayName.equals(name, true) }
+        fun get(name: String): DungeonClass? {
+            return entries.firstOrNull { it.displayName.equals(name, true) }
+        }
     }
 }

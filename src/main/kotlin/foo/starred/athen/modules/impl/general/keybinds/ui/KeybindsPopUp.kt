@@ -3,7 +3,7 @@
 package foo.starred.athen.modules.impl.general.keybinds.ui
 
 import com.mojang.blaze3d.platform.InputConstants
-import foo.starred.athen.api.dungeon.enums.DungeonClass
+import foo.starred.athen.api.dungeon.data.DungeonClass
 import foo.starred.athen.api.location.island.impl.PresetSkyBlockIsland
 import foo.starred.athen.api.minecraft.text.measurer.VanillaFontMeasurer
 import foo.starred.athen.api.rendering.ui.components.impl.MultiCheckboxComponent
