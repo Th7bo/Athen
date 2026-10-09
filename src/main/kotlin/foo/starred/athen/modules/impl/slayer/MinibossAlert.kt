@@ -31,26 +31,34 @@ object MinibossAlert : Module(
     private val alertText by config.input("Alert text", "<aqua>Miniboss spawned!")
     private val bigBoiText by config.input("Special text", "<red>Big boi spawned!")
 
-    private val bigBoys = SlayerMini.entries.filter { it.special }.map { it.name }
-    private val regex = Regex("^SLAYER MINI-BOSS! The (?<name>.+?) spawned!$")
+    private val special = SlayerMini.entries.filter { it.special }.map { it.name }
+    private val regex = Regex("^SLAYER MINIBOSS! The (?<name>.+?) spawned!$")
 
     init {
         on<MessageEvent.Chat.Receive> {
             val name = regex.findGroup(stripped, "name") ?: return@on
-            val text = if (name in bigBoys) bigBoiText else alertText
+            val text = if (name in special) bigBoiText else alertText
 
-            if (showTitle) text.parse().alert()
-            if (sendMessage) text.mod()
+            fn(text)
         }.runWhen(detection.state.map { it == 0 })
 
         on<SlayerEvent.Miniboss.Spawn> {
             if (entity.tickCount >= 20) return@on
             val player = client.player ?: return@on
-            val slayerMiniBoss = (slayerInfo.type as? SlayerMini).takeIf { entity.distanceTo(player) < maxDistance } ?: return@on
-            val text = (if (slayerMiniBoss.special) bigBoiText else alertText)
+            val info = (slayerInfo.type as? SlayerMini).takeIf { entity.distanceTo(player) < maxDistance } ?: return@on
+            val text = (if (info.special) bigBoiText else alertText)
 
-            if (showTitle) text.parse().alert()
-            if (sendMessage) text.mod()
+           fn(text)
         }.runWhen(detection.state.map { it == 1 })
+    }
+
+    private fun fn(text: String) {
+        if (showTitle) {
+            text.parse().alert()
+        }
+
+        if (sendMessage) {
+            text.mod()
+        }
     }
 }
