@@ -25,9 +25,8 @@ object WebSocketSlayerBossResolver : IWebSocket {
 
             val type = (slayerInfo.type as? SlayerBoss)?.name ?: return@on
             val tier = slayerInfo.tier?.int ?: return@on
-            val owner = slayerInfo.owner ?: return@on
 
-            `socket$send`(SocketPacket.Slayer.ServerBound.Spawn.id, "b" to "${entity.id},$type,$tier,${slayerInfo.phase},$owner")
+            `socket$send`(SocketPacket.Slayer.ServerBound.Spawn.id, "b" to "${entity.id},$type,$tier,${slayerInfo.phase}")
         }
 
         on<SlayerEvent.Boss.Death> {
@@ -46,13 +45,13 @@ object WebSocketSlayerBossResolver : IWebSocket {
                     val body = body ?: return@on
 
                     val split = body.split(",")
-                    if (split.size < 5) return@on
+                    if (split.size < 4) return@on
 
                     val id = split[0].toIntOrNull() ?: return@on
                     val type1 = runCatching { SlayerBoss.valueOf(split[1]) }.getOrNull() ?: return@on
                     val tier1 = split[2].toIntOrNull()?.let { a -> SlayerTier.entries.find { b -> b.int == a } } ?: return@on
                     val phase1 = split[3].toIntOrNull() ?: return@on
-                    val owner1 = split[4]
+                    val owner1 = name ?: split.getOrNull(4) ?: return@on
 
                     mainThread {
                         val entity = client.level?.getEntity(id) ?: return@mainThread
