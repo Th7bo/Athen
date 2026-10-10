@@ -5,7 +5,6 @@ package foo.starred.athen.modules.impl.slayer
 import foo.starred.athen.annotations.Load
 import foo.starred.athen.annotations.OnlyIn
 import foo.starred.athen.api.messaging.enums.MessageColors
-import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.config.dsl.impl.category.ConfigCategory
 import foo.starred.athen.config.theme.impl.catppuccin.MochaColorScheme
 import foo.starred.athen.ducks.entity.EntityDuck.Companion.parent
@@ -67,20 +66,17 @@ object SlayerHighlight : Module(
 
         on<EntityEvent.Update.Named> {
             if (!blaze) return@on
+            val parent = entity.parent ?: return@on
 
-            val a = entity in slayers.keys
-            val b = entity in demons.keys
-            if (!a && !b) return@on
-
-            val e = entity.parent ?: return@on
-            val s = SlayerAPI.bosses[e] ?: return@on
-            if (!b && s.owner == null) return@on
+            val slayer = slayers.any { it.key.id == parent.id }
+            val demon = demons.any { it.key.id == parent.id }
+            if (!slayer && !demon) return@on
 
             val f = regex.findGroup(stripped, "attunement") ?: return@on
             val c = if (f == "ASHEN") `blaze$ashen` else if (f == "AURIC") `blaze$auric` else if (f == "CRYSTAL") `blaze$crystal` else if (f == "SPIRIT") `blaze$spirit` else `boss$color`
 
-            if (a) slayers[e] = c
-            if (b) demons[e] = c
+            if (slayer) slayers[parent] = c
+            if (demon) demons[parent] = c
         }
 
         on<SlayerEvent.Boss.Spawn> {

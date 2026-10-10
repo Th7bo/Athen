@@ -9,7 +9,7 @@ import foo.starred.athen.events.core.on
 @Priority
 object ModWrapper {
     const val discord: String = "https://discord.gg/DB5S3DjQVa"
-    const val version: String = /*$ mod_version*/"0.3.6"
+    const val version: String = /*$ mod_version*/"0.3.7"
     const val name: String = /*$ mod_name*/"Athen"
     const val id: String = /*$ mod_id*/"athen"
 
