@@ -8,7 +8,6 @@ import foo.starred.athen.api.network.websocket.helpers.WebSocketLocationResolver
 import foo.starred.athen.api.slayers.SlayerAPI
 import foo.starred.athen.api.slayers.data.SlayerInfo
 import foo.starred.athen.api.slayers.enums.tier.SlayerTier
-import foo.starred.athen.api.slayers.enums.type.base.ISlayerType
 import foo.starred.athen.api.slayers.enums.type.impl.SlayerBoss
 import foo.starred.athen.events.PacketEvent
 import foo.starred.athen.events.SlayerEvent
@@ -47,8 +46,11 @@ object GenericSlayerBossResolver {
             val text = content.stripped().takeIf { it.startsWith("SLAYER BOSS! The ") } ?: return@on
             val match = spawnRegex.find(text) ?: return@on
 
-            val type0 = ISlayerType.Companion.Names.map[match.groups["type"]?.value ?: ""]
-            val tier0 = SlayerTier.find(match.groups["tier"]?.value ?: "")
+            val _type = match.groups["type"]?.value ?: return@on
+            val _tier = match.groups["tier"]?.value ?: return@on
+
+            val type0 = SlayerBoss.entries.firstOrNull { _type in it.names } ?: return@on
+            val tier0 = SlayerTier.find(_tier) ?: return@on
             val last = last
 
             mainThread {
@@ -69,7 +71,7 @@ object GenericSlayerBossResolver {
                 if (info.type !is SlayerBoss) continue
                 if (info.owner != null) continue
                 if (!info.entity.isAlive) continue
-                if (info.entity.tickCount > 20) continue
+                if (info.entity.tickCount > 60) continue
 
                 get(info, ModSettings.tickBossCheck)
             }
@@ -105,12 +107,10 @@ object GenericSlayerBossResolver {
         val active = SlayerAPI.bosses.values.filter { it.entity.isAlive && (it.type != SlayerBoss.Tarantula || it.phase != 1) }.mapNotNull { it.owner }
         val players = level.players().filter { it.valid(this, distance, active, p2, tick) }
 
-        return players.minByOrNull {
-            val distance = it.distanceTo(this)
-            val angle = angle(it)
+        val angles = players.associateWith { angle(it) }
+        val pool = angles.filter { it.value <= 15.0 }.ifEmpty { angles.filter { it.value <= 30.0 } }.ifEmpty { angles.filter { it.value <= 60.0 } }
 
-            distance + (angle / 90.0) * 2.0
-        }
+        return pool.minByOrNull { (v0, v1) -> v1 + (v0.distanceTo(this) * 0.3) }?.key
     }
 
     private fun Player.valid(boss: Entity, distance: Double, active: List<String>, p2: Boolean = false, tick: Boolean = false): Boolean {
