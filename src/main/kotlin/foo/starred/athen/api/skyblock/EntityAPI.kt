@@ -83,13 +83,15 @@ object EntityAPI {
     fun attach(entity: Entity) {
         val literal = entity.customName ?: return
         val level = client.level ?: return
+        val duck = entity as? EntityDuck ?: return
         if (literal.stripped().damage()) return
 
-        val duck = entity as? EntityDuck ?: return
-        if (duck.`athen$attach`() != null) return
+        var candidate0: Entity? = null
+        var candidate1: Entity? = null
 
-        var candidate: Entity? = null
-        var distance = Double.MAX_VALUE
+        var distance0 = Double.MAX_VALUE
+        var distance1 = Double.MAX_VALUE
+
         var ticks = Int.MAX_VALUE
 
         val all = level.getEntities(entity, entity.boundingBox.inflate(0.0, 1.0, 0.0))
@@ -105,23 +107,35 @@ object EntityAPI {
             }
 
             val _distance = living.distanceToSqr(entity)
-            if (candidate != null && _distance > distance) continue
-
             val _ticks = abs(living.tickCount - entity.tickCount)
             if (_distance == 0.0 && _ticks == 0) {
-                candidate = living
+                candidate0 = living
                 break
             }
 
-            if (candidate == null || _distance < distance || (_distance == distance && _ticks < ticks)) {
-                candidate = living
-                distance = _distance
-                ticks = _ticks
+            if (candidate0 != null && _distance >= distance0 && (_distance != distance0 || _ticks >= ticks)) {
+                if (candidate1 == null || _distance < distance1) {
+                    candidate1 = living
+                    distance1 = _distance
+                }
+
+                continue
             }
+
+            candidate1 = candidate0
+            distance1 = distance0
+
+            candidate0 = living
+            distance0 = _distance
+            ticks = _ticks
         }
 
-        val best = candidate?.takeIf { it !is ArmorStand && it.isAlive } ?: return
+        val best = candidate0?.takeIf { it !is ArmorStand && it.isAlive } ?: return
+        val current = duck.`athen$attach`()
+        if (current != null && (current == candidate0 || current == candidate1)) return
+
         val list = (best as? EntityDuck)?.`athen$attachments`() ?: return
+        if (current is EntityDuck) current.`athen$attachments`().removeIf { it.get() == entity || it.get()?.isAlive != true }
 
         list.removeIf { it.get()?.isAlive != true }
         if (!list.any { it.get() == entity }) list.add(WeakReference(entity))

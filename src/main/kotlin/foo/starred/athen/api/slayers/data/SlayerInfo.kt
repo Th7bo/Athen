@@ -73,6 +73,6 @@ data class SlayerInfo(val entity: Entity) {
     }
 
     companion object {
-        private val spawnerRegex = Regex("'(?:s )?SLAYER BOSS")
+        private val spawnerRegex = Regex("'s?\\s+SLAYER BOSS")
     }
 }
